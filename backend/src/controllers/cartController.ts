@@ -28,7 +28,7 @@ export class cartController {
         .eq("user_id", userId)
         .eq("product_id", product_id)
         .single();
-      if (fetchErr && fetchErr.code !== "PGRST116") throw fetchErr; // 116 = no rows found
+      if (fetchErr && fetchErr.code !== "PGRST116") throw fetchErr; 
       if (existing) {
         const { data, error } = await supabase
           .from("cart")
