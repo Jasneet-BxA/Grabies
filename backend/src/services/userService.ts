@@ -3,23 +3,23 @@ import type { UpdateProfileInput, AddressInput } from "../types/index.js";
 
 export const getProfileService = async (userId: string) => {
   const { data, error } = await supabase
-    .from('users')
-    .select(`
-      id,
-      name,
-      email,
-      contact,
-      dob,
-      role,
-      addresses (
-        address_line,
-        city,
-        state,
-        pincode
-      )
-    `)
-    .eq('id', userId)
-    .single();
+  .from('users')
+  .select(`
+    id,
+    name,
+    email,
+    contact,
+    dob,
+    address:users_address_id_fkey (
+      address_line,
+      city,
+      state,
+      pincode
+    )
+  `)
+  .eq('id', userId)
+  .single();
+
 
   if (error) throw new Error(error.message);
 
