@@ -1,11 +1,13 @@
 import { Router } from 'express';
-import { supabase } from '../config/supabaseClient.js';
+import { getProfile, updateAddress, updateProfile } from 'controllers/userController.js';
+import { authenticateToken } from 'middlewares/authMiddleware.js';
 
-export const userRouter = Router();
+const router = Router();
 
-userRouter.get('/', async (_req, res) => {
-  const { data, error } = await supabase.from('users').select('*');
-  console.log(data, error);
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data);
-});
+router.use(authenticateToken);
+
+router.get('/me', getProfile);
+router.put('/me', updateProfile);
+router.put('/address', updateAddress);
+
+export default router;

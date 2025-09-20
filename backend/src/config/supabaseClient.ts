@@ -1,4 +1,4 @@
-import {env} from '../env/index.js';
+import {env} from './env/index.js';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = env.SUPABASE_URL || '';

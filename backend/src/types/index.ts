@@ -1,3 +1,19 @@
+import type { addToCartSchema } from "validators/productValidator.js";
+import type { loginSchema, signupSchema } from "../validators/authValidator.js";
+import type z from "zod";
+import type { addressSchema, updateProfileSchema } from "validators/userValidator.js";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+      };
+    }
+  }
+}
+
 export interface User {
   id: string;
   name: string;
@@ -55,3 +71,9 @@ export interface OrderItem {
   total_price: number;
   product?: Product;
 }
+
+export type SignupInput = z.infer<typeof signupSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+export type AddToCartInput = z.infer<typeof addToCartSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+export type AddressInput = z.infer<typeof addressSchema>;
