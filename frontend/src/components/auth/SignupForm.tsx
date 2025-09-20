@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { signup } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 
+// Schema
 const signupSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.email('Enter a valid email'),
@@ -55,78 +56,90 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">Create an Account</CardTitle>
-          <CardDescription className="text-center">
-            Join Grabies to order delicious food!
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Name */}
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" {...register('name')} />
-              {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-            </div>
+    <div className="relative min-h-screen w-full">
+      {/* 🔥 Full screen background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+        style={{
+          backgroundImage:
+            'url("https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1470&q=80")',
+        }}
+      ></div>
 
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" {...register('email')} />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-            </div>
-
-            {/* Contact */}
-            <div className="space-y-2">
-              <Label htmlFor="contact">Contact Number</Label>
-              <Input id="contact" type="text" {...register('contact')} />
-              {errors.contact && <p className="text-sm text-red-500">{errors.contact.message}</p>}
-            </div>
-
-            {/* Address Line */}
-            <div className="space-y-2">
-              <Label htmlFor="addressLine">Address Line</Label>
-              <Input id="addressLine" {...register('address.address_line')} />
-              {errors.address?.address_line && <p className="text-sm text-red-500">{errors.address.address_line.message}</p>}
-            </div>
-
-            {/* City & Pincode - side by side */}
-            <div className="flex gap-4">
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input id="city" {...register('address.city')} />
-                {errors.address?.city && <p className="text-sm text-red-500">{errors.address.city.message}</p>}
+      {/* 🔲 Form Content over background */}
+      <div className="relative z-10 flex justify-center items-center min-h-screen px-4 py-10">
+        <Card className="w-full max-w-sm shadow-xl backdrop-blur-sm bg-white/80">
+          <CardHeader>
+            <CardTitle className="text-center text-2xl">Create an Account</CardTitle>
+            <CardDescription className="text-center">
+              Join Grabies to order delicious food!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Name */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" {...register('name')} />
+                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="pincode">Pincode</Label>
-                <Input id="pincode" {...register('address.pincode')} />
-                {errors.address?.pincode && <p className="text-sm text-red-500">{errors.address.pincode.message}</p>}
+
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" {...register('email')} />
+                {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
               </div>
-            </div>
 
-            {/* State */}
-            <div className="space-y-2">
-              <Label htmlFor="state">State</Label>
-              <Input id="state" {...register('address.state')} />
-              {errors.address?.state && <p className="text-sm text-red-500">{errors.address.state.message}</p>}
-            </div>
+              {/* Contact */}
+              <div className="space-y-2">
+                <Label htmlFor="contact">Contact Number</Label>
+                <Input id="contact" type="text" {...register('contact')} />
+                {errors.contact && <p className="text-sm text-red-500">{errors.contact.message}</p>}
+              </div>
 
-            {/* Password */}
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register('password')} />
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-            </div>
+              {/* Address Line */}
+              <div className="space-y-2">
+                <Label htmlFor="addressLine">Address Line</Label>
+                <Input id="addressLine" {...register('address.address_line')} />
+                {errors.address?.address_line && <p className="text-sm text-red-500">{errors.address.address_line.message}</p>}
+              </div>
 
-            <Button type="submit" className="w-full bg-orange-500 text-white hover:bg-orange-600">
-              Sign Up
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              {/* City & Pincode */}
+              <div className="flex gap-4">
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input id="city" {...register('address.city')} />
+                  {errors.address?.city && <p className="text-sm text-red-500">{errors.address.city.message}</p>}
+                </div>
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="pincode">Pincode</Label>
+                  <Input id="pincode" {...register('address.pincode')} />
+                  {errors.address?.pincode && <p className="text-sm text-red-500">{errors.address.pincode.message}</p>}
+                </div>
+              </div>
+
+              {/* State */}
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Input id="state" {...register('address.state')} />
+                {errors.address?.state && <p className="text-sm text-red-500">{errors.address.state.message}</p>}
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" {...register('password')} />
+                {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              </div>
+
+              <Button type="submit" className="w-full bg-orange-500 text-white hover:bg-orange-600">
+                Sign Up
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

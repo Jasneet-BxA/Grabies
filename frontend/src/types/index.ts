@@ -20,7 +20,26 @@ export interface User {
   address_id?: string
 }
 
+export interface Address {
+  id: string;
+  user_id?: string;
+  address_line: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+}
+
 export interface CartItem {
   product: Product
   quantity: number
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  email: string;
+  contact?: string;
+  dob?: string;
+  role?: string;
+  address?: Address;
 }

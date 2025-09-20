@@ -22,6 +22,10 @@ export async function getCurrentUser() {
   return api.get('/auth/me').then(res => res.data)
 }
 
+export async function getUserProfile() {
+  return api.get('/user/me').then(res => res.data)
+}
+
 export async function fetchProducts() {
   return api.get('/products').then(res => res.data)
 }

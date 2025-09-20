@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom'
 import { login } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 
-// Schema for validation
 const loginSchema = z.object({
   email: z.email({ message: 'Enter a valid email address' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
@@ -32,6 +31,7 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const res = await login(data.email, data.password)
+      console.log(res.data)
       setUser(res.data.user)
       navigate('/')
     } catch (err) {
@@ -40,8 +40,14 @@ export default function LoginForm() {
   }
 
   return (
-    // <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <Card className="w-full max-w-md shadow-lg">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center px-4"
+      style={{
+        backgroundImage:
+          'url("https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1470&q=80")',
+      }}
+    >
+      <Card className="w-full max-w-md shadow-lg backdrop-blur-sm bg-white/80">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Login to Grabies</CardTitle>
           <CardDescription className="text-center">
@@ -74,6 +80,6 @@ export default function LoginForm() {
           </form>
         </CardContent>
       </Card>
-    // </div>
+    </div>
   )
 }

@@ -123,17 +123,21 @@ export default function Home() {
 <div className="w-full bg-white py-12">
   <div className="max-w-6xl mx-auto px-4">
     <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
-      Explore More Food
+      Your Food Adventure Starts Here!
     </h2>
-    <div className="flex overflow-x-auto gap-6 scrollbar-hide justify-center">
+    <div className="flex flex-wrap gap-6 justify-center">
       {[
         { title: "Pizza", image: "https://img.icons8.com/color/96/pizza.png" },
         { title: "Burgers", image: "https://img.icons8.com/color/96/hamburger.png" },
         { title: "Momos", image: "https://img.icons8.com/color/96/dumplings.png" },
         { title: "Desserts", image: "https://img.icons8.com/color/96/cupcake.png" },
-        { title: "Biryani", image: "https://img.icons8.com/color/96/rice-bowl.png" },
-        { title: "Fries", image: "https://img.icons8.com/color/96/fries.png" },
+        { title: "Drinks", image: "https://img.icons8.com/color/96/cocktail.png" },
+        { title: "Pasta", image: "https://img.icons8.com/color/96/spaghetti.png" },
+        { title: "Springrolls", image: "https://img.icons8.com/color/96/wrap.png" },
+        { title: "NorthIndian", image: "https://img.icons8.com/color/96/curry.png" },
+        { title: "SouthIndian", image: "https://img.icons8.com/color/96/rice-bowl.png" },
         { title: "Noodles", image: "https://img.icons8.com/color/96/noodles.png" },
+
       ].map((item, index) => (
         <div
           key={index}
