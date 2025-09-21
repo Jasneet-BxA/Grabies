@@ -1,11 +1,5 @@
 import { z } from 'zod';
-
-export const addressSchema = z.object({
-  address_line: z.string().min(1),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
-});
+import { addressSchema } from './addressValidator.js';
 
 export const updateProfileSchema = z.object({
   name: z.string().min(2).optional(),

@@ -1,7 +1,8 @@
-import type { addToCartSchema } from "validators/productValidator.js";
+import type { addToCartSchema, productSchema, productUpdateSchema } from "validators/productValidator.js";
 import type { loginSchema, signupSchema } from "../validators/authValidator.js";
 import type z from "zod";
-import type { addressSchema, updateProfileSchema } from "validators/userValidator.js";
+import type {updateProfileSchema } from "validators/userValidator.js";
+import type {addressSchema} from "validators/addressValidator.js"
 
 declare global {
   namespace Express {
@@ -72,8 +73,22 @@ export interface OrderItem {
   product?: Product;
 }
 
+export interface FilterOptions {
+  category: string;
+  tag?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  rating?: number;
+  search?: string;
+  sort?: string; 
+  page?: number;
+  limit?: number;
+}
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type AddToCartInput = z.infer<typeof addToCartSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type AddressInput = z.infer<typeof addressSchema>;
+export type ProductCreateInput = z.infer<typeof productSchema>;
+export type ProductUpdateInput = z.infer<typeof productUpdateSchema>;
