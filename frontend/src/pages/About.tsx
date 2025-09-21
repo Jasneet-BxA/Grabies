@@ -1,3 +1,4 @@
+
 export default function About() {
   return (
     <div className="w-full">
@@ -72,8 +73,44 @@ export default function About() {
               alt="Our Mission"
               className="rounded-lg shadow-lg object-cover w-full"
             />
+
           </div>
+          
         </div>
+        {/* 🔶 We Provide Fast Delivery Section */}
+<div className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center">
+  {/* Left Image */}
+  <div>
+    <img
+      src="https://plus.unsplash.com/premium_photo-1731890642701-018c4b410da2?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      alt="Fast Delivery"
+      className="w-full h-full object-cover rounded-lg shadow-lg"
+    />
+  </div>
+
+  {/* Right Content */}
+  <div>
+    <h2 className="text-3xl font-bold text-orange-700 mb-4 leading-snug">
+      We Provide <br /> Fast Delivery
+    </h2>
+
+    <p className="text-orange-600 font-semibold mb-3 tracking-wide">
+      FRESH. FAST. RIGHT TO YOUR DOOR.
+    </p>
+
+    <p className="text-gray-700 leading-relaxed mb-5">
+      At Grabies, speed is our specialty. Our optimized logistics system ensures that your meal gets from our kitchen to your doorstep in record time. Whether you're in a rush or just hungry, we've got your back.
+    </p>
+
+    <ul className="list-disc pl-5 space-y-2 text-gray-600">
+      <li>Average delivery time: under 30 minutes</li>
+      <li>Live GPS order tracking</li>
+      <li>Priority delivery during peak hours</li>
+      <li>Highly-rated delivery partners</li>
+    </ul>
+  </div>
+</div>
+
       </div>
   )
 }

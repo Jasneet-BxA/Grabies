@@ -10,14 +10,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
+import { Heart , Menu } from "lucide-react"; // or any icon you prefer
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
 import Profile from "@/pages/Profile"
-import { Menu } from "lucide-react"
+
 
 export default function Navbar() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
+   const navigate = useNavigate();
 
   return (
     <header className="w-full px-4 md:px-10 py-4 shadow-sm bg-white fixed top-0 left-0 z-50">
@@ -61,15 +63,36 @@ export default function Navbar() {
               </Link>
             </>
           ) : (
+            <>
+    
+              {/* Wishlist Button */}
+              <button
+                aria-label="Wishlist"
+                onClick={() => navigate("/wishlist")}
+                className="relative p-2 rounded-full hover:bg-orange-100 transition"
+              >
+                <Heart className="h-6 w-6 text-orange-600" />
+                {/* Optional: badge for wishlist count */}
+                {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">3</span> */}
+              </button>
             <Profile />
+            </>
           )}
         </div>
 
         {/* ✅ Mobile Right Section: Profile + Menu */}
         <div className="md:hidden flex items-center gap-2">
           {isAuthenticated && (
-            // Show Profile icon on mobile (left of dropdown)
+            <>
+             <button
+              aria-label="Wishlist"
+              onClick={() => navigate("/wishlist")}
+              className="relative p-2 rounded-full hover:bg-orange-100 transition"
+            >
+              <Heart className="h-6 w-6 text-orange-600" />
+            </button>
             <Profile />
+            </>
           )}
 
           {/* Dropdown Menu for Mobile Nav */}

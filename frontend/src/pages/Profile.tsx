@@ -27,6 +27,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { getUserAddress, addUserNewAddress } from "@/lib/api";
 
 export default function Profile() {
   const { setUser, isAuthenticated } = useAuth();
@@ -42,9 +43,8 @@ export default function Profile() {
   const [pincode, setPincode] = useState("");
   const [currentAddress, setCurrentAddress] = useState("");
   const [savedAddresses, setSavedAddresses] = useState<
-  { address_line: string; city: string; state: string; pincode: string }[]
->([]);
-
+    { address_line: string; city: string; state: string; pincode: string }[]
+  >([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -53,7 +53,8 @@ export default function Profile() {
           const data = await getUserProfile();
           setProfile(data);
           setUser(data);
-          setCurrentAddress(data?.address || "");
+          const addressData = await getUserAddress();
+          setSavedAddresses(addressData);
         } catch (err) {
           console.error("Failed to fetch profile", err);
         }
@@ -62,7 +63,37 @@ export default function Profile() {
 
     fetchProfile();
   }, [sheetOpen, isAuthenticated]);
+  async function handleSaveAddress() {
+    if (!addressLine || !city || !stateName || !pincode) {
+      alert("Please fill out all fields.");
+      return;
+    }
 
+    try {
+      const res = await addUserNewAddress({
+        address_line: addressLine,
+        city,
+        state: stateName,
+        pincode: pincode,
+      });
+      const newAddress = res.address;
+      setSavedAddresses((prev) => [...prev, newAddress]);
+
+      setCurrentAddress(
+        `${newAddress.address_line}, ${newAddress.city}, ${newAddress.stateName} - ${newAddress.pincode}`
+      );
+
+      setAddressLine("");
+      setCity("");
+      setStateName("");
+      setPincode("");
+
+      setShowAddress(false);
+    } catch (error) {
+      console.error("Failed to add new address", error);
+      alert("Failed to save address. Please try again.");
+    }
+  }
   const handleLogout = async () => {
     setLoading(true);
     try {
@@ -203,24 +234,28 @@ export default function Profile() {
                 </div>
 
                 {/* Additional Saved Addresses */}
-{savedAddresses.length > 0 && (
-  <div className="mt-6 space-y-4">
-    <label className="block text-sm font-semibold text-gray-700 mb-1">
-      Saved Addresses
-    </label>
+                {savedAddresses.length > 0 && (
+                  <div className="mt-6 space-y-4">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Saved Addresses
+                    </label>
 
-    {savedAddresses.map((addr, index) => (
-      <div
-        key={index}
-        className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-700"
-      >
-        <div className="font-medium mb-1">Address {index + 1}</div>
-        <div>{addr.address_line}, {addr.city}, {addr.state} - {addr.pincode}</div>
-      </div>
-    ))}
-  </div>
-)}
-
+                    {savedAddresses.map((addr, index) => (
+                      <div
+                        key={index}
+                        className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-700"
+                      >
+                        <div className="font-medium mb-1">
+                          Address {index + 1}
+                        </div>
+                        <div>
+                          {addr.address_line}, {addr.city}, {addr.state} -{" "}
+                          {addr.pincode}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* New Address Dialog Trigger */}
                 <Dialog>
@@ -290,37 +325,8 @@ export default function Profile() {
                         <Button
                           type="button"
                           className="bg-orange-500 text-white hover:bg-orange-600"
-                         onClick={() => {
-  if (!addressLine || !city || !stateName || !pincode) {
-    alert("Please fill out all fields.");
-    return;
-  }
-
-  const newAddressObj = {
-    address_line: addressLine,
-    city,
-    state: stateName,
-    pincode,
-  };
-
-  // Append to the saved addresses list
-  setSavedAddresses((prev) => [...prev, newAddressObj]);
-
-  // Optionally set as current address
-  setCurrentAddress(
-    `${addressLine}, ${city}, ${stateName} - ${pincode}`
-  );
-
-  // Clear inputs
-  setAddressLine("");
-  setCity("");
-  setStateName("");
-  setPincode("");
-
-  setShowAddress(false);
-}}
-
-                        >
+                          onClick={handleSaveAddress}
+                          >
                           Save Address
                         </Button>
                       </DialogClose>
@@ -357,10 +363,8 @@ export default function Profile() {
           <>
             {/* --------- Default Welcome View --------- */}
             <SheetHeader>
-              <SheetTitle>
-                <h1 className="text-2xl font-bold text-orange-600">
-                  👋 Welcome, {profile?.name || "User"}
-                </h1>
+              <SheetTitle className="text-2xl font-bold text-orange-600">
+                👋 Welcome, {profile?.name || "User"}
               </SheetTitle>
             </SheetHeader>
 

@@ -10,6 +10,7 @@ import Profile from './pages/Profile'
 import Navbar from './components/Layout/Navbar'
 import Footer from './components/Layout/Footer'
 import About from './pages/About'
+import Wishlist from './pages/Wishlist.tsx'
 // import LoginForm from './components/auth/LoginForm.tsx'
 // import { R } from 'node_modules/react-router/dist/development/index-react-server-client-BeVfPpWg.d.mts'
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/wishlist" element={<Wishlist />} />
         </Routes>
       </div>
       <Footer />
