@@ -17,6 +17,16 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import type { Profile } from "@/types";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 export default function Profile() {
   const { setUser, isAuthenticated } = useAuth();
@@ -26,8 +36,15 @@ export default function Profile() {
   const [showAddress, setShowAddress] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(false);
-  const [newAddress, setNewAddress] = useState("");
+  const [addressLine, setAddressLine] = useState("");
+  const [city, setCity] = useState("");
+  const [stateName, setStateName] = useState(""); // avoid conflict with JS `state`
+  const [pincode, setPincode] = useState("");
   const [currentAddress, setCurrentAddress] = useState("");
+  const [savedAddresses, setSavedAddresses] = useState<
+  { address_line: string; city: string; state: string; pincode: string }[]
+>([]);
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -83,7 +100,6 @@ export default function Profile() {
       </SheetTrigger>
 
       <SheetContent className="w-72 sm:w-96 bg-white shadow-xl border-l border-gray-200 overflow-y-auto">
-
         {showDetails ? (
           <>
             {/* --------- My Account Details --------- */}
@@ -175,31 +191,147 @@ export default function Profile() {
                     Current Address
                   </label>
                   <textarea
-                    value={profile?.address?.address_line ? `${profile?.address?.address_line}, ${profile?.address?.city}, ${profile?.address?.state}, ${profile?.address?.pincode}` : ""}
+                    value={
+                      profile?.address?.address_line
+                        ? `${profile?.address?.address_line}, ${profile?.address?.city}, ${profile?.address?.state}, ${profile?.address?.pincode}`
+                        : ""
+                    }
                     readOnly
                     rows={3}
                     className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
 
-                {/* New Address */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">
-                    New Address
-                  </label>
-                  <textarea
-                    value={newAddress}
-                    onChange={(e) => setNewAddress(e.target.value)}
-                    rows={3}
-                    className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="Enter new address here..."
-                  />
-                </div>
+                {/* Additional Saved Addresses */}
+{savedAddresses.length > 0 && (
+  <div className="mt-6 space-y-4">
+    <label className="block text-sm font-semibold text-gray-700 mb-1">
+      Saved Addresses
+    </label>
+
+    {savedAddresses.map((addr, index) => (
+      <div
+        key={index}
+        className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-700"
+      >
+        <div className="font-medium mb-1">Address {index + 1}</div>
+        <div>{addr.address_line}, {addr.city}, {addr.state} - {addr.pincode}</div>
+      </div>
+    ))}
+  </div>
+)}
+
+
+                {/* New Address Dialog Trigger */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="w-full mt-4 bg-orange-500 text-white hover:bg-orange-600">
+                      Add New Address
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent className="sm:max-w-md bg-white">
+                    <DialogHeader>
+                      <DialogTitle>Add New Address</DialogTitle>
+                      <DialogDescription>
+                        Enter your new shipping address below.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                      {/* Address Line */}
+                      <input
+                        type="text"
+                        value={addressLine}
+                        onChange={(e) => setAddressLine(e.target.value)}
+                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        placeholder="Address Line"
+                      />
+
+                      {/* City */}
+                      <input
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        placeholder="City"
+                      />
+
+                      {/* State */}
+                      <input
+                        type="text"
+                        value={stateName}
+                        onChange={(e) => setStateName(e.target.value)}
+                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        placeholder="State"
+                      />
+
+                      {/* Pincode */}
+                      <input
+                        type="text"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value)}
+                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        placeholder="Pincode"
+                      />
+                    </div>
+
+                    <DialogFooter className="mt-4">
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="border-gray-300 text-gray-600"
+                        >
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          className="bg-orange-500 text-white hover:bg-orange-600"
+                         onClick={() => {
+  if (!addressLine || !city || !stateName || !pincode) {
+    alert("Please fill out all fields.");
+    return;
+  }
+
+  const newAddressObj = {
+    address_line: addressLine,
+    city,
+    state: stateName,
+    pincode,
+  };
+
+  // Append to the saved addresses list
+  setSavedAddresses((prev) => [...prev, newAddressObj]);
+
+  // Optionally set as current address
+  setCurrentAddress(
+    `${addressLine}, ${city}, ${stateName} - ${pincode}`
+  );
+
+  // Clear inputs
+  setAddressLine("");
+  setCity("");
+  setStateName("");
+  setPincode("");
+
+  setShowAddress(false);
+}}
+
+                        >
+                          Save Address
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 
             {/* Footer */}
-            <SheetFooter className="mt-6 flex gap-3">
+            <SheetFooter>
               <Button
                 variant="outline"
                 className="w-full border-orange-500 text-orange-600 hover:bg-orange-50 hover:border-orange-600 transition-colors duration-200"
@@ -207,7 +339,7 @@ export default function Profile() {
               >
                 Back
               </Button>
-              <Button
+              {/* <Button
                 className="w-full bg-orange-500 text-white hover:bg-orange-600 transition-colors duration-200"
                 onClick={() => {
                   // TODO: Persist to API
@@ -218,7 +350,7 @@ export default function Profile() {
                 }}
               >
                 Add Address
-              </Button>
+              </Button> */}
             </SheetFooter>
           </>
         ) : (

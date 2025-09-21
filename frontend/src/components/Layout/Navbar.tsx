@@ -4,10 +4,17 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
-import Profile from "@/pages/Profile" // ✅ Import your modular profile component
+import Profile from "@/pages/Profile"
+import { Menu } from "lucide-react"
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth()
@@ -20,7 +27,7 @@ export default function Navbar() {
           Grabies
         </Link>
 
-        {/* ✅ Navigation Menu */}
+        {/* ✅ Desktop Navigation */}
         <NavigationMenu>
           <NavigationMenuList className="hidden md:flex space-x-6">
             {["Home", "About Us", "Our Food", "Cart", "Contact"].map((item, idx) => (
@@ -38,7 +45,7 @@ export default function Navbar() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* ✅ Right side - Auth / Profile */}
+        {/* ✅ Desktop Auth/Profile */}
         <div className="hidden md:flex items-center gap-3">
           {!isAuthenticated ? (
             <>
@@ -56,6 +63,66 @@ export default function Navbar() {
           ) : (
             <Profile />
           )}
+        </div>
+
+        {/* ✅ Mobile Right Section: Profile + Menu */}
+        <div className="md:hidden flex items-center gap-2">
+          {isAuthenticated && (
+            // Show Profile icon on mobile (left of dropdown)
+            <Profile />
+          )}
+
+          {/* Dropdown Menu for Mobile Nav */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6 text-orange-600" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="w-56 mt-2 bg-white p-2 shadow-lg">
+              {[ // Navigation links
+                { label: "Home", to: "/" },
+                { label: "About Us", to: "/about" },
+                { label: "Our Food", to: "/food" },
+                { label: "Cart", to: "/plans" },
+                { label: "Contact", to: "/contact" },
+              ].map((item, idx) => (
+                <DropdownMenuItem key={idx} asChild>
+                  <Link
+                    to={item.to}
+                    className="w-full block text-sm text-gray-700 hover:text-orange-600"
+                  >
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+
+              <div className="border-t my-2" />
+
+              {/* Auth buttons */}
+              {!isAuthenticated ? (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/auth/login"
+                      className="w-full block text-sm text-gray-700 hover:text-orange-600"
+                    >
+                      Login
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/auth/signup"
+                      className="w-full block text-sm text-gray-700 hover:text-orange-600"
+                    >
+                      Signup
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
