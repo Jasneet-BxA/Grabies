@@ -22,16 +22,6 @@ export const signupService = async (userData: SignupInput) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const { data: addressData, error: addressError } = await supabase
-    .from("addresses")
-    .insert([address])
-    .select("id")
-    .single();
-
-  if (addressError) {
-    throw new Error("Failed to save address");
-  }
-
   const { data: newUser, error: insertError } = await supabase
     .from("users")
     .insert([
@@ -41,14 +31,30 @@ export const signupService = async (userData: SignupInput) => {
         password: hashedPassword,
         contact: contact || null,
         dob: dob || null,
-        address_id: addressData.id,
       },
     ])
     .select("id, name, email")
     .single();
 
-  if (insertError) {
+  if (insertError || !newUser) {
     throw new Error("Failed to create user");
+  }
+  const { data: addressData, error: addressError } = await supabase
+    .from("addresses")
+    .insert([{ ...address, user_id: newUser.id }])
+    .select("id")
+    .single();
+
+  if (addressError) {
+    throw new Error("Failed to save address");
+  }
+  const { error: updateUserError } = await supabase
+    .from("users")
+    .update({ address_id: addressData.id })
+    .eq("id", newUser.id);
+
+  if (updateUserError) {
+    throw new Error("Failed to link address to user");
   }
 
   return {

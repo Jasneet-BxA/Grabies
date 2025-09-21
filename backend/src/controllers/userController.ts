@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import { addressSchema, updateProfileSchema } from "../validators/userValidator.js";
+import { updateProfileSchema } from "../validators/userValidator.js";
+import {  addressSchema } from "../validators/addressValidator.js";
 import {
   getProfileService,
   updateProfileService,

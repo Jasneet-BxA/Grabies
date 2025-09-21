@@ -4,9 +4,7 @@ import { authenticateToken } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-router.use(authenticateToken); 
-
-router.get('/', getCart);
+router.get('/', authenticateToken, getCart);
 router.post('/', addToCart);
 router.delete('/:cartId', removeCartItem);
 
