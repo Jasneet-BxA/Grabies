@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
+import ExploreMoreFood from "@/components/product/ExploreMoreFood"
+import ProductCard from "@/components/product/ProductCard"
+import type { Product } from "@/types"
+import { getAllProducts, getProductsByCategory } from "@/lib/api";
 
 const slides = [
   {
@@ -44,19 +48,36 @@ export default function Home() {
       clearTimeout(timeoutRef.current)
     }
   }
-  useEffect(() => {
-  const fetchPreview = async () => {
-    try {
-      const response = await fetch("/api/products?limit=6"); // Adjust endpoint as per backend
-      const data = await response.json();
-      setPreviewProducts(data);
-    } catch (error) {
-      console.error("Error fetching preview products", error);
+    useEffect(() => {
+    const fetchPreview = async () => {
+      try {
+        const data = await getAllProducts(6,0);
+        console.log("Fetched preview products:", data);
+        setPreviewProducts(data);
+      } catch (error) {
+        console.error("Error fetching preview products", error);
+      }
+    };
+ 
+    fetchPreview();
+  }, []);
+  const [wishlist, setWishlist] = useState<Product[]>([]);
+ 
+  const handleAddToCart = (product: Product) => {
+    console.log("Added to cart:", product);
+  };
+ 
+  const handleToggleWishlist = (product: Product) => {
+    const exists = wishlist.find((item) => item.id === product.id);
+    if (exists) {
+      setWishlist(wishlist.filter((item) => item.id !== product.id));
+    } else {
+      setWishlist([...wishlist, product]);
     }
   };
-
-  fetchPreview();
-}, []);
+ 
+  const isWishlisted = (product: Product) =>
+    wishlist.some((item) => item.id === product.id);
   return (
     <div className="w-full">
       {/* ✅ Carousel */}
@@ -131,72 +152,28 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* ✅ Explore More Food Section */}
-<div className="w-full bg-white py-12">
-  <div className="max-w-6xl mx-auto px-4">
-    <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
-      Your Food Adventure Starts Here!
-    </h2>
-    <div className="flex flex-wrap gap-6 justify-center">
-      {[
-        { title: "Pizza", image: "https://img.icons8.com/color/96/pizza.png" },
-        { title: "Burger", image: "https://img.icons8.com/color/96/hamburger.png" },
-        { title: "Momos", image: "https://img.icons8.com/color/96/dumplings.png" },
-        { title: "Dessert", image: "https://img.icons8.com/color/96/cupcake.png" },
-        { title: "Drinks", image: "https://img.icons8.com/color/96/cocktail.png" },
-        { title: "Pasta", image: "https://img.icons8.com/color/96/spaghetti.png" },
-        { title: "Spring Roll", image: "https://img.icons8.com/color/96/wrap.png" },
-        { title: "North Indian", image: "https://img.icons8.com/color/96/curry.png" },
-        { title: "South Indian", image: "https://img.icons8.com/color/96/rice-bowl.png" },
-        { title: "Noodles", image: "https://img.icons8.com/color/96/noodles.png" },
-
-      ].map((item, index) => (
-        <div
-          key={index}
-          className="flex flex-col items-center cursor-pointer hover:scale-105 transition"
-          onClick={() => navigate(`/products?category=${item.title.toLowerCase()}`)}
-        >
-          <div className="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center shadow-md">
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-12 h-12 object-contain"
-            />
-          </div>
-          <p className="mt-2 text-sm font-medium text-gray-700">{item.title}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
+     <>
+     <ExploreMoreFood/>
+     </>
 {/* ✅ Product Preview Section */}
 <div className="w-full bg-orange-50 py-12">
-  <div className="max-w-6xl mx-auto px-4">
-    <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
-      Taste Sensation
-    </h2>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-      {previewProducts.map((item: any) => (
-        <div
-          key={item.id}
-          className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition aspect-w-4 aspect-h-3"
-        >
-          <img
-            src={item.image}
-            alt={item.name}
-            className="w-full h-40 object-cover rounded"
-          />
-          <h3 className="text-lg font-semibold mt-2">{item.name}</h3>
-          <p className="text-sm text-gray-600">{item.description}</p>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-orange-600 font-semibold">₹{item.price}</span>
-            <span className="text-sm text-yellow-500">⭐ {item.rating}</span>
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
+            Taste Sensation
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {previewProducts.map((product: Product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onToggleWishlist={handleToggleWishlist}
+                isWishlisted={isWishlisted(product)}
+              />
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</div>
+      </div>
 
     </div>
   )

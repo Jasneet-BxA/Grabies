@@ -31,12 +31,15 @@ export async function getUserProfile() {
 export async function getUserAddress(){
   return api.get('/address').then(res=>res.data)
 }
+
 export async function getProductsByCategory(category: string) {
-  if (category === "all") {
-    return api.get("/menu").then((res) => res.data);
-  } else {
-    return api.get(`/menu/${category}`).then((res) => res.data);
-  }
+  return api.get(`/menu/${category}`).then((res) => res.data);
+}
+export async function getAllProducts(limit: number = 6, offset: number = 0) {
+  return api.get(`/menu?limit=${limit}&offset=${offset}`).then((res) => res.data);
+}
+export async function getWishlist(){
+  return api.get('/wishlist').then((res) => res.data);
 }
 
 // POST request
@@ -49,9 +52,18 @@ export async function addUserNewAddress(addressData: {
   return api.post('/address', addressData).then(res => res.data)
 }
 
-// export async function placeOrder(orderData: {
-//   addressId: string
-//   paymentMethod: string
-// }) {
-//   return api.post('/orders', orderData).then(res => res.data)
-// }
+export async function addToWishlist(productId: string) {
+  await api.post(`/wishlist/`, {product_id: productId});
+}
+
+export async function getProductByName(category:string, productName: string){
+  const encodedName = encodeURIComponent(productName);
+  const res = await api.get(`/menu/${category}/${encodedName}`);
+  return res.data;
+}
+
+
+// DELETE request
+export async function removeFromWishlist(productId: string) {
+  await api.delete(`/wishlist/${productId}`);
+}

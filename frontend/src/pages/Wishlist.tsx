@@ -1,59 +1,56 @@
 import { useEffect, useState } from "react";
+import ProductCard from "@/components/product/ProductCard";
+import type { Product } from "@/types";
 
-interface WishlistItem {
-  id: string;
-  name: string;
-  image: string;
-  price: number;
-}
+const WISHLIST_KEY = "wishlist";
 
-export default function Wishlist() {
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
+export default function WishlistPage() {
+  const [wishlist, setWishlist] = useState<Product[]>([]);
 
+  // Load wishlist from localStorage on mount
   useEffect(() => {
-    // Fetch wishlist items from backend or localStorage
-    // For demo, using dummy data:
-    const dummyData = [
-      {
-        id: "1",
-        name: "Delicious Pizza",
-        image: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=600&q=80",
-        price: 12.99,
-      },
-      {
-        id: "2",
-        name: "Spicy Noodles",
-        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
-        price: 9.99,
-      },
-    ];
-
-    setWishlistItems(dummyData);
+    const stored = localStorage.getItem(WISHLIST_KEY);
+    if (stored) setWishlist(JSON.parse(stored));
   }, []);
 
-  if (wishlistItems.length === 0) {
-    return (
-      <div className="max-w-5xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-4">Your Wishlist</h1>
-        <p>You have no items in your wishlist.</p>
-      </div>
-    );
-  }
+  // Save wishlist to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  const handleAddToCart = (product: Product) => {
+    console.log("Added to cart:", product);
+  };
+
+  const handleToggleWishlist = (product: Product) => {
+    setWishlist((prev) => {
+      const exists = prev.some((item) => item.id === product.id);
+      if (exists) {
+        return prev.filter((item) => item.id !== product.id);
+      } else {
+        return [...prev, product];
+      }
+    });
+  };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8">Your Wishlist</h1>
-      <div className="grid md:grid-cols-3 gap-6">
-        {wishlistItems.map((item) => (
-          <div key={item.id} className="border rounded-lg overflow-hidden shadow-sm">
-            <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">{item.name}</h2>
-              <p className="text-orange-600 font-bold">${item.price.toFixed(2)}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      <h2 className="text-3xl font-bold text-orange-700 mb-8">Your Wishlist</h2>
+      {wishlist.length === 0 ? (
+        <p className="text-gray-600 text-center">No items in wishlist yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+          {wishlist.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={handleAddToCart}
+              onToggleWishlist={handleToggleWishlist}
+              isWishlisted={true}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

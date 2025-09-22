@@ -1,45 +1,90 @@
-import { useParams } from 'react-router'
-import { useEffect, useState } from 'react'
-import type{ Product } from '@/types'
-import { Button } from '@/components/ui/button'
-import { useCart } from '@/context/CartContext'
-import axios from 'axios'
-
-export default function ProductDetails() {
-  const { id } = useParams()
-  const [product, setProduct] = useState<Product | null>(null)
-  const { addToCart } = useCart()
-
-//   useEffect(() => {
-//     if (!id) return
-//     axios.get(`/api/products/${id}`)
-//       .then(res => setProduct(res.data))
-//       .catch(err => console.error(err))
-//   }, [id])
-
-  if (!product) return <p className="text-center mt-10">Loading...</p>
-
+import { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Product } from "@/types";
+import { getProductByName } from "@/lib/api";
+ 
+type Props = {
+  category: string;
+  productName: string;
+  triggerElement: React.ReactNode;
+};
+ 
+export default function ProductDetailDialog({
+  category,
+  productName,
+  triggerElement,
+}: Props) {
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+ 
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const data = await getProductByName(category, productName);
+        setProduct(data);
+      } catch (err) {
+        console.error("Failed to fetch product details:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+ 
+    if (open) {
+      fetchProduct();
+    }
+  }, [open, productName]);
+ 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="grid md:grid-cols-2 gap-10 items-start">
-        <img
-          src={product.image_url}
-          alt={product.name}
-          className="w-full rounded-lg object-cover h-96"
-        />
-
-        <div>
-          <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
-          <p className="text-gray-600 mb-4">{product.description}</p>
-          <p className="text-xl font-semibold text-orange-600 mb-2">₹{product.price.toFixed(2)}</p>
-
-          {product.rating && (
-            <p className="text-sm text-gray-500 mb-4">⭐ {product.rating} rating</p>
-          )}
-
-          <Button onClick={() => addToCart(product, 1)}>Add to Cart</Button>
-        </div>
-      </div>
-    </div>
-  )
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <div>{triggerElement}</div>
+      </DialogTrigger>
+ 
+      <DialogContent className="max-w-md sm:max-w-2xl bg-white rounded-lg p-6">
+        <DialogTitle className="sr-only">{productName}</DialogTitle>
+ 
+        {loading || !product ? (
+          <div className="text-center py-10 text-gray-500">Loading...</div>
+        ) : (
+          <div className="flex flex-col sm:flex-row gap-6">
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="w-full sm:w-1/2 h-64 object-cover rounded-lg"
+            />
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold">{product.name}</h2>
+              <p className="text-gray-600 mt-2">{product.description}</p>
+              <div className="mt-4 flex justify-between">
+                <span className="text-orange-600 font-semibold text-lg">
+                  ₹{product.price}
+                </span>
+                <span className="text-yellow-500 text-sm">⭐ {product.rating}</span>
+              </div>
+              <button
+                className={`mt-6 w-full ${
+                  product.availability && product.stock> 0
+                    ? "bg-orange-600 hover:bg-orange-700"
+                    : "bg-gray-300 cursor-not-allowed"
+                } text-white py-2 rounded transition`}
+                disabled={!product.availability || product.stock === 0}
+              >
+                {product.availability && product.stock > 0
+                  ? "Add to Cart"
+                  : "Out of Stock"}
+              </button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
 }
+ 

@@ -4,9 +4,9 @@ export interface Product {
   image_url: string
   description: string
   price: number
-  cuisine?: string
+  cuisine: string
   availability?: boolean
-  stock?: number
+  stock: number
   rating?: number
   tag?: string
 }
