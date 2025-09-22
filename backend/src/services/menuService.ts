@@ -1,8 +1,15 @@
 import { supabase } from "config/supabaseClient.js";
 import type { FilterOptions, Product } from "types/index.js";
 
-export const getAllProductsService = async (): Promise<Product[]> => {
-  const { data, error } = await supabase.from("products").select("*");
+export const getAllProductsService = async (
+  limit: number = 10,
+  offset: number = 0
+): Promise<Product[]> => {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .range(offset, offset + limit - 1); // Supabase uses inclusive range
+ 
   if (error) throw new Error(error.message);
   return data || [];
 };
