@@ -27,8 +27,8 @@ export default function Home() {
   const [current, setCurrent] = useState(0)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const navigate = useNavigate()
-
   const delay = 4000 // 4 seconds
+  const [previewProducts, setPreviewProducts] = useState([]);
 
   useEffect(() => {
     resetTimeout()
@@ -44,7 +44,19 @@ export default function Home() {
       clearTimeout(timeoutRef.current)
     }
   }
+  useEffect(() => {
+  const fetchPreview = async () => {
+    try {
+      const response = await fetch("/api/products?limit=6"); // Adjust endpoint as per backend
+      const data = await response.json();
+      setPreviewProducts(data);
+    } catch (error) {
+      console.error("Error fetching preview products", error);
+    }
+  };
 
+  fetchPreview();
+}, []);
   return (
     <div className="w-full">
       {/* ✅ Carousel */}
@@ -128,21 +140,21 @@ export default function Home() {
     <div className="flex flex-wrap gap-6 justify-center">
       {[
         { title: "Pizza", image: "https://img.icons8.com/color/96/pizza.png" },
-        { title: "Burgers", image: "https://img.icons8.com/color/96/hamburger.png" },
+        { title: "Burger", image: "https://img.icons8.com/color/96/hamburger.png" },
         { title: "Momos", image: "https://img.icons8.com/color/96/dumplings.png" },
-        { title: "Desserts", image: "https://img.icons8.com/color/96/cupcake.png" },
+        { title: "Dessert", image: "https://img.icons8.com/color/96/cupcake.png" },
         { title: "Drinks", image: "https://img.icons8.com/color/96/cocktail.png" },
         { title: "Pasta", image: "https://img.icons8.com/color/96/spaghetti.png" },
-        { title: "Springrolls", image: "https://img.icons8.com/color/96/wrap.png" },
-        { title: "NorthIndian", image: "https://img.icons8.com/color/96/curry.png" },
-        { title: "SouthIndian", image: "https://img.icons8.com/color/96/rice-bowl.png" },
+        { title: "Spring Roll", image: "https://img.icons8.com/color/96/wrap.png" },
+        { title: "North Indian", image: "https://img.icons8.com/color/96/curry.png" },
+        { title: "South Indian", image: "https://img.icons8.com/color/96/rice-bowl.png" },
         { title: "Noodles", image: "https://img.icons8.com/color/96/noodles.png" },
 
       ].map((item, index) => (
         <div
           key={index}
           className="flex flex-col items-center cursor-pointer hover:scale-105 transition"
-          onClick={() => console.log(`Clicked: ${item.title}`)} // or navigate(`/menu?category=${item.title.toLowerCase()}`)
+          onClick={() => navigate(`/products?category=${item.title.toLowerCase()}`)}
         >
           <div className="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center shadow-md">
             <img
@@ -157,6 +169,35 @@ export default function Home() {
     </div>
   </div>
 </div>
+{/* ✅ Product Preview Section */}
+<div className="w-full bg-orange-50 py-12">
+  <div className="max-w-6xl mx-auto px-4">
+    <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
+      Taste Sensation
+    </h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      {previewProducts.map((item: any) => (
+        <div
+          key={item.id}
+          className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition aspect-w-4 aspect-h-3"
+        >
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-40 object-cover rounded"
+          />
+          <h3 className="text-lg font-semibold mt-2">{item.name}</h3>
+          <p className="text-sm text-gray-600">{item.description}</p>
+          <div className="mt-2 flex items-center justify-between">
+            <span className="text-orange-600 font-semibold">₹{item.price}</span>
+            <span className="text-sm text-yellow-500">⭐ {item.rating}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
     </div>
   )
 }

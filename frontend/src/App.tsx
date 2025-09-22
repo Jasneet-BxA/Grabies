@@ -2,7 +2,6 @@ import { Routes , Route } from 'react-router'
 import Home from './pages/Home.tsx'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
-import Products from './pages/Product'
 import ProductDetails from './pages/ProductDetails'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
@@ -11,8 +10,8 @@ import Navbar from './components/Layout/Navbar'
 import Footer from './components/Layout/Footer'
 import About from './pages/About'
 import Wishlist from './pages/Wishlist.tsx'
-// import LoginForm from './components/auth/LoginForm.tsx'
-// import { R } from 'node_modules/react-router/dist/development/index-react-server-client-BeVfPpWg.d.mts'
+import ContactUs from './pages/Contact.tsx' 
+
 
 function App() {
   return (
@@ -26,13 +25,13 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
-            <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/about" element={<About />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/contact" element={<ContactUs />} />
         </Routes>
       </div>
       <Footer />

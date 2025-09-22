@@ -41,3 +41,10 @@ export async function addUserNewAddress(addressData: {
 }) {
   return api.post('/address', addressData).then(res => res.data)
 }
+
+// export async function placeOrder(orderData: {
+//   addressId: string
+//   paymentMethod: string
+// }) {
+//   return api.post('/orders', orderData).then(res => res.data)
+// }
