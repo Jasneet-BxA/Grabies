@@ -1,6 +1,11 @@
 import { supabase } from "config/supabaseClient.js";
 import type { FilterOptions, Product } from "types/index.js";
- 
+
+export const getAllProductsService = async (): Promise<Product[]> => {
+  const { data, error } = await supabase.from("products").select("*");
+  if (error) throw new Error(error.message);
+  return data || [];
+};
 export const getProductsByCategoryService = async (
   category: string
 ): Promise<Product[]> => {
@@ -43,4 +48,18 @@ export const getFilteredProductsService = async (
     data: data || [],
     total: count || 0,
   };
+};
+export const getProductByNameService = async (
+  category: string,
+  name: string
+): Promise<Product | null> => {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("cuisine", category)
+    .ilike("name", decodeURIComponent(name))
+    .limit(1);
+ 
+  if (error) throw new Error(error.message);
+  return data?.[0] || null;
 };
