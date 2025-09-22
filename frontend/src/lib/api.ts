@@ -31,7 +31,14 @@ export async function getUserProfile() {
 export async function getUserAddress(){
   return api.get('/address').then(res=>res.data)
 }
- 
+export async function getProductsByCategory(category: string) {
+  if (category === "all") {
+    return api.get("/menu").then((res) => res.data);
+  } else {
+    return api.get(`/menu/${category}`).then((res) => res.data);
+  }
+}
+
 // POST request
 export async function addUserNewAddress(addressData: {
   address_line: string

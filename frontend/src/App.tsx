@@ -11,6 +11,8 @@ import Footer from './components/Layout/Footer'
 import About from './pages/About'
 import Wishlist from './pages/Wishlist.tsx'
 import ContactUs from './pages/Contact.tsx' 
+import ProductListing from './pages/ProductListing.tsx'
+import OurFood from './pages/OurFood.tsx'
 
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/products" element={<ProductListing />} />
+            <Route path="/food" element={<OurFood />} />
         </Routes>
       </div>
       <Footer />
