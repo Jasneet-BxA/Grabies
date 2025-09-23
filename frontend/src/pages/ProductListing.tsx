@@ -13,6 +13,8 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductDetailDialog from "@/pages/ProductDetails";
 import type { Product } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 export default function ProductListing() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -117,16 +119,33 @@ export default function ProductListing() {
 
     fetchUserAndWishlist();
   }, []);
+const { cartitem, refreshCart } = useCart();
+  // ... other states and useEffect remain same
 
   const handleAddToCart = async (product: Product) => {
-   try {
-     await addToCart(product.id, 1);
-     console.log("Added to cart!");
-   } catch (error) {
-     console.error("Add to cart failed", error);
-     console.log("Failed to add to cart");
-   }
- };
+    if (!product) return;
+
+    const isAlreadyInCart = cartitem.some(
+      (item) => item.product.id === product.id
+    );
+
+    if (isAlreadyInCart) {
+      toast("Already added to cart", {
+        icon: "ℹ️",
+        style: { background: "#333", color: "#fff" },
+      });
+      return;
+    }
+
+    try {
+      await addToCart(product.id, 1);
+      await refreshCart();
+      toast.success(`${product.name} added to cart!`);
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      toast.error("Failed to add item to cart.");
+    }
+  };
 
   const handleToggleWishlist = async (product: Product) => {
   const productId = product.id.trim();
@@ -172,9 +191,7 @@ export default function ProductListing() {
   const isWishlisted = (product: Product) => wishlist.includes(product.id.trim());
 
   return (
-
     <>
-    
     {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-end items-start gap-4 mb-10 bg-white p-4 rounded-lg shadow-md border border-gray-200">
         {/* Type Toggle */}
