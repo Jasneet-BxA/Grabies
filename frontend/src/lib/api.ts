@@ -28,6 +28,13 @@ export async function getUserAddress(){
 export async function getProductsByCategory(category: string) {
   return api.get(`/menu/${category}`).then((res) => res.data);
 }
+export const getFilteredProducts = async (
+  category: string,
+  filters: { tag?: string; rating?: number;  priceRange?: "lt300" | "300to600"; }
+) => {
+  const res = await api.get(`/menu/${category}/filters`, { params: filters });
+  return res.data; 
+};
 export async function getAllProducts(limit: number = 6, offset: number = 0) {
   return api.get(`/menu?limit=${limit}&offset=${offset}`).then((res) => res.data);
 }
