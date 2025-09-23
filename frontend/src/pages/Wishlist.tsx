@@ -1,36 +1,41 @@
+// pages/Wishlist.tsx
 import { useEffect, useState } from "react";
+import { getWishlist, removeFromWishlist, getCurrentUser } from "@/lib/api";
 import ProductCard from "@/components/product/ProductCard";
-import type { Product } from "@/types";
-
-const WISHLIST_KEY = "wishlist";
+import type { Product, User } from "@/types";
 
 export default function WishlistPage() {
   const [wishlist, setWishlist] = useState<Product[]>([]);
+  const [user, setUser] = useState<User| null>(null);
 
-  // Load wishlist from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem(WISHLIST_KEY);
-    if (stored) setWishlist(JSON.parse(stored));
+    const fetchWishlist = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+        if (currentUser) {
+          const wishlistItems = await getWishlist();
+          setWishlist(wishlistItems);
+        }
+      } catch (err) {
+        console.error("Error loading wishlist", err);
+      }
+    };
+
+    fetchWishlist();
   }, []);
-
-  // Save wishlist to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
-  }, [wishlist]);
 
   const handleAddToCart = (product: Product) => {
     console.log("Added to cart:", product);
   };
 
-  const handleToggleWishlist = (product: Product) => {
-    setWishlist((prev) => {
-      const exists = prev.some((item) => item.id === product.id);
-      if (exists) {
-        return prev.filter((item) => item.id !== product.id);
-      } else {
-        return [...prev, product];
-      }
-    });
+  const handleToggleWishlist = async (product: Product) => {
+    try {
+      await removeFromWishlist(product.id);
+      setWishlist((prev) => prev.filter((item) => item.id !== product.id));
+    } catch (err) {
+      console.error("Error removing from wishlist", err);
+    }
   };
 
   return (

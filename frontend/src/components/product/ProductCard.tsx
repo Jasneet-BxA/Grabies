@@ -51,6 +51,7 @@ export default function ProductCard({
 </div>
  
         {/* Add to Cart Button */}
+
 <button
           onClick={(e) => {e.stopPropagation(), onAddToCart(product)}}
           disabled={!product.availability || (product.stock ?? 0) === 0}
