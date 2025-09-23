@@ -6,14 +6,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Product } from "@/types";
-import { getProductByName } from "@/lib/api";
- 
+import { addToCart, getProductByName } from "@/lib/api";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";  // Import toast
+
 type Props = {
   category: string;
   productName: string;
   triggerElement: React.ReactNode;
 };
- 
+
 export default function ProductDetailDialog({
   category,
   productName,
@@ -22,7 +24,7 @@ export default function ProductDetailDialog({
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
- 
+
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
@@ -35,21 +37,48 @@ export default function ProductDetailDialog({
         setLoading(false);
       }
     };
- 
+
     if (open) {
       fetchProduct();
     }
   }, [open, productName]);
- 
+
+  const { cartitem, refreshCart } = useCart();
+  const handleAddToCart = async (product: Product) => {
+    if (!product) return;
+
+    const isAlreadyInCart = cartitem.some(
+      (item) => item.product.id === product.id
+    );
+
+    if (isAlreadyInCart) {
+      toast("Already added to cart", {
+        icon: "ℹ️",
+        style: { background: "#333", color: "#fff" },
+      });
+      return;
+    }
+
+    try {
+      await addToCart(product.id, 1);
+      await refreshCart();
+      toast.success(`${product.name} added to cart!`);
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      toast.error("Failed to add item to cart.");
+    }
+  };
+
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div>{triggerElement}</div>
       </DialogTrigger>
- 
+
       <DialogContent className="max-w-md sm:max-w-2xl bg-white rounded-lg p-6">
         <DialogTitle className="sr-only">{productName}</DialogTitle>
- 
+
         {loading || !product ? (
           <div className="text-center py-10 text-gray-500">Loading...</div>
         ) : (
@@ -70,11 +99,12 @@ export default function ProductDetailDialog({
               </div>
               <button
                 className={`mt-6 w-full ${
-                  product.availability && product.stock> 0
+                  product.availability && product.stock > 0
                     ? "bg-orange-600 hover:bg-orange-700"
                     : "bg-gray-300 cursor-not-allowed"
                 } text-white py-2 rounded transition`}
                 disabled={!product.availability || product.stock === 0}
+                onClick={()=>{handleAddToCart}}
               >
                 {product.availability && product.stock > 0
                   ? "Add to Cart"
@@ -87,4 +117,3 @@ export default function ProductDetailDialog({
     </Dialog>
   );
 }
- 
