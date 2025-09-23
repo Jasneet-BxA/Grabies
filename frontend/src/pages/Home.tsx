@@ -1,10 +1,16 @@
-import { useEffect, useRef, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
-import ExploreMoreFood from "@/components/product/ExploreMoreFood"
-import ProductCard from "@/components/product/ProductCard"
-import type { Product } from "@/types"
-import { getAllProducts, getProductsByCategory } from "@/lib/api";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import ExploreMoreFood from "@/components/product/ExploreMoreFood";
+import ProductCard from "@/components/product/ProductCard";
+import type { Product } from "@/types";
+import {
+  getAllProducts,
+  getCurrentUser,
+  getWishlist,
+  addToWishlist,
+  removeFromWishlist,
+} from "@/lib/api";
 
 const slides = [
   {
@@ -25,59 +31,126 @@ const slides = [
     title: "Momo Melody",
     subtitle: "Spicy flavors delivered to your door",
   },
-]
+];
+
+const WISHLIST_KEY = "local_wishlist";
+
+function getWishlistFromLocalStorage(): string[] {
+  try {
+    const stored = localStorage.getItem(WISHLIST_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveWishlistToLocalStorage(wishlist: string[]) {
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+}
 
 export default function Home() {
-  const [current, setCurrent] = useState(0)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const navigate = useNavigate()
-  const delay = 4000 // 4 seconds
-  const [previewProducts, setPreviewProducts] = useState([]);
+  const [current, setCurrent] = useState(0);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const navigate = useNavigate();
+  const delay = 4000;
+  const [previewProducts, setPreviewProducts] = useState<Product[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
+  const [user, setUser] = useState<any>(null);
 
+  // Auto slide carousel
   useEffect(() => {
-    resetTimeout()
+    resetTimeout();
     timeoutRef.current = setTimeout(
-      () => setCurrent((prevIndex) => (prevIndex + 1) % slides.length),
+      () => setCurrent((prev) => (prev + 1) % slides.length),
       delay
-    )
-    return () => resetTimeout()
-  }, [current])
+    );
+    return () => resetTimeout();
+  }, [current]);
 
   const resetTimeout = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-  }
-    useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
+
+  // Fetch preview products
+  useEffect(() => {
     const fetchPreview = async () => {
       try {
-        const data = await getAllProducts(6,0);
-        console.log("Fetched preview products:", data);
+        const data = await getAllProducts(6, 0);
         setPreviewProducts(data);
       } catch (error) {
         console.error("Error fetching preview products", error);
       }
     };
- 
     fetchPreview();
   }, []);
-  const [wishlist, setWishlist] = useState<Product[]>([]);
- 
+
+  // Fetch user and wishlist
+  useEffect(() => {
+    const fetchUserAndWishlist = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+
+        if (currentUser) {
+          const wishlistItems = await getWishlist();
+          const ids = wishlistItems.map((item: Product) => item.id.trim());
+          setWishlist(ids);
+          saveWishlistToLocalStorage(ids);
+        } else {
+          const localWishlist = getWishlistFromLocalStorage();
+          setWishlist(localWishlist);
+        }
+      } catch (err) {
+        console.error("Could not fetch wishlist", err);
+        const fallback = getWishlistFromLocalStorage();
+        setWishlist(fallback);
+      }
+    };
+
+    fetchUserAndWishlist();
+  }, []);
+
+  // Handle wishlist toggle
+  const handleToggleWishlist = async (product: Product) => {
+    const productId = product.id.trim();
+    const isAlreadyWishlisted = wishlist.includes(productId);
+
+    let updatedWishlist: string[];
+
+    if (isAlreadyWishlisted) {
+      updatedWishlist = wishlist.filter((id) => id !== productId);
+      setWishlist(updatedWishlist);
+      saveWishlistToLocalStorage(updatedWishlist);
+
+      if (user) {
+        try {
+          await removeFromWishlist(productId);
+        } catch (err) {
+          console.error("Failed to remove from server wishlist", err);
+        }
+      }
+    } else {
+      updatedWishlist = [...wishlist, productId];
+      setWishlist(updatedWishlist);
+      saveWishlistToLocalStorage(updatedWishlist);
+
+      if (user) {
+        try {
+          await addToWishlist(productId);
+        } catch (err) {
+          console.error("Failed to add to server wishlist", err);
+        }
+      }
+    }
+  };
+
   const handleAddToCart = (product: Product) => {
     console.log("Added to cart:", product);
   };
- 
-  const handleToggleWishlist = (product: Product) => {
-    const exists = wishlist.find((item) => item.id === product.id);
-    if (exists) {
-      setWishlist(wishlist.filter((item) => item.id !== product.id));
-    } else {
-      setWishlist([...wishlist, product]);
-    }
-  };
- 
+
   const isWishlisted = (product: Product) =>
-    wishlist.some((item) => item.id === product.id);
+    wishlist.includes(product.id.trim());
+
   return (
     <div className="w-full">
       {/* ✅ Carousel */}
@@ -109,7 +182,7 @@ export default function Home() {
           ))}
         </div>
 
-        {/* ✅ Dots Navigation */}
+        {/* Dots */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
           {slides.map((_, index) => (
             <button
@@ -123,10 +196,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ✅ Full-width About Us Section */}
+      {/* ✅ About Section */}
       <div className="w-full bg-orange-50 mt-12">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 px-4 py-10">
-          {/* Left: Image */}
           <div className="w-full md:w-1/2">
             <img
               src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=900&q=80"
@@ -135,13 +207,16 @@ export default function Home() {
             />
           </div>
 
-          {/* Right: Text & Button */}
           <div className="w-full md:w-1/2">
             <h2 className="text-4xl font-bold text-orange-700 mb-4">
               About Grabies
             </h2>
             <p className="text-gray-700 mb-6 max-w-xl">
-              Grabies simplifies your life by bringing diverse cuisines from your favorite local restaurants directly to your doorstep. From the aromatic spices of a Hyderabadi biryani to the comforting warmth of a hot pizza and the sweet allure of decadent desserts, our platform connects you with a vast array of culinary delights. We ensure a seamless ordering experience, allowing you to browse menus, place orders, and track your delivery from a wide selection of options—all with speed and efficiency, making mealtime an effortless pleasure. 
+              Grabies simplifies your life by bringing diverse cuisines from your
+              favorite local restaurants directly to your doorstep. From the
+              aromatic spices of a Hyderabadi biryani to the comforting warmth of
+              a hot pizza and the sweet allure of decadent desserts, our platform
+              connects you with a vast array of culinary delights.
             </p>
             <Button
               onClick={() => navigate("/about")}
@@ -152,11 +227,12 @@ export default function Home() {
           </div>
         </div>
       </div>
-     <>
-     <ExploreMoreFood/>
-     </>
-{/* ✅ Product Preview Section */}
-<div className="w-full bg-orange-50 py-12">
+
+      {/* ✅ Explore More Food */}
+      <ExploreMoreFood />
+
+      {/* ✅ Product Preview */}
+      <div className="w-full bg-orange-50 py-12">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
             Taste Sensation
@@ -174,7 +250,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
     </div>
-  )
+  );
 }
