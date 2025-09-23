@@ -3,40 +3,55 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart , Menu } from "lucide-react"; // or any icon you prefer
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/context/AuthContext"
-import Profile from "@/pages/Profile"
-
+import { Heart, Menu, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import Profile from "@/pages/Profile";
+import { useEffect, useState } from "react";
+import { getCart } from "@/lib/api";  // <-- import getCart from api.ts
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
-   const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchCartCount() {
+      try {
+        const cartItems = await getCart();  // Use api.ts function here
+        setCartCount(cartItems.length);
+      } catch {
+        setCartCount(0);
+      }
+    }
+    fetchCartCount();
+  }, []);
 
   return (
     <header className="w-full px-4 md:px-10 py-4 shadow-sm bg-white fixed top-0 left-0 z-50">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        {/* ✅ Logo */}
+        {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-orange-600">
           Grabies
         </Link>
 
-        {/* ✅ Desktop Navigation */}
+        {/* Desktop Navigation */}
         <NavigationMenu>
           <NavigationMenuList className="hidden md:flex space-x-6">
-            {["Home", "About Us", "Our Food", "Cart", "Contact"].map((item, idx) => (
+            {["Home", "About Us", "Our Food", "Contact"].map((item, idx) => (
               <NavigationMenuItem key={idx}>
                 <NavigationMenuLink asChild>
                   <Link
-                    to={["/", "/about", "/food", "/plans", "/contact"][idx]}
+                    to={["/", "/about", "/food", "/contact"][idx]}
                     className="text-gray-700 hover:text-orange-600 font-medium"
                   >
                     {item}
@@ -47,7 +62,7 @@ export default function Navbar() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* ✅ Desktop Auth/Profile */}
+        {/* Desktop Auth/Profile */}
         <div className="hidden md:flex items-center gap-3">
           {!isAuthenticated ? (
             <>
@@ -64,38 +79,66 @@ export default function Navbar() {
             </>
           ) : (
             <>
-    
-              {/* Wishlist Button */}
+              {/* Wishlist Icon */}
               <button
                 aria-label="Wishlist"
                 onClick={() => navigate("/wishlist")}
                 className="relative p-2 rounded-full hover:bg-orange-100 transition"
               >
                 <Heart className="h-6 w-6 text-orange-600" />
-                {/* Optional: badge for wishlist count */}
-                {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">3</span> */}
               </button>
-            <Profile />
+
+              {/* Cart Icon */}
+              <button
+                aria-label="Cart"
+                onClick={() => navigate("/cart")}
+                className="relative p-2 rounded-full hover:bg-orange-100 transition"
+              >
+                <ShoppingCart className="h-6 w-6 text-orange-600" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+
+              <Profile />
             </>
           )}
         </div>
 
-        {/* ✅ Mobile Right Section: Profile + Menu */}
+        {/* Mobile Right Section */}
         <div className="md:hidden flex items-center gap-2">
           {isAuthenticated && (
             <>
-             <button
-              aria-label="Wishlist"
-              onClick={() => navigate("/wishlist")}
-              className="relative p-2 rounded-full hover:bg-orange-100 transition"
-            >
-              <Heart className="h-6 w-6 text-orange-600" />
-            </button>
-            <Profile />
+              {/* Wishlist */}
+              <button
+                aria-label="Wishlist"
+                onClick={() => navigate("/wishlist")}
+                className="relative p-2 rounded-full hover:bg-orange-100 transition"
+              >
+                <Heart className="h-6 w-6 text-orange-600" />
+              </button>
+
+              {/* Cart for Mobile */}
+              <button
+                aria-label="Cart"
+                onClick={() => navigate("/cart")}
+                className="relative p-2 rounded-full hover:bg-orange-100 transition"
+              >
+                <ShoppingCart className="h-6 w-6 text-orange-600" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+
+              <Profile />
             </>
           )}
 
-          {/* Dropdown Menu for Mobile Nav */}
+          {/* Mobile Dropdown Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -104,11 +147,11 @@ export default function Navbar() {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-56 mt-2 bg-white p-2 shadow-lg">
-              {[ // Navigation links
+              {[ 
                 { label: "Home", to: "/" },
                 { label: "About Us", to: "/about" },
                 { label: "Our Food", to: "/food" },
-                { label: "Cart", to: "/plans" },
+                { label: "Cart", to: "/cart" },
                 { label: "Contact", to: "/contact" },
               ].map((item, idx) => (
                 <DropdownMenuItem key={idx} asChild>
@@ -123,8 +166,7 @@ export default function Navbar() {
 
               <div className="border-t my-2" />
 
-              {/* Auth buttons */}
-              {!isAuthenticated ? (
+              {!isAuthenticated && (
                 <>
                   <DropdownMenuItem asChild>
                     <Link
@@ -143,11 +185,11 @@ export default function Navbar() {
                     </Link>
                   </DropdownMenuItem>
                 </>
-              ) : null}
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
     </header>
-  )
+  );
 }

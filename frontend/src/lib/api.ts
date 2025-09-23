@@ -67,3 +67,27 @@ export async function getProductByName(category:string, productName: string){
 export async function removeFromWishlist(productId: string) {
   await api.delete(`/wishlist/${productId}`);
 }
+
+// Get the cart items for current user
+export async function getCart() {
+  const res = await api.get('/cart');
+  return res.data;
+}
+
+// Add product to cart
+export async function addToCart(productId: string, quantity: number) {
+  const res = await api.post('/cart', {product_id:productId, quantity });
+  return res.data;
+}
+
+// Remove item from cart
+export async function removeFromCart(productId: string) {
+  const res = await api.delete(`/cart/${productId}`);
+  return res.data;
+}
+
+// Update quantity (if your backend supports it)
+export async function updateCartItem(cartId: string, quantity: number) {
+  const res = await api.put(`/cart/update/${cartId}`, { quantity });
+  return res.data;
+}
