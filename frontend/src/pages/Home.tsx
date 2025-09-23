@@ -10,6 +10,7 @@ import {
   getWishlist,
   addToWishlist,
   removeFromWishlist,
+  addToCart,
 } from "@/lib/api";
 
 const slides = [
@@ -144,9 +145,15 @@ export default function Home() {
     }
   };
 
-  const handleAddToCart = (product: Product) => {
-    console.log("Added to cart:", product);
-  };
+  const handleAddToCart = async (product: Product) => {
+   try {
+     await addToCart(product.id, 1);
+     console.log("Added to cart!");
+   } catch (error) {
+     console.error("Add to cart failed", error);
+     console.log("Failed to add to cart");
+   }
+ };
 
   const isWishlisted = (product: Product) =>
     wishlist.includes(product.id.trim());

@@ -7,6 +7,7 @@ import {
   removeFromWishlist,
   getCurrentUser,
   getFilteredProducts,
+  addToCart,
 } from "@/lib/api";
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailDialog from "@/pages/ProductDetails";
@@ -117,9 +118,15 @@ export default function ProductListing() {
     fetchUserAndWishlist();
   }, []);
 
-  const handleAddToCart = (product: Product) => {
-    console.log("Added to cart:", product);
-  };
+  const handleAddToCart = async (product: Product) => {
+   try {
+     await addToCart(product.id, 1);
+     console.log("Added to cart!");
+   } catch (error) {
+     console.error("Add to cart failed", error);
+     console.log("Failed to add to cart");
+   }
+ };
 
   const handleToggleWishlist = async (product: Product) => {
   const productId = product.id.trim();
@@ -165,7 +172,9 @@ export default function ProductListing() {
   const isWishlisted = (product: Product) => wishlist.includes(product.id.trim());
 
   return (
+
     <>
+    
     {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-end items-start gap-4 mb-10 bg-white p-4 rounded-lg shadow-md border border-gray-200">
         {/* Type Toggle */}
