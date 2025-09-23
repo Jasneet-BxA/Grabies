@@ -262,6 +262,7 @@ export default function ProductListing() {
                 onAddToCart={handleAddToCart}
                 onToggleWishlist={handleToggleWishlist}
                 isWishlisted={isWishlisted(product)}
+                showWishlistIcon={!!user}
               />
             }
           />

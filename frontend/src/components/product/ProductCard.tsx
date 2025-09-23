@@ -7,6 +7,7 @@ type Props = {
   onAddToCart: (product: Product) => void;
   onToggleWishlist: (product: Product) => void;
   isWishlisted: boolean;
+  showWishlistIcon?: boolean; // ✅ Optional prop
 };
  
 export default function ProductCard({
@@ -14,6 +15,7 @@ export default function ProductCard({
   onAddToCart,
   onToggleWishlist,
   isWishlisted,
+  showWishlistIcon = true, // ✅ default to true
 }: Props) {
   return (
 <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
@@ -29,31 +31,41 @@ export default function ProductCard({
 <div className="flex justify-between items-center">
 <h3 className="text-xl font-semibold text-gray-800">
             {product.name}
-</h3>
-<button
-            onClick={(e) => {e.stopPropagation(), onToggleWishlist(product)}}
-            className="text-xl text-red-500"
-            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
->
-            {isWishlisted ? <FaHeart /> : <FaRegHeart />}
-</button>
-</div>
+          </h3>
+ 
+          {/* ✅ Conditionally render wishlist icon */}
+          {showWishlistIcon && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleWishlist(product);
+              }}
+              className="text-xl text-red-500"
+              title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              {isWishlisted ? <FaHeart /> : <FaRegHeart />}
+            </button>
+          )}
+        </div>
  
         {/* Description */}
-<p className="text-sm text-gray-600 mt-2">{product.description}</p>
+        <p className="text-sm text-gray-600 mt-2">{product.description}</p>
  
         {/* Price and Rating */}
 <div className="mt-4 flex items-center justify-between">
 <span className="text-lg text-orange-600 font-semibold">
             ₹{product.price}
-</span>
-<span className="text-sm text-yellow-500">⭐ {product.rating}</span>
-</div>
+
+          </span>
+          <span className="text-sm text-yellow-500">⭐ {product.rating}</span>
+        </div>
  
         {/* Add to Cart Button */}
-
-<button
-          onClick={(e) => {e.stopPropagation(), onAddToCart(product)}}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToCart(product);
+          }}
           disabled={!product.availability || (product.stock ?? 0) === 0}
           className={`mt-4 w-full ${
             product.availability && (product.stock ?? 0) > 0
@@ -69,3 +81,4 @@ export default function ProductCard({
 </div>
   );
 }
+

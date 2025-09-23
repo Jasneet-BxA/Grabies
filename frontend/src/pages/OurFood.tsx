@@ -122,6 +122,7 @@ export default function OurFood() {
                   onAddToCart={handleAddToCart}
                   onToggleWishlist={handleToggleWishlist}
                   isWishlisted={isWishlisted(product)}
+                  showWishlistIcon={!!user}
                 />
               }
             />
