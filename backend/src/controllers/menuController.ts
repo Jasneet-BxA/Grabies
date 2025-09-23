@@ -3,9 +3,16 @@ import { getFilteredProductsService, getProductsByCategoryService , getProductBy
 import type { FilterOptions } from "../types/index.js";
 
 
- export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const products = await getAllProductsService();
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = parseInt(req.query.offset as string) || 0;
+ 
+    const products = await getAllProductsService(limit, offset);
     res.json(products);
   } catch (error) {
     next(error);

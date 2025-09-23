@@ -1,47 +1,50 @@
 import axios from 'axios'
- 
 // Set base URL for API
 const api = axios.create({
   baseURL: 'http://localhost:3000/', // Change this to your backend URL
   withCredentials: true,
 })
- 
 // Authentication
 export async function login(email: string, password: string) {
   return api.post('/auth/login', { email, password })
 }
- 
 export async function signup(data: any) {
   return api.post('/auth/signup', data)
 }
- 
 export async function logout() {
   return api.post('/auth/logout')
 }
- 
 // GET request
 export async function getCurrentUser() {
   return api.get('/user/me').then(res => res.data)
 }
- 
 export async function getUserProfile() {
   return api.get('/user/me').then(res => res.data)
 }
- 
 export async function getUserAddress(){
   return api.get('/address').then(res=>res.data)
 }
-
+ 
 export async function getProductsByCategory(category: string) {
   return api.get(`/menu/${category}`).then((res) => res.data);
 }
+export const getFilteredProducts = async (
+  category: string,
+  filters: { tag?: string; rating?: number;  priceRange?: "lt300" | "300to600"; }
+) => {
+  const res = await api.get(`/menu/${category}/filters`, { params: filters });
+  return res.data; 
+};
 export async function getAllProducts(limit: number = 6, offset: number = 0) {
   return api.get(`/menu?limit=${limit}&offset=${offset}`).then((res) => res.data);
 }
 export async function getWishlist(){
   return api.get('/wishlist').then((res) => res.data);
 }
-
+export async function getCart(){
+  return api.get('/cart').then((res) => res.data);
+}
+ 
 // POST request
 export async function addUserNewAddress(addressData: {
   address_line: string
@@ -51,19 +54,29 @@ export async function addUserNewAddress(addressData: {
 }) {
   return api.post('/address', addressData).then(res => res.data)
 }
-
+ 
 export async function addToWishlist(productId: string) {
   await api.post(`/wishlist/${productId}`);
 }
-
+export async function addToCart(productId: string, quantity: number = 1) {
+  return api.post('/cart', {
+    product_id: productId,
+    quantity,
+  }).then(res => res.data);
+}
+ 
+ 
 export async function getProductByName(category:string, productName: string){
   const encodedName = encodeURIComponent(productName);
   const res = await api.get(`/menu/${category}/${encodedName}`);
   return res.data;
 }
-
-
+ 
+ 
 // DELETE request
 export async function removeFromWishlist(productId: string) {
   await api.delete(`/wishlist/${productId}`);
+}
+export async function removeFromCart(cartId: string) {
+  return api.delete(`/cart/${cartId}`).then((res) => res.data);
 }

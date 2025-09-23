@@ -32,6 +32,9 @@ export interface Address {
 export interface CartItem {
   product: Product
   quantity: number
+  product_id: string
+  id: string // cart item id (cartId) 
+  user_id: string
 }
 
 export interface Profile {

@@ -1,0 +1,20 @@
+.toggle-group {
+  display: flex;
+  border: 2px solid #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+  background-color: white;
+  width: fit-content;
+}
+
+.toggle-option {
+  padding: 6px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.toggle-option.active {
+  background-color: #f97316; /* orange */
+  color: white;
+}
