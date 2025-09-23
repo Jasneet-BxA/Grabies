@@ -52,6 +52,7 @@ export default function WishlistPage() {
               onAddToCart={handleAddToCart}
               onToggleWishlist={handleToggleWishlist}
               isWishlisted={true}
+              showWishlistIcon={!!user}
             />
           ))}
         </div>

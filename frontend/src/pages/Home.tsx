@@ -245,6 +245,7 @@ export default function Home() {
                 onAddToCart={handleAddToCart}
                 onToggleWishlist={handleToggleWishlist}
                 isWishlisted={isWishlisted(product)}
+                showWishlistIcon={!!user}
               />
             ))}
           </div>
