@@ -1,7 +1,5 @@
-// src/components/ExploreMoreFood.tsx
- 
 import { useNavigate } from "react-router-dom";
- 
+
 const categories = [
   { title: "Pizza", image: "https://img.icons8.com/color/96/pizza.png" },
   { title: "Burger", image: "https://img.icons8.com/color/96/hamburger.png" },
@@ -14,10 +12,10 @@ const categories = [
   { title: "South Indian", image: "https://img.icons8.com/color/96/rice-bowl.png" },
   { title: "Noodles", image: "https://img.icons8.com/color/96/noodles.png" },
 ];
- 
+
 export default function ExploreMoreFood() {
   const navigate = useNavigate();
- 
+
   return (
     <div className="w-full bg-white py-12">
       <div className="max-w-6xl mx-auto px-4">
@@ -29,7 +27,11 @@ export default function ExploreMoreFood() {
             <div
               key={index}
               className="flex flex-col items-center cursor-pointer hover:scale-105 transition"
-              onClick={() => navigate(`/products?category=${item.title.toLowerCase()}`)}
+              onClick={() =>
+                navigate(`/category?category=${item.title.toLowerCase()}`, {
+                  state: { fromOurFood: true },
+                })
+              }
             >
               <div className="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center shadow-md">
                 <img
