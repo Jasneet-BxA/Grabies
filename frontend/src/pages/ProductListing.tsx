@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams , useLocation} from "react-router-dom";
 import {
   getProductsByCategory,
   getWishlist,
@@ -13,6 +13,14 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductDetailDialog from "@/pages/ProductDetails";
 import type { Product } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
+
 
 export default function ProductListing() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,6 +33,8 @@ export default function ProductListing() {
   const [tag, setTag] = useState<"veg" | "non-veg" | "">("");
   const [rating, setRating] = useState<number | "">("");
   const [priceRange, setPriceRange] = useState<"lt300" | "300to600" | "">("");
+  const location = useLocation();
+const cameFromOurFood = location.state?.fromOurFood === true;
 
   const WISHLIST_KEY = "local_wishlist";
 
@@ -174,7 +184,31 @@ export default function ProductListing() {
   return (
 
     <>
-    
+   <Breadcrumb className="mb-6 text-sm text-gray-600 flex items-center space-x-1">
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+
+        {cameFromOurFood ? (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/food">OurFood</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <span className="capitalize text-gray-900 font-medium">{category}</span>
+            </BreadcrumbItem>
+          </>
+        ) : (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <span className="capitalize text-gray-900 font-medium">{category}</span>
+            </BreadcrumbItem>
+          </>
+        )}
+      </Breadcrumb>
     {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-end items-start gap-4 mb-10 bg-white p-4 rounded-lg shadow-md border border-gray-200">
         {/* Type Toggle */}

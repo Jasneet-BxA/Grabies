@@ -14,7 +14,7 @@ export default function Footer() {
           <h4 className="font-semibold mb-2">Grabies</h4>
           <ul className="text-sm space-y-1">
             <li><a href="/" className="hover:underline">Home</a></li>
-            <li><a href="/products" className="hover:underline">Menu</a></li>
+            <li><a href="/food" className="hover:underline">Menu</a></li>
             <li><a href="/cart" className="hover:underline">Cart</a></li>
             <li><a href="/profile" className="hover:underline">Profile</a></li>
           </ul>

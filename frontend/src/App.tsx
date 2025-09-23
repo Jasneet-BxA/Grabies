@@ -13,6 +13,7 @@ import Wishlist from './pages/Wishlist.tsx'
 import ContactUs from './pages/Contact.tsx' 
 import ProductListing from './pages/ProductListing.tsx'
 import OurFood from './pages/OurFood.tsx'
+import Order from './pages/Order.tsx'
 
 
 function App() {
@@ -34,8 +35,9 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/contact" element={<ContactUs />} />
-            <Route path="/products" element={<ProductListing />} />
+            <Route path="/category" element={<ProductListing />} />
             <Route path="/food" element={<OurFood />} />
+            <Route path="/order" element={<Order/>} />
         </Routes>
       </div>
       <Footer />
