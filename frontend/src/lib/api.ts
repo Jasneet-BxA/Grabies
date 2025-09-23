@@ -53,7 +53,7 @@ export async function addUserNewAddress(addressData: {
 }
 
 export async function addToWishlist(productId: string) {
-  await api.post(`/wishlist/`, {product_id: productId});
+  await api.post(`/wishlist/${productId}`);
 }
 
 export async function getProductByName(category:string, productName: string){

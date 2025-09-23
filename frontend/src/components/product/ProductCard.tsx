@@ -31,7 +31,7 @@ export default function ProductCard({
             {product.name}
           </h3>
           <button
-            onClick={() => onToggleWishlist(product)}
+            onClick={(e) => {e.stopPropagation(), onToggleWishlist(product)}}
             className="text-xl text-red-500"
             title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
@@ -52,7 +52,7 @@ export default function ProductCard({
 
         {/* Add to Cart Button */}
         <button
-          onClick={() => onAddToCart(product)}
+          onClick={(e) => {e.stopPropagation(), onAddToCart(product)}}
           disabled={!product.availability || (product.stock ?? 0) === 0}
           className={`mt-4 w-full ${
             product.availability && (product.stock ?? 0) > 0
