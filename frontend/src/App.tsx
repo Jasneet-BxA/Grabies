@@ -13,7 +13,11 @@ import Wishlist from './pages/Wishlist.tsx'
 import ContactUs from './pages/Contact.tsx' 
 import ProductListing from './pages/ProductListing.tsx'
 import OurFood from './pages/OurFood.tsx'
+
 import Order from './pages/Order.tsx'
+
+import { Toaster } from 'react-hot-toast'
+
 
 
 function App() {
@@ -22,7 +26,7 @@ function App() {
     <div className="pt-20">
       <Navbar />
     </div>
-    
+    <Toaster position="top-right" /> 
       <div className="min-h-screen pt-16 px-4 md:px-8">
           <Routes>
             <Route path="/" element={<Home />} />

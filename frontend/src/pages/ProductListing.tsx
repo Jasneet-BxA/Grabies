@@ -20,7 +20,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 export default function ProductListing() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -127,16 +128,33 @@ const cameFromOurFood = location.state?.fromOurFood === true;
 
     fetchUserAndWishlist();
   }, []);
+const { cartitem, refreshCart } = useCart();
+  // ... other states and useEffect remain same
 
   const handleAddToCart = async (product: Product) => {
-   try {
-     await addToCart(product.id, 1);
-     console.log("Added to cart!");
-   } catch (error) {
-     console.error("Add to cart failed", error);
-     console.log("Failed to add to cart");
-   }
- };
+    if (!product) return;
+
+    const isAlreadyInCart = cartitem.some(
+      (item) => item.product.id === product.id
+    );
+
+    if (isAlreadyInCart) {
+      toast("Already added to cart", {
+        icon: "ℹ️",
+        style: { background: "#333", color: "#fff" },
+      });
+      return;
+    }
+
+    try {
+      await addToCart(product.id, 1);
+      await refreshCart();
+      toast.success(`${product.name} added to cart!`);
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      toast.error("Failed to add item to cart.");
+    }
+  };
 
   const handleToggleWishlist = async (product: Product) => {
   const productId = product.id.trim();
@@ -182,7 +200,6 @@ const cameFromOurFood = location.state?.fromOurFood === true;
   const isWishlisted = (product: Product) => wishlist.includes(product.id.trim());
 
   return (
-
     <>
    <Breadcrumb className="mb-6 text-sm text-gray-600 flex items-center space-x-1">
         <BreadcrumbItem>
