@@ -5,7 +5,7 @@ import { authenticateToken } from '../middlewares/authMiddleware.js';
 const router = Router();
 
 router.get('/', authenticateToken, getCart);
-router.post('/', addToCart);
-router.delete('/:cartId', removeCartItem);
+router.post('/',authenticateToken, addToCart);
+router.delete('/:cartId', authenticateToken, removeCartItem);
 
 export default router;
