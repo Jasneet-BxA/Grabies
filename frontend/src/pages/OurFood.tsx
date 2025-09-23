@@ -8,6 +8,7 @@ import {
   addToWishlist,
   removeFromWishlist,
   getCurrentUser,
+  addToCart,
 } from "@/lib/api";
 import type { Product, User } from "@/types";
 
@@ -65,9 +66,15 @@ export default function OurFood() {
     fetchWishlist();
   }, []);
 
-  const handleAddToCart = (product: Product) => {
-    console.log("Add to cart:", product);
-  };
+  const handleAddToCart = async (product: Product) => {
+   try {
+     await addToCart(product.id, 1);
+     console.log("Added to cart!");
+   } catch (error) {
+     console.error("Add to cart failed", error);
+     console.log("Failed to add to cart");
+   }
+ };
 
   const handleToggleWishlist = async (product: Product) => {
     const productId = product.id.trim();

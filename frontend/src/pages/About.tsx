@@ -1,5 +1,14 @@
+import { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function About() {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation duration (ms)
+      once: true,     // Only animate once
+    });
+  }, []);
   return (
     <div className="w-full">
       {/* 🔶 Top Banner Section */}
@@ -19,7 +28,7 @@ export default function About() {
       {/* 🔶 Intro Section */}
       <div className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center">
         {/* Left Image */}
-        <div>
+        <div data-aos="fade-right">
           <img
             src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80"
             alt="Cooking"
@@ -28,7 +37,7 @@ export default function About() {
         </div>
 
         {/* Right Text */}
-        <div>
+        <div data-aos="fade-left">
           <h2 className="text-2xl md:text-3xl font-bold text-orange-700 mb-4">
             We Are Specialized In <br /> Spicy Modern Fusion Food
           </h2>
@@ -54,7 +63,7 @@ export default function About() {
 
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           {/* Left Image */}
-          <div>
+          <div data-aos="fade-right">
             <h2 className="text-3xl font-bold text-orange-700 mb-4">
               OUR MISSION
             </h2>
@@ -67,7 +76,7 @@ export default function About() {
           
 
           {/* Right Text */}
-          <div>
+          <div data-aos="fade-left">
             <img
               src="https://images.unsplash.com/photo-1617010644337-b22e658053b7?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="Our Mission"
@@ -80,7 +89,7 @@ export default function About() {
         {/* 🔶 We Provide Fast Delivery Section */}
 <div className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center">
   {/* Left Image */}
-  <div>
+  <div data-aos="fade-right">
     <img
       src="https://plus.unsplash.com/premium_photo-1731890642701-018c4b410da2?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       alt="Fast Delivery"
@@ -89,7 +98,7 @@ export default function About() {
   </div>
 
   {/* Right Content */}
-  <div>
+  <div data-aos="fade-left">
     <h2 className="text-3xl font-bold text-orange-700 mb-4 leading-snug">
       We Provide <br /> Fast Delivery
     </h2>
