@@ -85,6 +85,9 @@ export interface FilterOptions {
   limit?: number;
 }
 
+export interface CreateOrderInput{
+  addressId: string;
+}
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type AddToCartInput = z.infer<typeof addToCartSchema>;

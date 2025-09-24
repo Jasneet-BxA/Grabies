@@ -5,3 +5,4 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   
 });
 console.log("STRIPE KEY:", env.STRIPE_SECRET_KEY); // should print full key
+
