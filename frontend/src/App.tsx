@@ -14,7 +14,7 @@ import ContactUs from './pages/Contact.tsx'
 import ProductListing from './pages/ProductListing.tsx'
 import OurFood from './pages/OurFood.tsx'
 
-import Order from './pages/Order.tsx'
+import CheckoutwithStripe from './pages/CheckoutwithStripe.tsx'
 
 import { Toaster } from 'react-hot-toast'
 
@@ -41,7 +41,8 @@ function App() {
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/category" element={<ProductListing />} />
             <Route path="/food" element={<OurFood />} />
-            <Route path="/order" element={<Order/>} />
+            <Route path="/checkoutwithstripe" element={<CheckoutwithStripe/>} />
+
         </Routes>
       </div>
       <Footer />

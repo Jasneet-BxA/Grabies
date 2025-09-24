@@ -13,19 +13,6 @@ export const createOrderFromCart = async (req: Request, res: Response) => {
   res.json(result);
 };
 
-export const createPaymentIntent = async (req: Request, res: Response) => {
-  const { orderId } = req.body;
-  const amount = await getOrderAmount(orderId);
-
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: Math.round(amount * 100),
-    currency: "inr",
-    metadata: { order_id: orderId },
-  });
-
-  res.json({ clientSecret: paymentIntent.client_secret });
-};
-
 export const confirmPayment = async (req: Request, res: Response) => {
   const { orderId } = req.body;
   await confirmOrderPayment(orderId);

@@ -78,6 +78,7 @@ export const createOrderFromCartService = async (
     total_price: item.quantity * (priceMap.get(item.product_id) || 0),
   }));
 
+
   const { error: orderItemsError } = await supabase
     .from("order_items")
     .insert(orderItems);
@@ -96,13 +97,13 @@ export const createOrderFromCartService = async (
 };
 
 
-
 export const getOrderAmount = async (orderId: string) => {
   const { data, error } = await supabase
     .from("orders")
     .select("total_price")
     .eq("id", orderId)
     .single();
+
 
   if (error) throw new Error("Order not found");
   return data.total_price;
