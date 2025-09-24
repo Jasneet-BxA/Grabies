@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate , useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getCart, getUserAddress } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { MapPin, ShoppingBag } from "lucide-react";
@@ -24,15 +24,14 @@ interface Address {
 
 export default function OrderPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-    const location = useLocation();
+  const location = useLocation();
 
   const passedAddress = location.state?.address;
 
-const [address, setAddress] = useState<Address | null>(passedAddress || null);
+  const [address, setAddress] = useState<Address | null>(passedAddress || null);
   const [loading, setLoading] = useState(true);
   const [addressConfirmed, setAddressConfirmed] = useState(false);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,18 +50,18 @@ const [address, setAddress] = useState<Address | null>(passedAddress || null);
         setCartItems(formattedCart);
 
         if (!passedAddress) {
-        const addresses = await getUserAddress();
-        setAddress(addresses?.[0] || null);
+          const addresses = await getUserAddress();
+          setAddress(addresses?.[0] || null);
+        }
+      } catch (err) {
+        console.error("Error loading order data", err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error loading order data", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchData();
-}, [passedAddress]);
+    fetchData();
+  }, [passedAddress]);
 
   const totalPrice = useMemo(
     () =>
@@ -104,7 +103,9 @@ const [address, setAddress] = useState<Address | null>(passedAddress || null);
       <section className="mb-8 bg-white shadow-lg rounded-lg p-6 border border-orange-100">
         <div className="flex items-center gap-2 mb-4">
           <MapPin className="text-orange-600" size={22} />
-          <h2 className="text-xl font-semibold text-gray-800">Delivery Address</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Delivery Address
+          </h2>
         </div>
 
         {address ? (
@@ -121,7 +122,9 @@ const [address, setAddress] = useState<Address | null>(passedAddress || null);
                 Confirm Address
               </Button>
             ) : (
-              <p className="mt-2 text-green-600 font-medium">✅ Address confirmed</p>
+              <p className="mt-2 text-green-600 font-medium">
+                ✅ Address confirmed
+              </p>
             )}
           </div>
         ) : (
@@ -133,7 +136,9 @@ const [address, setAddress] = useState<Address | null>(passedAddress || null);
       <section className="mb-8 bg-white shadow-md rounded-lg p-6 border border-gray-100">
         <div className="flex items-center gap-2 mb-4">
           <ShoppingBag className="text-orange-500" size={22} />
-          <h2 className="text-xl font-semibold text-gray-800">Items in Your Order</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Items in Your Order
+          </h2>
         </div>
 
         <div className="divide-y divide-gray-200">
@@ -150,7 +155,9 @@ const [address, setAddress] = useState<Address | null>(passedAddress || null);
                   className="w-14 h-14 rounded-full object-cover border border-gray-200 shadow-sm"
                 />
                 <div>
-                  <p className="font-medium text-gray-800">{item.product.name}</p>
+                  <p className="font-medium text-gray-800">
+                    {item.product.name}
+                  </p>
                   <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                 </div>
               </div>

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select"; // Adjust path if needed
 import { getUserAddress } from "@/lib/api"; // import your getUserAddress API
 import type { Address } from "@/types/index.ts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CartItem {
   id: string; // cart table item ID
@@ -117,7 +118,37 @@ const fetchAddresses = async () => {
     0
   );
  
-  if (loading) return <p className="text-center py-10">Loading cart...</p>;
+if (loading) {
+  return (
+    <main className="max-w-5xl mx-auto px-6 py-10 space-y-8">
+      <h1 className="text-4xl font-bold text-center text-orange-600">
+        🛒 Your Shopping Cart
+      </h1>
+
+      <div className="space-y-6">
+        {[1, 2, 3].map((_, i) => (
+          <div
+            key={i}
+            className="flex flex-col sm:flex-row items-center gap-6 bg-gray-90 border border-gray-400 p-5 rounded-xl shadow-sm"
+          >
+            <Skeleton className="w-28 h-28 rounded-lg bg-gray-200" />
+
+            <div className="flex-1 w-full space-y-2">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-1/4" />
+
+              <div className="flex gap-3 mt-3">
+                <Skeleton className="h-10 w-10 rounded-md" />
+                <Skeleton className="h-10 w-10 rounded-md" />
+                <Skeleton className="h-10 w-10 rounded-md" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}
  
   if (cartItems.length === 0)
     return (

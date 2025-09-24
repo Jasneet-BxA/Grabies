@@ -51,6 +51,17 @@ function saveWishlistToLocalStorage(wishlist: string[]) {
   localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
 }
 
+function SkeletonCard() {
+  return (
+    <div className="border rounded-lg p-4 bg-white animate-pulse">
+      <div className="h-48 bg-gray-300 rounded mb-4" />
+      <div className="h-6 bg-gray-300 rounded w-3/4 mb-2" />
+      <div className="h-4 bg-gray-300 rounded w-full mb-1" />
+      <div className="h-4 bg-gray-300 rounded w-1/2" />
+    </div>
+  );
+}
+
 export default function Home() {
   const [current, setCurrent] = useState(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -59,6 +70,7 @@ export default function Home() {
   const [previewProducts, setPreviewProducts] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   // Auto slide carousel
   useEffect(() => {
@@ -77,11 +89,14 @@ export default function Home() {
   // Fetch preview products
   useEffect(() => {
     const fetchPreview = async () => {
+      setLoading(true);
       try {
         const data = await getAllProducts(6, 0);
         setPreviewProducts(data);
       } catch (error) {
         console.error("Error fetching preview products", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPreview();
@@ -128,6 +143,7 @@ export default function Home() {
       if (user) {
         try {
           await removeFromWishlist(productId);
+          toast.success(`💔 Removed "${product.name}" from your CraveBox`);
         } catch (err) {
           console.error("Failed to remove from server wishlist", err);
         }
@@ -140,6 +156,7 @@ export default function Home() {
       if (user) {
         try {
           await addToWishlist(productId);
+          toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
         } catch (err) {
           console.error("Failed to add to server wishlist", err);
         }
@@ -147,8 +164,7 @@ export default function Home() {
     }
   };
 
-const { cartitem, refreshCart } = useCart();
-  // ... other states and useEffect remain same
+  const { cartitem, refreshCart } = useCart();
 
   const handleAddToCart = async (product: Product) => {
     if (!product) return;
@@ -175,13 +191,12 @@ const { cartitem, refreshCart } = useCart();
     }
   };
 
-
   const isWishlisted = (product: Product) =>
     wishlist.includes(product.id.trim());
 
   return (
     <div className="w-full">
-      {/* ✅ Carousel */}
+      {/* Carousel */}
       <div className="relative w-full overflow-hidden h-[400px] md:h-[500px]">
         <div
           className="whitespace-nowrap transition-transform duration-700 ease-in-out"
@@ -197,14 +212,11 @@ const { cartitem, refreshCart } = useCart();
                 alt={slide.title}
                 className="w-full h-full object-cover brightness-75"
               />
-              <div className="absolute inset-0 flex flex-col items-start justify-center px-8 md:px-20 text-white z-10">
+              <div className="absolute inset-0 flex flex-col items-start justify-center px-8 md:px-20 text-white z-10 ">
                 <h2 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">
                   {slide.title}
                 </h2>
                 <p className="text-lg md:text-2xl drop-shadow">{slide.subtitle}</p>
-                <button className="mt-6 px-6 py-2 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition">
-                  Order Now
-                </button>
               </div>
             </div>
           ))}
@@ -224,7 +236,7 @@ const { cartitem, refreshCart } = useCart();
         </div>
       </div>
 
-      {/* ✅ About Section */}
+      {/* About Section */}
       <div className="w-full bg-orange-50 mt-12">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 px-4 py-10">
           <div className="w-full md:w-1/2">
@@ -240,11 +252,11 @@ const { cartitem, refreshCart } = useCart();
               About Grabies
             </h2>
             <p className="text-gray-700 mb-6 max-w-xl">
-              Grabies simplifies your life by bringing diverse cuisines from your
-              favorite local restaurants directly to your doorstep. From the
-              aromatic spices of a Hyderabadi biryani to the comforting warmth of
-              a hot pizza and the sweet allure of decadent desserts, our platform
-              connects you with a vast array of culinary delights.
+              Grabies simplifies your life by bringing diverse cuisines from
+              your favorite local restaurants directly to your doorstep. From
+              the aromatic spices of a Hyderabadi biryani to the comforting
+              warmth of a hot pizza and the sweet allure of decadent desserts,
+              our platform connects you with a vast array of culinary delights.
             </p>
             <Button
               onClick={() => navigate("/about")}
@@ -256,26 +268,31 @@ const { cartitem, refreshCart } = useCart();
         </div>
       </div>
 
-      {/* ✅ Explore More Food */}
+      {/* Explore More Food */}
       <ExploreMoreFood />
 
-      {/* ✅ Product Preview */}
+      {/* Product Preview */}
       <div className="w-full bg-orange-50 py-12">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
             Taste Sensation
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {previewProducts.map((product: Product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-                onToggleWishlist={handleToggleWishlist}
-                isWishlisted={isWishlisted(product)}
-                showWishlistIcon={!!user}
-              />
-            ))}
+            {loading
+              ? // Show 6 skeleton cards while loading
+                Array.from({ length: 6 }).map((_, idx) => (
+                  <SkeletonCard key={idx} />
+                ))
+              : previewProducts.map((product: Product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    onToggleWishlist={handleToggleWishlist}
+                    isWishlisted={isWishlisted(product)}
+                    showWishlistIcon={!!user}
+                  />
+                ))}
           </div>
         </div>
       </div>

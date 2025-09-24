@@ -5,10 +5,28 @@ import { useAuth } from "@/context/AuthContext";
 import { getUserProfile, logout } from "@/lib/api";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import {Sheet,SheetContent,SheetHeader,SheetTitle,SheetDescription,SheetFooter,SheetTrigger,SheetClose,} from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import type { Profile } from "@/types";
-import {Dialog,DialogTrigger,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFooter,DialogClose,} from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { getUserAddress, addUserNewAddress } from "@/lib/api";
 
 export default function Profile() {
@@ -352,18 +370,34 @@ export default function Profile() {
 
             <Button
               onClick={() => setShowDetails(true)}
-              className="w-full my-4 text-sm bg-gray-100 text-gray-800 hover:bg-gray-200"
+              className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
               variant="ghost"
             >
-              My Account
+              👤My Account
             </Button>
 
             <Button
               onClick={() => setShowAddress(true)}
-              className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-gray-200"
+              className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
               variant="ghost"
             >
-              Address
+              🏠 Address
+            </Button>
+
+            <Button
+              onClick={() => navigate("/wishlist")}
+              className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
+              variant="ghost"
+            >
+              ❤️ Favourites
+            </Button>
+
+            <Button
+              onClick={() => navigate("/order")}
+              className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
+              variant="ghost"
+            >
+              📦 Orders
             </Button>
 
             <SheetFooter>
