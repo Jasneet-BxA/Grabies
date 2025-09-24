@@ -13,11 +13,27 @@ import {
 import type { Product, User } from "@/types";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
+// components/ui/SkeletonCard.tsx
+import { Skeleton } from "@/components/ui/skeleton";
+
+export function SkeletonCard() {
+  return (
+    <div className="flex flex-col space-y-3 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+      <Skeleton className="h-[180px] w-full rounded-lg bg-gray-200" />
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-3/4 bg-gray-200" />
+        <Skeleton className="h-4 w-1/2 bg-gray-200" />
+      </div>
+    </div>
+  );
+}
+
 
 export default function OurFood() {
   const [products, setProducts] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const WISHLIST_KEY = "local_wishlist";
 
@@ -36,12 +52,20 @@ export default function OurFood() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
       const data = await getAllProducts(21, 0);
       setProducts(data);
-    };
-    fetchData();
-  }, []);
+    } catch (err) {
+      console.error("Failed to fetch products", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, []);
+
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -68,7 +92,7 @@ export default function OurFood() {
     fetchWishlist();
   }, []);
 
-const { cartitem, refreshCart } = useCart();
+  const { cartitem, refreshCart } = useCart();
   // ... other states and useEffect remain same
 
   const handleAddToCart = async (product: Product) => {
@@ -96,7 +120,6 @@ const { cartitem, refreshCart } = useCart();
     }
   };
 
-
   const handleToggleWishlist = async (product: Product) => {
     const productId = product.id.trim();
     const isAlreadyWishlisted = wishlist.includes(productId);
@@ -105,6 +128,7 @@ const { cartitem, refreshCart } = useCart();
       if (user) {
         try {
           await removeFromWishlist(productId);
+           toast.success(`💔 Removed "${product.name}" from your CraveBox`);
         } catch (err) {
           console.error("Failed to remove from server wishlist", err);
         }
@@ -116,7 +140,8 @@ const { cartitem, refreshCart } = useCart();
     } else {
       if (user) {
         try {
-          await addToWishlist(productId);
+          await addToWishlist(product.id);
+    toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
         } catch (err) {
           console.error("Failed to add to server wishlist", err);
         }
@@ -128,7 +153,8 @@ const { cartitem, refreshCart } = useCart();
     }
   };
 
-  const isWishlisted = (product: Product) => wishlist.includes(product.id.trim());
+  const isWishlisted = (product: Product) =>
+    wishlist.includes(product.id.trim());
 
   return (
     <>
@@ -139,23 +165,26 @@ const { cartitem, refreshCart } = useCart();
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-          {products.map((product) => (
-            <ProductDetailDialog
-              key={product.id}
-              category={product.cuisine}
-              productName={product.name}
-              triggerElement={
-                <ProductCard
-                  product={product}
-                  onAddToCart={handleAddToCart}
-                  onToggleWishlist={handleToggleWishlist}
-                  isWishlisted={isWishlisted(product)}
-                  showWishlistIcon={!!user}
-                />
-              }
+  {loading
+    ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+    : products.map((product) => (
+        <ProductDetailDialog
+          key={product.id}
+          category={product.cuisine}
+          productName={product.name}
+          triggerElement={
+            <ProductCard
+              product={product}
+              onAddToCart={handleAddToCart}
+              onToggleWishlist={handleToggleWishlist}
+              isWishlisted={isWishlisted(product)}
+              showWishlistIcon={!!user}
             />
-          ))}
-        </div>
+          }
+        />
+      ))}
+</div>
+
       </div>
     </>
   );

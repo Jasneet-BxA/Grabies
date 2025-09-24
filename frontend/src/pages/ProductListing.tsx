@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams , useLocation} from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import {
   getProductsByCategory,
   getWishlist,
@@ -12,7 +12,13 @@ import {
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailDialog from "@/pages/ProductDetails";
 import type { Product } from "@/types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,6 +28,21 @@ import {
 
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
+// components/ui/SkeletonCard.tsx
+import { Skeleton } from "@/components/ui/skeleton";
+
+export function SkeletonCard() {
+  return (
+    <div className="flex flex-col space-y-3 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+      <Skeleton className="h-[180px] w-full rounded-lg bg-gray-200" />
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-3/4 bg-gray-200" />
+        <Skeleton className="h-4 w-1/2 bg-gray-200" />
+      </div>
+    </div>
+  );
+}
+
 
 export default function ProductListing() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,7 +56,7 @@ export default function ProductListing() {
   const [rating, setRating] = useState<number | "">("");
   const [priceRange, setPriceRange] = useState<"lt300" | "300to600" | "">("");
   const location = useLocation();
-const cameFromOurFood = location.state?.fromOurFood === true;
+  const cameFromOurFood = location.state?.fromOurFood === true;
 
   const WISHLIST_KEY = "local_wishlist";
 
@@ -55,12 +76,12 @@ const cameFromOurFood = location.state?.fromOurFood === true;
     localStorage.setItem(WISHLIST_KEY, JSON.stringify(trimmedWishlist));
   }
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         setError(null);
- 
+
         if (!tag && !rating && !priceRange) {
           const data = await getProductsByCategory(category || "all");
           console.log("Fetched by category:", data);
@@ -82,7 +103,7 @@ const cameFromOurFood = location.state?.fromOurFood === true;
         setLoading(false);
       }
     };
- 
+
     fetchProducts();
   }, [category, tag, rating, priceRange]);
 
@@ -128,7 +149,7 @@ const cameFromOurFood = location.state?.fromOurFood === true;
 
     fetchUserAndWishlist();
   }, []);
-const { cartitem, refreshCart } = useCart();
+  const { cartitem, refreshCart } = useCart();
   // ... other states and useEffect remain same
 
   const handleAddToCart = async (product: Product) => {
@@ -157,51 +178,54 @@ const { cartitem, refreshCart } = useCart();
   };
 
   const handleToggleWishlist = async (product: Product) => {
-  const productId = product.id.trim();
-  const isAlreadyWishlisted = wishlist.includes(productId);
+    const productId = product.id.trim();
+    const isAlreadyWishlisted = wishlist.includes(productId);
 
-  if (isAlreadyWishlisted) {
-    // Try removing from backend first
-    if (user) {
-      try {
-        await removeFromWishlist(productId);
+    if (isAlreadyWishlisted) {
+      // Try removing from backend first
+      if (user) {
+        try {
+          await removeFromWishlist(productId);
+          const updatedWishlist = wishlist.filter((id) => id !== productId);
+          setWishlist(updatedWishlist);
+          saveWishlistToLocalStorage(updatedWishlist);
+           toast.success(`💔 Removed "${product.name}" from your CraveBox`);
+        } catch (err) {
+          console.error("Failed to remove from server wishlist", err);
+        }
+      } else {
+        // Anonymous/local user
         const updatedWishlist = wishlist.filter((id) => id !== productId);
         setWishlist(updatedWishlist);
         saveWishlistToLocalStorage(updatedWishlist);
-      } catch (err) {
-        console.error("Failed to remove from server wishlist", err);
       }
     } else {
-      // Anonymous/local user
-      const updatedWishlist = wishlist.filter((id) => id !== productId);
-      setWishlist(updatedWishlist);
-      saveWishlistToLocalStorage(updatedWishlist);
-    }
-  } else {
-    if (user) {
-      try {
-        await addToWishlist(productId);
+      if (user) {
+        try {
+          await addToWishlist(productId);
+          const updatedWishlist = [...wishlist, productId];
+          setWishlist(updatedWishlist);
+          saveWishlistToLocalStorage(updatedWishlist);
+          await addToWishlist(product.id);
+    toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
+        } catch (err) {
+          console.error("Failed to add to server wishlist", err);
+        }
+      } else {
+        // Anonymous/local user
         const updatedWishlist = [...wishlist, productId];
         setWishlist(updatedWishlist);
         saveWishlistToLocalStorage(updatedWishlist);
-      } catch (err) {
-        console.error("Failed to add to server wishlist", err);
       }
-    } else {
-      // Anonymous/local user
-      const updatedWishlist = [...wishlist, productId];
-      setWishlist(updatedWishlist);
-      saveWishlistToLocalStorage(updatedWishlist);
     }
-  }
-};
+  };
 
-
-  const isWishlisted = (product: Product) => wishlist.includes(product.id.trim());
+  const isWishlisted = (product: Product) =>
+    wishlist.includes(product.id.trim());
 
   return (
     <>
-   <Breadcrumb className="mb-6 text-sm text-gray-600 flex items-center space-x-1">
+      <Breadcrumb className="mb-6 text-sm text-gray-600 flex items-center space-x-1">
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
@@ -214,19 +238,23 @@ const { cartitem, refreshCart } = useCart();
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <span className="capitalize text-gray-900 font-medium">{category}</span>
+              <span className="capitalize text-gray-900 font-medium">
+                {category}
+              </span>
             </BreadcrumbItem>
           </>
         ) : (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <span className="capitalize text-gray-900 font-medium">{category}</span>
+              <span className="capitalize text-gray-900 font-medium">
+                {category}
+              </span>
             </BreadcrumbItem>
           </>
         )}
       </Breadcrumb>
-    {/* Filters */}
+      {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-end items-start gap-4 mb-10 bg-white p-4 rounded-lg shadow-md border border-gray-200">
         {/* Type Toggle */}
         <div className="flex flex-col gap-1">
@@ -249,7 +277,7 @@ const { cartitem, refreshCart } = useCart();
             ))}
           </div>
         </div>
- 
+
         {/* Rating Select */}
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-gray-700">Rating</label>
@@ -269,7 +297,7 @@ const { cartitem, refreshCart } = useCart();
             </SelectContent>
           </Select>
         </div>
- 
+
         {/* Price Range Select */}
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-gray-700">Price</label>
@@ -286,7 +314,7 @@ const { cartitem, refreshCart } = useCart();
             </SelectContent>
           </Select>
         </div>
- 
+
         {/* Reset Button */}
         <div className="sm:ml-auto">
           <button
@@ -302,33 +330,42 @@ const { cartitem, refreshCart } = useCart();
         </div>
       </div>
 
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      <h2 className="text-3xl font-bold text-orange-700 mb-8 capitalize">
-        {category ? `${category} Items` : "All Food Items"}
-      </h2>
+      <div className="max-w-6xl mx-auto px-4 py-10">
+        <h2 className="text-3xl font-bold text-orange-700 mb-8 capitalize">
+          {category ? `${category} Items` : "All Food Items"}
+        </h2>
 
-      {loading && <p className="text-center text-gray-500">Loading...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+{loading && (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <SkeletonCard key={i} />
+    ))}
+  </div>
+)}
+        {error && <p className="text-center text-red-500">{error}</p>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-        {products.map((product) => (
-          <ProductDetailDialog
-            key={product.id}
-            category={product.cuisine}
-            productName={product.name}
-            triggerElement={
-              <ProductCard
-                product={product}
-                onAddToCart={handleAddToCart}
-                onToggleWishlist={handleToggleWishlist}
-                isWishlisted={isWishlisted(product)}
-                showWishlistIcon={!!user}
-              />
-            }
+        {!loading && !error && (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+    {products.map((product) => (
+      <ProductDetailDialog
+        key={product.id}
+        category={product.cuisine}
+        productName={product.name}
+        triggerElement={
+          <ProductCard
+            product={product}
+            onAddToCart={handleAddToCart}
+            onToggleWishlist={handleToggleWishlist}
+            isWishlisted={isWishlisted(product)}
+            showWishlistIcon={!!user}
           />
-        ))}
+        }
+      />
+    ))}
+  </div>
+)}
+
       </div>
-    </div>
-     </>
+    </>
   );
 }

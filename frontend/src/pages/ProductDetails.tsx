@@ -8,7 +8,8 @@ import {
 import type { Product } from "@/types";
 import { addToCart, getProductByName } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
-import toast from "react-hot-toast";  // Import toast
+import toast from "react-hot-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   category: string;
@@ -44,6 +45,7 @@ export default function ProductDetailDialog({
   }, [open, productName]);
 
   const { cartitem, refreshCart } = useCart();
+
   const handleAddToCart = async (product: Product) => {
     if (!product) return;
 
@@ -69,7 +71,6 @@ export default function ProductDetailDialog({
     }
   };
 
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -80,7 +81,16 @@ export default function ProductDetailDialog({
         <DialogTitle className="sr-only">{productName}</DialogTitle>
 
         {loading || !product ? (
-          <div className="text-center py-10 text-gray-500">Loading...</div>
+          <div className="flex flex-col sm:flex-row gap-6">
+            <Skeleton className="w-full sm:w-1/2 h-64 bg-gray-200" />
+            <div className="flex-1 space-y-4">
+              <Skeleton className="h-8 w-3/4 bg-gray-200" />
+              <Skeleton className="h-4 w-full bg-gray-200" />
+              <Skeleton className="h-4 w-full bg-gray-200" />
+              <Skeleton className="h-6 w-1/4 bg-gray-200" />
+              <Skeleton className="h-10 w-full rounded bg-gray-200" />
+            </div>
+          </div>
         ) : (
           <div className="flex flex-col sm:flex-row gap-6">
             <img
@@ -104,7 +114,7 @@ export default function ProductDetailDialog({
                     : "bg-gray-300 cursor-not-allowed"
                 } text-white py-2 rounded transition`}
                 disabled={!product.availability || product.stock === 0}
-                onClick={()=>{handleAddToCart}}
+                onClick={() => handleAddToCart(product)}
               >
                 {product.availability && product.stock > 0
                   ? "Add to Cart"

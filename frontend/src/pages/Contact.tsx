@@ -10,7 +10,9 @@ export default function ContactUs() {
 
   const [submitted, setSubmitted] = useState(false);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
@@ -28,7 +30,9 @@ export default function ContactUs() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md my-12">
-      <h1 className="text-4xl font-bold text-orange-600 mb-6 text-center">Contact Us</h1>
+      <h1 className="text-4xl font-bold text-orange-600 mb-6 text-center">
+        Contact Us
+      </h1>
 
       {submitted && (
         <p className="mb-4 text-green-600 font-semibold text-center">
@@ -38,7 +42,10 @@ export default function ContactUs() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-gray-700 font-medium mb-1">
+          <label
+            htmlFor="name"
+            className="block text-gray-700 font-medium mb-1"
+          >
             Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -54,7 +61,10 @@ export default function ContactUs() {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-gray-700 font-medium mb-1">
+          <label
+            htmlFor="email"
+            className="block text-gray-700 font-medium mb-1"
+          >
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -70,7 +80,10 @@ export default function ContactUs() {
         </div>
 
         <div>
-          <label htmlFor="subject" className="block text-gray-700 font-medium mb-1">
+          <label
+            htmlFor="subject"
+            className="block text-gray-700 font-medium mb-1"
+          >
             Subject
           </label>
           <input
@@ -85,7 +98,10 @@ export default function ContactUs() {
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-gray-700 font-medium mb-1">
+          <label
+            htmlFor="message"
+            className="block text-gray-700 font-medium mb-1"
+          >
             Message <span className="text-red-500">*</span>
           </label>
           <textarea
