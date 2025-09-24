@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useLocation } from "react-router-dom";
 import { getCart, getUserAddress } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { MapPin, ShoppingBag } from "lucide-react";
@@ -24,10 +24,15 @@ interface Address {
 
 export default function OrderPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [address, setAddress] = useState<Address | null>(null);
+    const location = useLocation();
+
+  const passedAddress = location.state?.address;
+
+const [address, setAddress] = useState<Address | null>(passedAddress || null);
   const [loading, setLoading] = useState(true);
   const [addressConfirmed, setAddressConfirmed] = useState(false);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,17 +50,19 @@ export default function OrderPage() {
         }));
         setCartItems(formattedCart);
 
+        if (!passedAddress) {
         const addresses = await getUserAddress();
         setAddress(addresses?.[0] || null);
-      } catch (err) {
-        console.error("Error loading order data", err);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error("Error loading order data", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+}, [passedAddress]);
 
   const totalPrice = useMemo(
     () =>

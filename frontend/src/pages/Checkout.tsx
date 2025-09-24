@@ -54,7 +54,7 @@ export default function CheckoutPage() {
 
       {/* Right: Checkout Form */}
       <section className="bg-white p-6 shadow-lg rounded-lg border space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        <h2 className="text-2xl font-semibold text-orange-600 mb-4">
           Checkout Details
         </h2>
 
