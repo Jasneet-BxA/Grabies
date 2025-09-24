@@ -1,0 +1,60 @@
+import { stripe } from "../utils/stripe.js";
+import type { Request, Response } from "express";
+import { createOrderFromCartService } from "../services/orderService.js";
+
+// Stripe Checkout session for card payment
+export const createCheckoutSession = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const addressId = req.params.addressId;
+    if (!addressId) {
+      return res.status(400).json({ error: "Address ID is required" });
+    }
+
+    const { orderId, totalPrice } = await createOrderFromCartService(userId, addressId);
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"], // Only card payments
+      line_items: [
+        {
+          price_data: {
+            currency: "inr",
+            product_data: { name: "Food Order" },
+            unit_amount: Math.round(totalPrice * 100),
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${process.env.FRONTEND_URL}/payment-success?orderId=${orderId}`,
+      cancel_url: `${process.env.FRONTEND_URL}/cart`,
+      metadata: { orderId, userId },
+    });
+
+    res.json({ url: session.url });
+  } catch (error: any) {
+    console.error("Error creating checkout session:", error);
+    res.status(500).json({ error: error.message || "Internal server error" });
+  }
+};
+
+// Endpoint for placing Cash on Delivery order
+export const placeOrderCashOnDelivery = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const addressId = req.params.addressId;
+    if (!addressId) {
+      return res.status(400).json({ error: "Address ID is required" });
+    }
+
+    const { orderId, totalPrice } = await createOrderFromCartService(userId, addressId);
+
+    // TODO: Update order in DB to set paymentMode = "cash_on_delivery"
+    // e.g. await updateOrderPaymentMode(orderId, "cash_on_delivery");
+
+    res.json({ message: "Order placed with Cash on Delivery", orderId });
+  } catch (error: any) {
+    console.error("Error placing COD order:", error);
+    res.status(500).json({ error: error.message || "Internal server error" });
+  }
+};

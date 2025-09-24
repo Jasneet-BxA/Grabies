@@ -7,9 +7,14 @@ import authRouter  from './routes/authRoute.js';
 import addressRouter from './routes/addressRoute.js'
 import menuRouter from './routes/menuRoute.js'
 import wishlistRouter from './routes/wishlistRoute.js'
+import orderRouter from './routes/orderRoute.js'
+import paymentRouter from './routes/paymentRoute.js'
 import { errorHandler } from 'middlewares/errorHandler.js';
+import stripeWebhookRouter from './routes/stripeWebhook.js';
+ 
  
 const app = express();
+app.use('/webhook', stripeWebhookRouter);
 app.use(cors({origin: 'http://localhost:5173', credentials: true}));
 app.use(express.json());
 app.use(cookieParser());
@@ -20,6 +25,8 @@ app.use('/auth', authRouter);
 app.use('/address', addressRouter);
 app.use('/menu', menuRouter);
 app.use('/wishlist', wishlistRouter);
+app.use('/order', orderRouter);
+app.use('/payment', paymentRouter)
  
 app.use(errorHandler);
  

@@ -14,7 +14,6 @@ export default function CheckoutPage() {
   const [saveInfo, setSaveInfo] = useState(false);
 
   const handlePayment = () => {
-    // payment logic
     console.log("Proceeding to payment", {
       email,
       paymentMethod,

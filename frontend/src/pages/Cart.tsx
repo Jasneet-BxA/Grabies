@@ -273,7 +273,7 @@ if (loading) {
       size="lg"
       className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg transition"
       onClick={() => {
-        navigate("/order", {
+        navigate("/checkoutwithstripe", {
           state: {
             address: selectedAddress,
           },

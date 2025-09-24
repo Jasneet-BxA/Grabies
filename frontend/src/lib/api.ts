@@ -54,7 +54,12 @@ export async function addUserNewAddress(addressData: {
 }) {
   return api.post('/address', addressData).then(res => res.data)
 }
- 
+ export async function createStripeCheckoutSession(address_id: string){
+  return api.get(`/payment/${address_id}`)
+}
+export const placeCODOrder = (addressId: string) => {
+  return api.post(`/payment/cod-order/${addressId}`);
+};
 export async function addToWishlist(productId: string) {
   await api.post(`/wishlist/${productId}`);
 }
@@ -65,13 +70,17 @@ export async function addToCart(productId: string, quantity: number = 1) {
   }).then(res => res.data);
 }
  
- 
+export async function createOrder(addressId: String){
+  return api.post('/order/create-order', {addressId});
+}
 export async function getProductByName(category:string, productName: string){
   const encodedName = encodeURIComponent(productName);
   const res = await api.get(`/menu/${category}/${encodedName}`);
   return res.data;
 }
- 
+export async function confirmPayment(orderId: string){
+  return api.post('/order/confirm-payment', {orderId});
+}
  
 // DELETE request
 export async function removeFromWishlist(productId: string) {
