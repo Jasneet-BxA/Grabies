@@ -7,6 +7,8 @@ import authRouter  from './routes/authRoute.js';
 import addressRouter from './routes/addressRoute.js'
 import menuRouter from './routes/menuRoute.js'
 import wishlistRouter from './routes/wishlistRoute.js'
+import orderRouter from './routes/orderRoute.js'
+import checkoutRouter from './routes/checkoutRoute.js'
 import { errorHandler } from 'middlewares/errorHandler.js';
  
 const app = express();
@@ -20,6 +22,8 @@ app.use('/auth', authRouter);
 app.use('/address', addressRouter);
 app.use('/menu', menuRouter);
 app.use('/wishlist', wishlistRouter);
+app.use('/orders', orderRouter);
+app.use('/checkout', checkoutRouter)
  
 app.use(errorHandler);
  
