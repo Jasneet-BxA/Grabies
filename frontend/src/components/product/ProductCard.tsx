@@ -18,22 +18,22 @@ export default function ProductCard({
   showWishlistIcon = true, // ✅ default to true
 }: Props) {
   return (
-<div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition h-full flex flex-col">
       {/* Product Image */}
-<img
-        src={product.image_url}
-        alt={product.name}
-        className="w-full h-64 object-cover"
-      />
- 
-      <div className="p-5">
+      <div className="w-full h-48">
+        <img
+          src={product.image_url}
+          alt={product.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <div className="flex flex-col p-5 flex-grow">
         {/* Title + Wishlist Icon */}
-<div className="flex justify-between items-center">
-<h3 className="text-xl font-semibold text-gray-800">
-            {product.name}
-          </h3>
- 
-          {/* ✅ Conditionally render wishlist icon */}
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-gray-800 truncate">{product.name}</h3>
+
+          {/* Conditionally render wishlist icon */}
           {showWishlistIcon && (
             <button
               onClick={(e) => {
@@ -47,38 +47,36 @@ export default function ProductCard({
             </button>
           )}
         </div>
- 
-        {/* Description */}
-        <p className="text-sm text-gray-600 mt-2">{product.description}</p>
- 
-        {/* Price and Rating */}
-<div className="mt-4 flex items-center justify-between">
-<span className="text-lg text-orange-600 font-semibold">
-            ₹{product.price}
 
-          </span>
+        {/* Description */}
+        <p className="text-sm text-gray-600 mt-2 flex-grow">{product.description}</p>
+
+        {/* Price and Rating */}
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-lg text-orange-600 font-semibold">₹{product.price}</span>
           <span className="text-sm text-yellow-500">⭐ {product.rating}</span>
         </div>
- 
-        {/* Add to Cart Button */}
+      </div>
+
+      {/* Add to Cart Button */}
+      <div className="p-5 pt-0 flex justify-between items-center">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onAddToCart(product);
           }}
           disabled={!product.availability || (product.stock ?? 0) === 0}
-          className={`mt-4 w-full ${
+          className={`w-full ${
             product.availability && (product.stock ?? 0) > 0
               ? "bg-orange-600 hover:bg-orange-700"
               : "bg-gray-300 cursor-not-allowed"
           } text-white text-sm font-medium py-2 rounded transition`}
->
-          {product.availability && (product.stock ?? 0) > 0
-            ? "Add to Cart"
-            : "Out of Stock"}
-</button>
-</div>
-</div>
+        >
+          {product.availability && (product.stock ?? 0) > 0 ? "Add to Cart" : "Out of Stock"}
+        </button>
+      </div>
+    </div>
   );
 }
+
 
