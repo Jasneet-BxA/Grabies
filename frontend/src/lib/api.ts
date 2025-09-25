@@ -54,7 +54,7 @@ export async function getProductByName(category:string, productName: string){
 
 //  Wishlist
 export async function getWishlist() {
-  const res = await fetch("/api/wishlist");
+  const res = await fetch("/wishlist");
   const data = await res.json();
  
   return Array.isArray(data) ? data : data?.wishlist ?? [];
