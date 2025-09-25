@@ -43,6 +43,7 @@ export function SkeletonCard() {
 }
 
 export default function ProductListing() {
+  const [sort, setSort] = useState<"price_asc" | "price_desc" | "">("");
   const [products, setProducts] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,19 +81,17 @@ export default function ProductListing() {
         setLoading(true);
         setError(null);
 
-        if (!tag && !rating && !priceRange) {
+        if (!tag && !rating && !priceRange && !sort) {
           const data = await getProductsByCategory(category || "all");
-          console.log("Fetched by category:", data);
           setProducts(data);
         } else {
-          const products = await getFilteredProducts(category || "all", {
+          const filtered = await getFilteredProducts(category || "all", {
             tag: tag || undefined,
             rating: rating || undefined,
             priceRange: priceRange || undefined,
+            sort: sort || undefined,
           });
-          console.log("Fetched by filters:", products);
-          setProducts(products.data);
-          console.log("Products after filtering:", products.data);
+          setProducts(filtered.data || filtered); // adjust based on API response structure
         }
       } catch (err) {
         console.error(err);
@@ -103,25 +102,7 @@ export default function ProductListing() {
     };
 
     fetchProducts();
-  }, [category, tag, rating, priceRange]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getProductsByCategory(category || "all");
-        setProducts(data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load products");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [category]);
+  }, [category, tag, rating, priceRange, sort]);
 
   useEffect(() => {
     const fetchUserAndWishlist = async () => {
@@ -147,6 +128,7 @@ export default function ProductListing() {
 
     fetchUserAndWishlist();
   }, []);
+
   const { cartitem, refreshCart } = useCart();
 
   const handleAddToCart = async (product: Product) => {
@@ -201,7 +183,6 @@ export default function ProductListing() {
           const updatedWishlist = [...wishlist, productId];
           setWishlist(updatedWishlist);
           saveWishlistToLocalStorage(updatedWishlist);
-          await addToWishlist(product.id);
           toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
         } catch (err) {
           console.error("Failed to add to server wishlist", err);
@@ -243,6 +224,7 @@ export default function ProductListing() {
           </>
         )}
       </Breadcrumb>
+
       <div className="flex flex-col sm:flex-row sm:items-end items-start gap-4 mb-10 bg-white p-4 rounded-lg shadow-md border border-gray-200">
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-gray-700">Type</label>
@@ -275,7 +257,7 @@ export default function ProductListing() {
               <SelectValue placeholder="Choose rating" />
             </SelectTrigger>
             <SelectContent>
-              {[5, 4, 3, 2, 1].map((r) => (
+              {[5, 4.7, 4.5, 4].map((r) => (
                 <SelectItem key={r} value={r.toString()}>
                   {r} ⭐ & up
                 </SelectItem>
@@ -300,12 +282,29 @@ export default function ProductListing() {
           </Select>
         </div>
 
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold text-gray-700">Sort by</label>
+          <Select
+            onValueChange={(value) => setSort(value as "price_asc" | "price_desc")}
+            value={sort}
+          >
+            <SelectTrigger className="w-[180px] border-gray-300 shadow-sm hover:border-orange-400 focus:ring-orange-500">
+              <SelectValue placeholder="Sort by price" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="price_asc">Price: Low to High</SelectItem>
+              <SelectItem value="price_desc">Price: High to Low</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="sm:ml-auto">
           <button
             onClick={() => {
               setTag("");
               setRating("");
               setPriceRange("");
+              setSort("");
             }}
             className="text-sm text-red-600 hover:text-red-800 hover:underline mt-2 sm:mt-0"
           >
