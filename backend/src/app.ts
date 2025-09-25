@@ -11,11 +11,13 @@ import orderRouter from './routes/orderRoute.js'
 import paymentRouter from './routes/paymentRoute.js'
 import { errorHandler } from './middlewares/errorHandler.js';
 import stripeWebhookRouter from './routes/stripeWebhook.js';
- 
+import dotenv from 'dotenv';
+
+dotenv.config();
  
 const app = express();
 app.use('/webhook', stripeWebhookRouter);
-app.use(cors({origin: 'http://localhost:5173', credentials: true}));
+app.use(cors({origin: process.env.FRONTEND_URL, credentials: true}));
 app.use(express.json());
 app.use(cookieParser());
  
