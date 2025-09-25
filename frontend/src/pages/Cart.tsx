@@ -19,6 +19,7 @@ import {
 import { getUserAddress } from "@/lib/api"; // import your getUserAddress API
 import type { Address } from "@/types/index.ts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FaShoppingCart } from "react-icons/fa";
 
 interface CartItem {
   id: string; // cart table item ID
@@ -150,10 +151,20 @@ if (loading) {
   );
 }
  
-  if (cartItems.length === 0)
-    return (
-<p className="text-center py-10 text-gray-500">Your cart is empty.</p>
-    );
+
+
+if (cartItems.length === 0) {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+      <FaShoppingCart className="text-6xl mb-4 text-orange-400 animate-pulse" />
+      <p className="text-lg font-medium">Your cart is empty.</p>
+      <p className="text-sm mt-1 text-gray-400">
+        Start shopping and add items to your cart!
+      </p>
+    </div>
+  );
+}
+
  
   return (
 <main className="max-w-5xl mx-auto px-6 py-10 space-y-8">
