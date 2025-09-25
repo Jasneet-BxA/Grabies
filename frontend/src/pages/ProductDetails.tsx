@@ -5,7 +5,7 @@ import {
   DialogTrigger,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Product } from "@/types";
+import type{ Product } from "@/types/index";
 import { addToCart, getProductByName } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
@@ -23,17 +23,23 @@ export default function ProductDetailDialog({
   triggerElement,
 }: Props) {
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null); // For error state
 
+  const { cartitem, refreshCart } = useCart();
+
+  // Function to fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
+      setError(null); // Reset error when fetching starts
       try {
         const data = await getProductByName(category, productName);
         setProduct(data);
       } catch (err) {
         console.error("Failed to fetch product details:", err);
+        setError("Failed to load product details. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -42,10 +48,9 @@ export default function ProductDetailDialog({
     if (open) {
       fetchProduct();
     }
-  }, [open, productName]);
+  }, [open, category, productName]);
 
-  const { cartitem, refreshCart } = useCart();
-
+  // Handle adding to the cart
   const handleAddToCart = async (product: Product) => {
     if (!product) return;
 
@@ -91,6 +96,8 @@ export default function ProductDetailDialog({
               <Skeleton className="h-10 w-full rounded bg-gray-200" />
             </div>
           </div>
+        ) : error ? (
+          <div className="text-red-500 text-center">{error}</div>
         ) : (
           <div className="flex flex-col sm:flex-row gap-6">
             <img

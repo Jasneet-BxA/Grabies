@@ -39,27 +39,31 @@ export const getFilteredMenu = async (
 ) => {
   try {
     const category = req.params.category as string;
+
     if (!category) {
       return res.status(400).json({ error: "Category is required" });
     }
-    const { tag, minPrice, maxPrice, rating, search, sort} = req.query;
- 
+
+    const {
+      tag,
+      rating,
+      priceRange,
+    } = req.query;
+
     const filters: FilterOptions = {
       category,
       ...(tag ? { tag: tag as string } : {}),
-      ...(minPrice ? { minPrice: Number(minPrice) } : {}),
-      ...(maxPrice ? { maxPrice: Number(maxPrice) } : {}),
+      ...(priceRange ? { priceRange: priceRange as "lt300" | "300to600" } : {}),
       ...(rating ? { rating: Number(rating) } : {}),
-      ...(search ? { search: search as string } : {}),
-      ...(sort ? { sort: sort as string } : {}),
     };
- 
+
     const filteredProducts = await getFilteredProductsService(filters);
     res.json(filteredProducts);
   } catch (error) {
     next(error);
   }
 };
+
 export const getProductByName = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const category = req.params.category;

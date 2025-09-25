@@ -73,17 +73,14 @@ export interface OrderItem {
   product?: Product;
 }
 
-export interface FilterOptions {
+export type FilterOptions = {
   category: string;
   tag?: string;
-  minPrice?: number;
-  maxPrice?: number;
   rating?: number;
   search?: string;
-  sort?: string; 
-  page?: number;
-  limit?: number;
-}
+  sort?: string;
+  priceRange?: "lt300" | "300to600" | "";
+};
 
 export interface CreateOrderInput{
   addressId: string;
