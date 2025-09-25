@@ -9,7 +9,10 @@ const categories = [
   { title: "Pasta", image: "https://img.icons8.com/color/96/spaghetti.png" },
   { title: "Spring Roll", image: "https://img.icons8.com/color/96/wrap.png" },
   { title: "North Indian", image: "https://img.icons8.com/color/96/curry.png" },
-  { title: "South Indian", image: "https://img.icons8.com/color/96/rice-bowl.png" },
+  {
+    title: "South Indian",
+    image: "https://img.icons8.com/color/96/rice-bowl.png",
+  },
   { title: "Noodles", image: "https://img.icons8.com/color/96/noodles.png" },
 ];
 
@@ -40,7 +43,9 @@ export default function ExploreMoreFood() {
                   className="w-12 h-12 object-contain"
                 />
               </div>
-              <p className="mt-2 text-sm font-medium text-gray-700">{item.title}</p>
+              <p className="mt-2 text-sm font-medium text-gray-700">
+                {item.title}
+              </p>
             </div>
           ))}
         </div>

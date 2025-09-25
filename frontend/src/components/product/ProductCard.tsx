@@ -1,6 +1,6 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import type { Product } from "@/types";
- 
+
 type Props = {
   product: Product;
   onAddToCart: (product: Product) => void;
@@ -8,7 +8,7 @@ type Props = {
   isWishlisted: boolean;
   showWishlistIcon?: boolean;
 };
- 
+
 export default function ProductCard({
   product,
   onAddToCart,
@@ -28,7 +28,9 @@ export default function ProductCard({
 
       <div className="flex flex-col p-5 flex-grow">
         <div className="flex justify-between items-center">
-          <h3 className="text-xl font-semibold text-gray-800 truncate">{product.name}</h3>
+          <h3 className="text-xl font-semibold text-gray-800 truncate">
+            {product.name}
+          </h3>
           {showWishlistIcon && (
             <button
               onClick={(e) => {
@@ -43,16 +45,16 @@ export default function ProductCard({
           )}
         </div>
 
-        <p className="text-sm text-gray-600 mt-2 flex-grow">{product.description}</p>
-
-        {/* Price and Rating */}
+        <p className="text-sm text-gray-600 mt-2 flex-grow">
+          {product.description}
+        </p>
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-lg text-orange-600 font-semibold">₹{product.price}</span>
+          <span className="text-lg text-orange-600 font-semibold">
+            ₹{product.price}
+          </span>
           <span className="text-sm text-yellow-500">⭐ {product.rating}</span>
         </div>
       </div>
-
-      {/* Add to Cart Button */}
       <div className="p-5 pt-0 flex justify-between items-center">
         <button
           onClick={(e) => {
@@ -66,11 +68,11 @@ export default function ProductCard({
               : "bg-gray-300 cursor-not-allowed"
           } text-white text-sm font-medium py-2 rounded transition`}
         >
-          {product.availability && (product.stock ?? 0) > 0 ? "Add to Cart" : "Out of Stock"}
+          {product.availability && (product.stock ?? 0) > 0
+            ? "Add to Cart"
+            : "Out of Stock"}
         </button>
       </div>
     </div>
   );
 }
-
-

@@ -9,7 +9,6 @@ export const getOrderById = async (req: Request, res: Response, next: NextFuncti
   const { orderId } = req.params;
 
   try {
-    console.log(orderId)
     const order = await getOrderByIdService(orderId as string);
     console.log(order);
     return res.status(200).json(order); 
