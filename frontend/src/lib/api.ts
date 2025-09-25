@@ -1,11 +1,11 @@
 import axios from 'axios'
 const api = axios.create({
-  baseURL:  import.meta.env.REACT_APP_BACKEND_URL,
+  baseURL:  import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 })
 // Authentication
 export async function login(email: string, password: string) {
-  console.log(import.meta.env.BACKEND_URL)
+  console.log(import.meta.env.VITE_BACKEND_URL);
   return api.post('/auth/login', { email, password })
 }
 export async function signup(data: any) {
