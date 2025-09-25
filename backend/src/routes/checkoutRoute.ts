@@ -3,7 +3,6 @@ import { createPaymentIntentController } from "../controllers/checkoutController
 
 const router = express.Router();
 
-// POST /checkout/payment-intent
 router.post("/payment-intent", createPaymentIntentController);
 
 export default router;
