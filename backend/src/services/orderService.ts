@@ -1,5 +1,36 @@
 import { supabase } from "../config/supabaseClient.js";
 
+export const getOrderByIdService = async (orderId: string) => {
+  const { data, error } = await supabase
+    .from("orders")
+    .select(`
+      id,
+      total_price,
+      status,
+      address_id,
+      order_items (
+        quantity,
+        total_price,
+        products (
+          id,
+          name,
+          price,
+          image_url
+        )
+      )
+    `)
+    .eq("id", orderId)
+    .single(); 
+
+  if (error) {
+    console.error("Error fetching order by ID:", error);
+    throw new Error("Failed to fetch order details.");
+  }
+console.log(data);
+  return data;
+};
+
+
 export const getUserOrdersService = async (userId: string) => {
   const { data, error } = await supabase
     .from("orders")

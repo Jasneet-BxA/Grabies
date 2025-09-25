@@ -17,6 +17,7 @@ import OrderHistoryPage from './pages/OrderHistory.tsx'
 import CheckoutwithStripe from './pages/CheckoutwithStripe.tsx'
 
 import { Toaster } from 'react-hot-toast'
+import OrderDetailPage from './pages/OrderDetail.tsx'
 
 
 
@@ -44,6 +45,7 @@ function App() {
             <Route path="/checkoutwithstripe" element={<CheckoutwithStripe/>} />
             <Route path="/checkout" element={<Checkout/>} />
             <Route path="/orderhistory" element={<OrderHistoryPage/>} />
+            <Route path="/order/:id" element={<OrderDetailPage />} />
         </Routes>
       </div>
       <Footer />

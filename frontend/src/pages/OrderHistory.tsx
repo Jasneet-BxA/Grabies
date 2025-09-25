@@ -78,7 +78,7 @@ export default function OrderHistoryPage() {
             </div>
 
             <Button
-              onClick={() => navigate(`/order/${order.id}`)}
+              onClick={() => navigate(`/order/${order.id}` )}
               className="mt-4 bg-blue-600 text-white hover:bg-blue-700"
             >
               View Order Details
