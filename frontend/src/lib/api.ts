@@ -55,10 +55,7 @@ export async function getProductByName(category:string, productName: string){
 
 //  Wishlist
 export async function getWishlist() {
-  const res = await fetch("/wishlist");
-  const data = await res.json();
- 
-  return Array.isArray(data) ? data : data?.wishlist ?? [];
+  return await api.get('wishlist/').then((res)=>res.data)
 }
 export async function addToWishlist(productId: string) {
   await api.post(`/wishlist/${productId}`);
