@@ -36,10 +36,12 @@ export default function OrderPage() {
   const [addressConfirmed, setAddressConfirmed] = useState(false);
  
   const location = useLocation();
+  const addressId = location.state?.addressId
   const navigate = useNavigate();
   const handlePayByCOD = () => {
   navigate("/checkout", {
     state: {
+      addressId,
       cartItems,
       totalPrice,
     },

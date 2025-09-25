@@ -44,7 +44,16 @@ export async function getWishlist(){
 export async function getCart(){
   return api.get('/cart').then((res) => res.data);
 }
- 
+ export const getOrderById = async (orderId: string) => {
+  const res = await api.get(`/order/${orderId}`);
+  return res.data;
+};
+export async function getOrders() {
+  const res = await api.get('/order'); // ✅ Your backend route
+  return res.data;
+}
+
+
 // POST request
 export async function addUserNewAddress(addressData: {
   address_line: string
@@ -70,9 +79,11 @@ export async function addToCart(productId: string, quantity: number = 1) {
   }).then(res => res.data);
 }
  
-export async function createOrder(addressId: String){
-  return api.post('/order/create-order', {addressId});
+export async function createOrder(addressId: string) {
+  const res = await api.post('/order/create-order', { addressId });
+  return res.data; // Now we get the created order back
 }
+
 export async function getProductByName(category:string, productName: string){
   const encodedName = encodeURIComponent(productName);
   const res = await api.get(`/menu/${category}/${encodedName}`);
