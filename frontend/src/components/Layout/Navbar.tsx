@@ -11,48 +11,44 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, Menu, ShoppingCart } from "lucide-react";
+import { Heart, Menu, ShoppingCart, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import Profile from "@/pages/Profile";
 import { useCart } from "@/context/CartContext";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
- 
+
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  // const [cartCount, setCartCount] = useState(0);
   const { totalItems, refreshCart } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
- 
+  const [showSearch, setShowSearch] = useState(false);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
-      setShowMobileSearch(false); // Close on mobile
+      setShowMobileSearch(false); // Close on mobile after search
+      setShowSearch(false); // Close on desktop after search
     }
   };
-  //  const fetchCartCount = async () => {
-  //   try {
-  //     const cartItems = await getCart();
-  //     setCartCount(cartItems.length);
-  //   } catch {
-  //     setCartCount(0);
-  //   }
-  // };
- 
+
   useEffect(() => {
     refreshCart();
   }, []);
+
   return (
-    <header className="w-full px-4 md:px-10 py-4 shadow-sm bg-white fixed top-0 left-0 z-50">
+<header className="fixed top-0 left-0 z-50 w-full h-16 px-4 md:px-10 py-4 bg-white shadow-sm">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
+        {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-orange-600">
           Grabies
         </Link>
+
+        {/* Desktop Navigation Menu */}
         <NavigationMenu>
           <NavigationMenuList className="hidden md:flex space-x-6">
             {["Home", "About Us", "Our Food"].map((item, idx) => (
@@ -69,7 +65,56 @@ export default function Navbar() {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
+
+        {/* Desktop Right Section */}
         <div className="hidden md:flex items-center gap-3">
+          {/* Desktop Search Form */}
+          <div className="relative">
+            {/* Search Icon Button */}
+            {!showSearch && (
+              <button
+                aria-label="Search"
+                onClick={() => setShowSearch(true)}
+                className="p-2 rounded hover:bg-orange-100 transition"
+              >
+                <Search className="h-6 w-6 text-orange-600" />
+              </button>
+            )}
+
+            {/* Search Input Form */}
+            {showSearch && (
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex items-center border border-orange-600 rounded-md overflow-hidden shadow-sm"
+              >
+                <input
+                  type="text"
+                  placeholder="Search food..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="px-4 py-2 text-sm text-gray-700 placeholder-gray-400 outline-none focus:ring-2 focus:ring-orange-600 focus:ring-offset-1 transition"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="bg-orange-600 text-white px-4 py-2 hover:bg-orange-700 transition"
+                >
+                  Search
+                </button>
+                {/* Close button */}
+                <button
+                  type="button"
+                  onClick={() => setShowSearch(false)}
+                  className="px-2 text-orange-600 hover:text-orange-800"
+                  aria-label="Close search"
+                >
+                  ✕
+                </button>
+              </form>
+            )}
+          </div>
+
+          {/* Authentication buttons or wishlist/cart/profile */}
           {!isAuthenticated ? (
             <>
               <Link to="/auth/login">
@@ -85,24 +130,6 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <form
-                onSubmit={handleSearchSubmit}
-                className="hidden md:flex items-center border rounded-md overflow-hidden"
-              >
-                <input
-                  type="text"
-                  placeholder="Search food..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-3 py-1 text-sm outline-none"
-                />
-                <button
-                  type="submit"
-                  className="bg-orange-600 text-white px-3 py-1 hover:bg-orange-700 transition text-sm"
-                >
-                  Search
-                </button>
-              </form>
               <button
                 aria-label="Wishlist"
                 onClick={() => navigate("/wishlist")}
@@ -110,6 +137,7 @@ export default function Navbar() {
               >
                 <Heart className="h-6 w-6 text-orange-600" />
               </button>
+
               <button
                 aria-label="Cart"
                 onClick={() => navigate("/cart")}
@@ -126,19 +154,21 @@ export default function Navbar() {
             </>
           )}
         </div>
+
+        {/* Mobile Right Section */}
         <div className="md:hidden flex items-center gap-2">
           {isAuthenticated && (
             <>
-              {/* Search Icon - Mobile */}
+              {/* Mobile Search Icon */}
               <button
                 aria-label="Search"
-                onClick={() => setShowMobileSearch(!showMobileSearch)}
+                onClick={() => setShowMobileSearch((prev) => !prev)}
                 className="relative p-2 rounded-full hover:bg-orange-100 transition"
               >
                 <Search className="h-6 w-6 text-orange-600" />
               </button>
- 
-              {/* Mobile Search Input - shown only when toggled */}
+
+              {/* Mobile Search Input */}
               {showMobileSearch && (
                 <form
                   onSubmit={handleSearchSubmit}
@@ -150,10 +180,12 @@ export default function Navbar() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full px-3 py-2 border rounded-md text-sm outline-none"
+                    autoFocus
                   />
                 </form>
               )}
- 
+
+              {/* Wishlist & Cart Buttons */}
               <button
                 aria-label="Wishlist"
                 onClick={() => navigate("/wishlist")}
@@ -161,6 +193,7 @@ export default function Navbar() {
               >
                 <Heart className="h-6 w-6 text-orange-600" />
               </button>
+
               <button
                 aria-label="Cart"
                 onClick={() => navigate("/cart")}
@@ -173,9 +206,12 @@ export default function Navbar() {
                   </span>
                 )}
               </button>
+
               <Profile />
             </>
           )}
+
+          {/* Hamburger menu dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -198,7 +234,9 @@ export default function Navbar() {
                   </Link>
                 </DropdownMenuItem>
               ))}
+
               <div className="border-t my-2" />
+
               {!isAuthenticated && (
                 <>
                   <DropdownMenuItem asChild>
@@ -226,4 +264,3 @@ export default function Navbar() {
     </header>
   );
 }
- 

@@ -18,11 +18,11 @@ const WISHLIST_KEY = "local_wishlist";
 
 export function SkeletonCard() {
   return (
-    <div className="flex flex-col space-y-3 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+    <div className="flex flex-col space-y-3 bg-white p-5 rounded-xl border border-gray-200 shadow-md animate-pulse hover:shadow-lg transition-shadow duration-300">
       <Skeleton className="h-[180px] w-full rounded-lg bg-gray-200" />
       <div className="space-y-2">
-        <Skeleton className="h-5 w-3/4 bg-gray-200" />
-        <Skeleton className="h-4 w-1/2 bg-gray-200" />
+        <Skeleton className="h-6 w-3/4 bg-gray-200 rounded" />
+        <Skeleton className="h-5 w-1/2 bg-gray-200 rounded" />
       </div>
     </div>
   );
@@ -37,7 +37,6 @@ export default function SearchResults() {
   const [loading, setLoading] = useState(false);
   const { cartitem, refreshCart } = useCart();
 
-  // Utility functions to get/save wishlist in localStorage
   const getWishlistFromLocalStorage = (): string[] => {
     try {
       const stored = localStorage.getItem(WISHLIST_KEY);
@@ -51,7 +50,6 @@ export default function SearchResults() {
     localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
   };
 
-  // Fetch user and wishlist once on mount
   useEffect(() => {
     const fetchUserAndWishlist = async () => {
       try {
@@ -76,14 +74,13 @@ export default function SearchResults() {
     fetchUserAndWishlist();
   }, []);
 
-  // Fetch search results when `query` changes
   useEffect(() => {
     if (!query) return;
 
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const data = await search(query);  // Correct usage of search API
+        const data = await search(query);
         setResults(data);
       } catch (error) {
         console.error("Search error:", error);
@@ -97,12 +94,16 @@ export default function SearchResults() {
   }, [query]);
 
   if (!query) {
-    return <p>Please enter a search query.</p>;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <p className="text-xl text-gray-500">Please enter a search query to get started.</p>
+      </div>
+    );
   }
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto px-4 py-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {Array.from({ length: 6 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
@@ -111,10 +112,14 @@ export default function SearchResults() {
   }
 
   if (results.length === 0) {
-    return <p>No results found for "{query}".</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+        <p className="text-lg text-gray-600 mb-4">No results found for:</p>
+        <p className="text-2xl font-semibold text-orange-600 break-words max-w-md text-center">"{query}"</p>
+      </div>
+    );
   }
 
-  // Cart handlers
   const handleAddToCart = async (product: Product) => {
     const isAlreadyInCart = cartitem.some((item) => item.product.id === product.id);
     if (isAlreadyInCart) {
@@ -132,7 +137,6 @@ export default function SearchResults() {
     }
   };
 
-  // Wishlist handlers
   const handleToggleWishlist = async (product: Product) => {
     const productId = product.id.trim();
     const isWishlisted = wishlist.includes(productId);
@@ -169,23 +173,26 @@ export default function SearchResults() {
   const isWishlisted = (product: Product) => wishlist.includes(product.id.trim());
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-20">
-      <h2 className="text-2xl font-bold mb-6 text-center text-orange-700">
-        Search Results for "{query}"
-      </h2>
+    <section className="bg-gray-50 min-h-screen py-24">
+      <div className="max-w-6xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-center text-orange-700 tracking-wide">
+          Your Craving Match is <span className="text-orange-900">"{query}"</span>
+        </h2>
+        <div className="w-24 h-1 mx-auto mb-10 rounded-full bg-gradient-to-r from-orange-400 via-orange-600 to-orange-500 shadow-lg"></div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {results.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={handleAddToCart}
-            onToggleWishlist={handleToggleWishlist}
-            isWishlisted={isWishlisted(product)}
-            showWishlistIcon={!!user}
-          />
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 animate-fadeIn">
+          {results.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={handleAddToCart}
+              onToggleWishlist={handleToggleWishlist}
+              isWishlisted={isWishlisted(product)}
+              showWishlistIcon={!!user}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

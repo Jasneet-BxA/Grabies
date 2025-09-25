@@ -26,7 +26,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/orderhistory?orderId=${orderId}`,
+      success_url: `${process.env.FRONTEND_URL}/orderhistory`,
       cancel_url: `${process.env.FRONTEND_URL}/cart`,
       metadata: { orderId, userId },
     });
