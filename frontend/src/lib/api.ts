@@ -5,6 +5,7 @@ const api = axios.create({
 })
 // Authentication
 export async function login(email: string, password: string) {
+  console.log(import.meta.env.BACKEND_URL)
   return api.post('/auth/login', { email, password })
 }
 export async function signup(data: any) {
