@@ -1,5 +1,5 @@
-import { supabase } from "config/supabaseClient.js";
-import type { FilterOptions, Product } from "types/index.js";
+import { supabase } from "../config/supabaseClient.js";
+import type { FilterOptions, Product } from "../types/index.js";
  
 export const getAllProductsService = async (
   limit: number = 10,

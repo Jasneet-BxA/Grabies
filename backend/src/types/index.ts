@@ -1,8 +1,8 @@
-import type { addToCartSchema, productSchema, productUpdateSchema } from "validators/productValidator.js";
+import type { addToCartSchema, productSchema, productUpdateSchema } from "../validators/productValidator.js";
 import type { loginSchema, signupSchema } from "../validators/authValidator.js";
 import type z from "zod";
-import type {updateProfileSchema } from "validators/userValidator.js";
-import type {addressSchema} from "validators/addressValidator.js"
+import type {updateProfileSchema } from "../validators/userValidator.js";
+import type {addressSchema} from "../validators/addressValidator.js"
 
 declare global {
   namespace Express {
