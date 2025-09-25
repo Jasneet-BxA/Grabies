@@ -13,7 +13,7 @@ import Wishlist from './pages/Wishlist.tsx'
 import ContactUs from './pages/Contact.tsx' 
 import ProductListing from './pages/ProductListing.tsx'
 import OurFood from './pages/OurFood.tsx'
-
+import OrderHistoryPage from './pages/OrderHistory.tsx'
 import CheckoutwithStripe from './pages/CheckoutwithStripe.tsx'
 
 import { Toaster } from 'react-hot-toast'
@@ -43,6 +43,7 @@ function App() {
             <Route path="/food" element={<OurFood />} />
             <Route path="/checkoutwithstripe" element={<CheckoutwithStripe/>} />
             <Route path="/checkout" element={<Checkout/>} />
+            <Route path="/orderhistory" element={<OrderHistoryPage/>} />
         </Routes>
       </div>
       <Footer />
