@@ -157,9 +157,7 @@ export default function Navbar() {
 
         {/* Mobile Right Section */}
         <div className="md:hidden flex items-center gap-2">
-          {isAuthenticated && (
-            <>
-              {/* Mobile Search Icon */}
+           {/* Mobile Search Icon */}
               <button
                 aria-label="Search"
                 onClick={() => setShowMobileSearch((prev) => !prev)}
@@ -185,6 +183,9 @@ export default function Navbar() {
                 </form>
               )}
 
+          {isAuthenticated && (
+            <>
+             
               {/* Wishlist & Cart Buttons */}
               <button
                 aria-label="Wishlist"
