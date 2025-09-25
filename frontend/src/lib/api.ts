@@ -121,4 +121,17 @@ export async function confirmPayment(orderId: string){
   return api.post('/order/confirm-payment', {orderId});
 }
 
-
+//  Search
+export async function search(
+  q: string,
+  options?: {
+    tag?: string;
+    rating?: number;
+    priceRange?: "lt300" | "300to600";
+    sort?: "price_asc" | "price_desc";
+  }
+) {
+  const params = { q, ...options };
+  const res = await api.get('/search', { params });
+  return res.data;
+}

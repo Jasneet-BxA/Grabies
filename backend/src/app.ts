@@ -9,6 +9,7 @@ import menuRouter from './routes/menuRoute.js'
 import wishlistRouter from './routes/wishlistRoute.js'
 import orderRouter from './routes/orderRoute.js'
 import paymentRouter from './routes/paymentRoute.js'
+import searchRouter from './routes/searchRoute.js'
 import { errorHandler } from './middlewares/errorHandler.js';
 import stripeWebhookRouter from './routes/stripeWebhook.js';
 import dotenv from 'dotenv';
@@ -30,6 +31,7 @@ app.use('/food', menuRouter);
 app.use('/wishlist', wishlistRouter);
 app.use('/order', orderRouter);
 app.use('/payment', paymentRouter)
+app.use('/search', searchRouter);
 
  
 app.use(errorHandler);
