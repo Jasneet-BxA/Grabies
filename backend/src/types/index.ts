@@ -46,7 +46,13 @@ export interface Product {
   rating?: number;
   tag?: string;
 }
-
+export interface SearchFilters {
+  q: string;
+  tag?: string;
+  rating?: number;
+  priceRange?: "lt300" | "300to600";
+  sort?: "price_asc" | "price_desc";
+}
 export interface CartItem {
   id: string;
   user_id: string;

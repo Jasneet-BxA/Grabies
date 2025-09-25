@@ -18,7 +18,7 @@ import Profile from "@/pages/Profile";
 import { useCart } from "@/context/CartContext";
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
-
+ 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function Navbar() {
   const { totalItems, refreshCart } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-
+ 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -43,7 +43,7 @@ export default function Navbar() {
   //     setCartCount(0);
   //   }
   // };
-
+ 
   useEffect(() => {
     refreshCart();
   }, []);
@@ -137,7 +137,7 @@ export default function Navbar() {
               >
                 <Search className="h-6 w-6 text-orange-600" />
               </button>
-
+ 
               {/* Mobile Search Input - shown only when toggled */}
               {showMobileSearch && (
                 <form
@@ -153,7 +153,7 @@ export default function Navbar() {
                   />
                 </form>
               )}
-
+ 
               <button
                 aria-label="Wishlist"
                 onClick={() => navigate("/wishlist")}
@@ -226,3 +226,4 @@ export default function Navbar() {
     </header>
   );
 }
+ 
