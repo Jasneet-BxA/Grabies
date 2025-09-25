@@ -53,8 +53,11 @@ export async function getProductByName(category:string, productName: string){
 }
 
 //  Wishlist
-export async function getWishlist(){
-  return api.get('/wishlist').then((res) => res.data);
+export async function getWishlist() {
+  const res = await fetch("/api/wishlist");
+  const data = await res.json();
+ 
+  return Array.isArray(data) ? data : data?.wishlist ?? [];
 }
 export async function addToWishlist(productId: string) {
   await api.post(`/wishlist/${productId}`);
