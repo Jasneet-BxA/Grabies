@@ -42,7 +42,7 @@ function App() {
             <Route path="/category" element={<ProductListing />} />
             <Route path="/food" element={<OurFood />} />
             <Route path="/checkoutwithstripe" element={<CheckoutwithStripe/>} />
-
+            <Route path="/checkout" element={<Checkout/>} />
         </Routes>
       </div>
       <Footer />

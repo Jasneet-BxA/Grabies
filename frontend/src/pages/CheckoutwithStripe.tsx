@@ -37,6 +37,14 @@ export default function OrderPage() {
  
   const location = useLocation();
   const navigate = useNavigate();
+  const handlePayByCOD = () => {
+  navigate("/checkout", {
+    state: {
+      cartItems,
+      totalPrice,
+    },
+  });
+};
  
   // Try to use passed address from previous page (via router state)
   const passedAddress = location.state?.address;
@@ -220,13 +228,24 @@ export default function OrderPage() {
         </p>
  
         {addressConfirmed && (
-          <Button
-            onClick={handleProceedToPay}
-            className="bg-orange-600 hover:bg-orange-700 text-white text-lg"
-          >
-            Proceed to Pay
-          </Button>
-        )}
+  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+    <Button
+      onClick={handleProceedToPay}
+      className="bg-orange-600 hover:bg-orange-700 text-white text-lg"
+    >
+      Pay Online (Stripe)
+    </Button>
+
+    <Button
+      onClick={handlePayByCOD}
+      variant="outline"
+      className="text-orange-700 border-orange-600 hover:bg-orange-50"
+    >
+      Pay by COD
+    </Button>
+  </div>
+)}
+
       </section>
     </main>
   );
