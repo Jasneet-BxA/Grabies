@@ -78,7 +78,7 @@ export type FilterOptions = {
   tag?: string;
   rating?: number;
   search?: string;
-  sort?: string;
+  sort?: "price_asc" | "price_desc";
   priceRange?: "lt300" | "300to600" | "";
 };
 

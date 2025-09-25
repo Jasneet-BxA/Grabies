@@ -26,7 +26,7 @@ app.use('/user', userRouter);
 app.use('/cart', cartRouter);
 app.use('/auth', authRouter);
 app.use('/address', addressRouter);
-app.use('/menu', menuRouter);
+app.use('/food', menuRouter);
 app.use('/wishlist', wishlistRouter);
 app.use('/order', orderRouter);
 app.use('/payment', paymentRouter)

@@ -1,6 +1,6 @@
 import axios from 'axios'
 const api = axios.create({
-  baseURL:  import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 })
 // Authentication
@@ -26,17 +26,34 @@ export async function getUserAddress(){
 }
 // Products
 export async function getProductsByCategory(category: string) {
-  return api.get(`/menu/${category}`).then((res) => res.data);
+  return api.get(`/food/${category}`).then((res) => res.data);
 }
-export const getFilteredProducts = async (
+// export const getFilteredProducts = async (
+//   category: string,
+//   filters: { tag?: string; rating?: number;  priceRange?: "lt300" | "300to600";  sort?: 'price_asc' | 'price_desc';}
+// ) => {
+//   const res = await api.get(`/menu/${category}/filters`, { params: filters });
+//   return res.data; 
+// };
+
+export async function getFilteredProducts(
   category: string,
-  filters: { tag?: string; rating?: number;  priceRange?: "lt300" | "300to600"; }
-) => {
-  const res = await api.get(`/menu/${category}/filters`, { params: filters });
-  return res.data; 
-};
+  options: {
+    tag?: string;
+    rating?: number;
+    priceRange?: "lt300" | "300to600";
+    sort?: "price_asc" | "price_desc";
+  }
+) {
+  const res = await api.get(`/food/${category}/filters`, {
+    params: options, 
+  });
+  return res.data;
+}
+
+
 export async function getAllProducts(limit: number = 6, offset: number = 0) {
-  return api.get(`/menu?limit=${limit}&offset=${offset}`).then((res) => res.data);
+  return api.get(`/food?limit=${limit}&offset=${offset}`).then((res) => res.data);
 }
 export async function addUserNewAddress(addressData: {
   address_line: string
@@ -49,7 +66,7 @@ export async function addUserNewAddress(addressData: {
 
 export async function getProductByName(category:string, productName: string){
   const encodedName = encodeURIComponent(productName);
-  const res = await api.get(`/menu/${category}/${encodedName}`);
+  const res = await api.get(`/food/${category}/${encodedName}`);
   return res.data;
 }
 
