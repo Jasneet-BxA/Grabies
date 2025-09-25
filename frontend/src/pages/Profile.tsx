@@ -35,11 +35,12 @@ export default function Profile() {
   const [showAddress, setShowAddress] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(false);
+
   const [addressLine, setAddressLine] = useState("");
   const [city, setCity] = useState("");
   const [stateName, setStateName] = useState("");
   const [pincode, setPincode] = useState("");
-  const [currentAddress, setCurrentAddress] = useState("");
+
   const [savedAddresses, setSavedAddresses] = useState<
     { address_line: string; city: string; state: string; pincode: string }[]
   >([]);
@@ -61,6 +62,7 @@ export default function Profile() {
 
     fetchProfile();
   }, [sheetOpen, isAuthenticated]);
+
   async function handleSaveAddress() {
     if (!addressLine || !city || !stateName || !pincode) {
       alert("Please fill out all fields.");
@@ -74,12 +76,9 @@ export default function Profile() {
         state: stateName,
         pincode: pincode,
       });
+
       const newAddress = res.address;
       setSavedAddresses((prev) => [...prev, newAddress]);
-
-      setCurrentAddress(
-        `${newAddress.address_line}, ${newAddress.city}, ${newAddress.stateName} - ${newAddress.pincode}`
-      );
 
       setAddressLine("");
       setCity("");
@@ -92,6 +91,7 @@ export default function Profile() {
       alert("Failed to save address. Please try again.");
     }
   }
+
   const handleLogout = async () => {
     setLoading(true);
     try {
@@ -329,18 +329,6 @@ export default function Profile() {
               >
                 Back
               </Button>
-              {/* <Button
-                className="w-full bg-orange-500 text-white hover:bg-orange-600 transition-colors duration-200"
-                onClick={() => {
-                  // TODO: Persist to API
-                  alert(`Address added: ${newAddress}`);
-                  setCurrentAddress(newAddress);
-                  setNewAddress("");
-                  setShowAddress(false);
-                }}
-              >
-                Add Address
-              </Button> */}
             </SheetFooter>
           </>
         ) : (
@@ -356,7 +344,7 @@ export default function Profile() {
               className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
               variant="ghost"
             >
-              👤My Account
+              👤 My Account
             </Button>
 
             <Button

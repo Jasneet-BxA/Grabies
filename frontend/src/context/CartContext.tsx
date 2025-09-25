@@ -18,18 +18,12 @@ interface CartContextType {
   refreshCart: () => Promise<void>;
   addItem: (productId: string, quantity: number) => Promise<void>;
   removeItem: (cartId: string) => Promise<void>;
-  quantity: (
-    cartId: string,
-    productId: string,
-    quantity: number
-  ) => Promise<void>;
+  quantity: (productId: string, quantity: number) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartitem, setCartItems] = useState<CartItem[]>([]);
 
   const fetchCart = async () => {
@@ -67,11 +61,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     await refreshCart();
   };
 
-  const quantity = async (
-    cartId: string,
-    productId: string,
-    quantity: number
-  ) => {
+  const quantity = async (productId: string, quantity: number) => {
     if (quantity < 1) return;
     await addToCart(productId, quantity);
     await refreshCart();
