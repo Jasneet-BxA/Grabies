@@ -10,7 +10,6 @@ import Navbar from './components/Layout/Navbar'
 import Footer from './components/Layout/Footer'
 import About from './pages/About'
 import Wishlist from './pages/Wishlist.tsx'
-import ContactUs from './pages/Contact.tsx' 
 import ProductListing from './pages/ProductListing.tsx'
 import OurFood from './pages/OurFood.tsx'
 import OrderHistoryPage from './pages/OrderHistory.tsx'
@@ -39,7 +38,6 @@ function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/contact" element={<ContactUs />} />
             <Route path="/category" element={<ProductListing />} />
             <Route path="/food" element={<OurFood />} />
             <Route path="/checkoutwithstripe" element={<CheckoutwithStripe/>} />
