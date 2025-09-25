@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DollarSign } from "lucide-react";
 import { createOrder } from "@/lib/api"; // Your backend API
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast"; // Import react-hot-toast
 
 export default function CheckoutPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { addressId } = location.state || {}; // Assuming addressId is passed via state
+  const { refreshCart } = useCart();
 
   const [email, setEmail] = useState("");
   const [saveInfo, setSaveInfo] = useState(false);
@@ -23,24 +26,23 @@ export default function CheckoutPage() {
     try {
       // Place the order and receive the response (which includes orderId)
       const res = await createOrder(addressId);
+      await refreshCart();
       console.log(res);
 
-      // Inform the user of successful order placement
-      const confirmed = window.confirm(
-        "Your COD order has been placed successfully! 🛵💸\n\nClick OK to view your orders."
-      );
+      // Show toast message on success
+      toast.success("Your COD order has been placed successfully! 🛵💸");
 
-      if (confirmed) {
-        // Navigate to the order history page and pass orderId
+      // Navigate to the order history page and pass orderId
+      setTimeout(() => {
         navigate("/orderhistory", {
           state: {
             orderId: res.orderId, // Assuming this is returned by the API
           },
         });
-      }
+      }, 3000); // Wait 3 seconds before navigating
     } catch (error) {
       console.error("Order placement failed:", error);
-      alert("Failed to place order. Please try again.");
+      toast.error("Failed to place order. Please try again.");
     }
   };
 
@@ -86,10 +88,11 @@ export default function CheckoutPage() {
         </label>
       </div>
 
-      {/* Place Order */}
+      {/* Place Order Button */}
       <Button
         className="w-full bg-orange-600 hover:bg-orange-700 text-white text-lg py-3 mt-4 transition"
         onClick={handlePayment}
+        disabled={!email} // Disable button if email is not entered
       >
         Place COD Order 🛵
       </Button>
@@ -98,6 +101,7 @@ export default function CheckoutPage() {
       <div className="text-xs text-gray-500 text-center mt-6 border-t pt-4">
         Powered by COD | <span className="underline cursor-pointer">Privacy Policy</span>
       </div>
+
     </main>
   );
 }
