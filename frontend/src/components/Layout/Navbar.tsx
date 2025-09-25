@@ -17,8 +17,6 @@ import { useAuth } from "@/context/AuthContext";
 import Profile from "@/pages/Profile";
 import { useCart } from "@/context/CartContext";
 import { useEffect } from "react";
-// import { useEffect, useState } from "react";
-// import { getCart } from "@/lib/api"; // <-- import getCart from api.ts
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -41,19 +39,17 @@ refreshCart();
     <header className="w-full px-4 md:px-10 py-4 shadow-sm bg-white fixed top-0 left-0 z-50">
       
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        {/* Logo */}
     
         <Link to="/" className="text-2xl font-bold text-orange-600">
           Grabies
         </Link>
-        {/* Desktop Navigation */}
         <NavigationMenu>
           <NavigationMenuList className="hidden md:flex space-x-6">
-            {["Home", "About Us", "Our Food", "Contact"].map((item, idx) => (
+            {["Home", "About Us", "Our Food"].map((item, idx) => (
               <NavigationMenuItem key={idx}>
                 <NavigationMenuLink asChild>
                   <Link
-                    to={["/", "/about", "/food", "/contact"][idx]}
+                    to={["/", "/about", "/food"][idx]}
                     className="text-gray-700 hover:text-orange-600 font-medium"
                   >
                     {item}
@@ -63,7 +59,6 @@ refreshCart();
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        {/* Desktop Auth/Profile */}
         <div className="hidden md:flex items-center gap-3">
           {!isAuthenticated ? (
             <>
@@ -80,7 +75,6 @@ refreshCart();
             </>
           ) : (
             <>
-              {/* Wishlist Icon */}
               <button
                 aria-label="Wishlist"
                 onClick={() => navigate("/wishlist")}
@@ -88,7 +82,6 @@ refreshCart();
               >
                 <Heart className="h-6 w-6 text-orange-600" />
               </button>
-              {/* Cart Icon */}
               <button
                 aria-label="Cart"
                 onClick={() => navigate("/cart")}
@@ -105,11 +98,9 @@ refreshCart();
             </>
           )}
         </div>
-        {/* Mobile Right Section */}
         <div className="md:hidden flex items-center gap-2">
           {isAuthenticated && (
             <>
-              {/* Wishlist */}
               <button
                 aria-label="Wishlist"
                 onClick={() => navigate("/wishlist")}
@@ -117,7 +108,6 @@ refreshCart();
               >
                 <Heart className="h-6 w-6 text-orange-600" />
               </button>
-              {/* Cart for Mobile */}
               <button
                 aria-label="Cart"
                 onClick={() => navigate("/cart")}
@@ -133,7 +123,6 @@ refreshCart();
               <Profile />
             </>
           )}
-          {/* Mobile Dropdown Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -146,7 +135,6 @@ refreshCart();
                 { label: "About Us", to: "/about" },
                 { label: "Our Food", to: "/food" },
                 { label: "Cart", to: "/cart" },
-                { label: "Contact", to: "/contact" },
               ].map((item, idx) => (
                 <DropdownMenuItem key={idx} asChild>
                   <Link

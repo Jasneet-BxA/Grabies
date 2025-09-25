@@ -26,7 +26,6 @@ interface Order {
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchOrders = async () => {
       try {

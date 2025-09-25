@@ -1,4 +1,3 @@
-// components/product/ProductCard.tsx
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import type { Product } from "@/types";
  
@@ -7,7 +6,7 @@ type Props = {
   onAddToCart: (product: Product) => void;
   onToggleWishlist: (product: Product) => void;
   isWishlisted: boolean;
-  showWishlistIcon?: boolean; // ✅ Optional prop
+  showWishlistIcon?: boolean;
 };
  
 export default function ProductCard({
@@ -15,11 +14,10 @@ export default function ProductCard({
   onAddToCart,
   onToggleWishlist,
   isWishlisted,
-  showWishlistIcon = true, // ✅ default to true
+  showWishlistIcon = true,
 }: Props) {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition h-full flex flex-col">
-      {/* Product Image */}
       <div className="w-full h-48">
         <img
           src={product.image_url}
@@ -29,11 +27,8 @@ export default function ProductCard({
       </div>
 
       <div className="flex flex-col p-5 flex-grow">
-        {/* Title + Wishlist Icon */}
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-semibold text-gray-800 truncate">{product.name}</h3>
-
-          {/* Conditionally render wishlist icon */}
           {showWishlistIcon && (
             <button
               onClick={(e) => {
@@ -48,7 +43,6 @@ export default function ProductCard({
           )}
         </div>
 
-        {/* Description */}
         <p className="text-sm text-gray-600 mt-2 flex-grow">{product.description}</p>
 
         {/* Price and Rating */}
