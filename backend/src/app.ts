@@ -9,7 +9,7 @@ import menuRouter from './routes/menuRoute.js'
 import wishlistRouter from './routes/wishlistRoute.js'
 import orderRouter from './routes/orderRoute.js'
 import paymentRouter from './routes/paymentRoute.js'
-import { errorHandler } from 'middlewares/errorHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 import stripeWebhookRouter from './routes/stripeWebhook.js';
  
  
