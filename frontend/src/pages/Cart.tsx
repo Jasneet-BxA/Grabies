@@ -95,7 +95,7 @@ export default function Cart() {
     try {
       await addToCart(productId, newQuantity);
       await refreshCart();
-      quantity(cartId, productId, newQuantity);
+      quantity(productId, newQuantity);
       setCartItems((prev) =>
         prev.map((item) =>
           item.id === cartId ? { ...item, quantity: newQuantity } : item
