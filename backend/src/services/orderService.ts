@@ -57,7 +57,6 @@ export const createOrderFromCartService = async (
   userId: string,
   addressId: string
 ) => {
-  // 1️⃣ Get cart items (basic info only)
   const { data: cartItems, error: cartError } = await supabase
     .from("cart")
     .select("product_id, quantity")
@@ -66,10 +65,8 @@ export const createOrderFromCartService = async (
   if (cartError) throw new Error(cartError.message);
   if (!cartItems || cartItems.length === 0) throw new Error("Cart is empty");
 
-  // 2️⃣ Get all unique product IDs
   const productIds = cartItems.map((item) => item.product_id);
 
-  // 3️⃣ Fetch prices for all products in a single query
   const { data: products, error: productsError } = await supabase
     .from("products")
     .select("id, price")
@@ -81,13 +78,11 @@ export const createOrderFromCartService = async (
     products.map((product) => [product.id, product.price])
   );
 
-  // 4️⃣ Calculate total price
   const totalPrice = cartItems.reduce((sum, item) => {
     const price = priceMap.get(item.product_id) || 0;
     return sum + item.quantity * price;
   }, 0);
 
-  // 5️⃣ Create order
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert({
@@ -101,7 +96,6 @@ export const createOrderFromCartService = async (
 
   if (orderError) throw new Error(orderError.message);
 
-  // 6️⃣ Prepare and insert order_items
   const orderItems = cartItems.map((item) => ({
     order_id: order.id,
     product_id: item.product_id,
@@ -116,7 +110,6 @@ export const createOrderFromCartService = async (
 
   if (orderItemsError) throw new Error(orderItemsError.message);
 
-  // 7️⃣ Clear the cart
   const { error: clearCartError } = await supabase
     .from("cart")
     .delete()

@@ -45,7 +45,6 @@ export const updateAddressService = async (
   userId: string,
   addressFields: AddressInput
 ) => {
-  // Check if address exists
   const { data: existingAddress, error: addressFetchError } = await supabase
     .from('addresses')
     .select('id')
@@ -78,7 +77,6 @@ export const updateAddressService = async (
     if (error) throw new Error(error.message);
     addressResult = data;
 
-    // Update user's address_id with new address id
     const { error: userUpdateError } = await supabase
       .from('users')
       .update({ address_id: addressResult.id })

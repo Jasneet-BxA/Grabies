@@ -2,7 +2,7 @@ import { stripe } from "../utils/stripe.js";
 import type { Request, Response } from "express";
 import { createOrderFromCartService } from "../services/orderService.js";
 
-// Stripe Checkout session for card payment
+
 export const createCheckoutSession = async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
@@ -14,7 +14,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
     const { orderId, totalPrice } = await createOrderFromCartService(userId, addressId);
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"], // Only card payments
+      payment_method_types: ["card"], 
       line_items: [
         {
           price_data: {
@@ -38,7 +38,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
   }
 };
 
-// Endpoint for placing Cash on Delivery order
+
 export const placeOrderCashOnDelivery = async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
@@ -48,9 +48,6 @@ export const placeOrderCashOnDelivery = async (req: Request, res: Response) => {
     }
 
     const { orderId, totalPrice } = await createOrderFromCartService(userId, addressId);
-
-    // TODO: Update order in DB to set paymentMode = "cash_on_delivery"
-    // e.g. await updateOrderPaymentMode(orderId, "cash_on_delivery");
 
     res.json({ message: "Order placed with Cash on Delivery", orderId });
   } catch (error: any) {
