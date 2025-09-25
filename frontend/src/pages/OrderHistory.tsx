@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getOrders } from "@/lib/api"; // Your backend API to fetch all orders
+import { getOrders } from "@/lib/api"; 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from "lucide-react"; // Arrow icon for buttons
+import { ArrowRight } from "lucide-react"; 
 
 interface OrderItem {
   quantity: number;

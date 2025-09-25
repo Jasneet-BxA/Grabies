@@ -1,5 +1,3 @@
-// src/components/Profile.tsx
-
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getUserProfile, logout } from "@/lib/api";
@@ -39,7 +37,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [addressLine, setAddressLine] = useState("");
   const [city, setCity] = useState("");
-  const [stateName, setStateName] = useState(""); // avoid conflict with JS `state`
+  const [stateName, setStateName] = useState("");
   const [pincode, setPincode] = useState("");
   const [currentAddress, setCurrentAddress] = useState("");
   const [savedAddresses, setSavedAddresses] = useState<
@@ -133,7 +131,6 @@ export default function Profile() {
       <SheetContent className="w-72 sm:w-96 bg-white shadow-xl border-l border-gray-200 overflow-y-auto">
         {showDetails ? (
           <>
-            {/* --------- My Account Details --------- */}
             <SheetHeader>
               <SheetTitle className="text-2xl font-semibold text-orange-600">
                 My Account
@@ -145,7 +142,6 @@ export default function Profile() {
 
             <div className="mt-6 space-y-6">
               <div className="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
-                {/* Name */}
                 <div className="mb-4">
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Full Name
@@ -158,7 +154,6 @@ export default function Profile() {
                   />
                 </div>
 
-                {/* Email */}
                 <div className="mb-4">
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Email Address
@@ -171,7 +166,6 @@ export default function Profile() {
                   />
                 </div>
 
-                {/* Phone */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Phone Number
@@ -186,7 +180,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Footer */}
             <SheetFooter className="mt-6 flex gap-3">
               <Button
                 variant="outline"
@@ -204,7 +197,6 @@ export default function Profile() {
           </>
         ) : showAddress ? (
           <>
-            {/* --------- Address Section --------- */}
             <SheetHeader>
               <SheetTitle className="text-2xl font-semibold text-orange-600">
                 My Address
@@ -216,7 +208,6 @@ export default function Profile() {
 
             <div className="mt-6 space-y-6">
               <div className="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
-                {/* Current Address */}
                 <div className="mb-4">
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Current Address
@@ -233,7 +224,6 @@ export default function Profile() {
                   />
                 </div>
 
-                {/* Additional Saved Addresses */}
                 {savedAddresses.length > 0 && (
                   <div className="mt-6 space-y-4">
                     <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -257,7 +247,6 @@ export default function Profile() {
                   </div>
                 )}
 
-                {/* New Address Dialog Trigger */}
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button className="w-full mt-4 bg-orange-500 text-white hover:bg-orange-600">
@@ -274,7 +263,6 @@ export default function Profile() {
                     </DialogHeader>
 
                     <div className="space-y-4">
-                      {/* Address Line */}
                       <input
                         type="text"
                         value={addressLine}
@@ -283,7 +271,6 @@ export default function Profile() {
                         placeholder="Address Line"
                       />
 
-                      {/* City */}
                       <input
                         type="text"
                         value={city}
@@ -292,7 +279,6 @@ export default function Profile() {
                         placeholder="City"
                       />
 
-                      {/* State */}
                       <input
                         type="text"
                         value={stateName}
@@ -301,7 +287,6 @@ export default function Profile() {
                         placeholder="State"
                       />
 
-                      {/* Pincode */}
                       <input
                         type="text"
                         value={pincode}
@@ -336,7 +321,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Footer */}
             <SheetFooter>
               <Button
                 variant="outline"
@@ -361,7 +345,6 @@ export default function Profile() {
           </>
         ) : (
           <>
-            {/* --------- Default Welcome View --------- */}
             <SheetHeader>
               <SheetTitle className="text-2xl font-bold text-orange-600">
                 👋 Welcome, {profile?.name || "User"}

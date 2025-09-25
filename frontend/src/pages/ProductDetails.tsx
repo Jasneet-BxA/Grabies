@@ -5,7 +5,7 @@ import {
   DialogTrigger,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type{ Product } from "@/types/index";
+import type { Product } from "@/types/index";
 import { addToCart, getProductByName } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
@@ -25,15 +25,14 @@ export default function ProductDetailDialog({
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null); // For error state
+  const [error, setError] = useState<string | null>(null);
 
   const { cartitem, refreshCart } = useCart();
 
-  // Function to fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
-      setError(null); // Reset error when fetching starts
+      setError(null);
       try {
         const data = await getProductByName(category, productName);
         setProduct(data);
@@ -50,7 +49,6 @@ export default function ProductDetailDialog({
     }
   }, [open, category, productName]);
 
-  // Handle adding to the cart
   const handleAddToCart = async (product: Product) => {
     if (!product) return;
 
@@ -112,7 +110,9 @@ export default function ProductDetailDialog({
                 <span className="text-orange-600 font-semibold text-lg">
                   ₹{product.price}
                 </span>
-                <span className="text-yellow-500 text-sm">⭐ {product.rating}</span>
+                <span className="text-yellow-500 text-sm">
+                  ⭐ {product.rating}
+                </span>
               </div>
               <button
                 className={`mt-6 w-full ${

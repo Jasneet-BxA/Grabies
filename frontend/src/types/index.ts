@@ -33,7 +33,7 @@ export interface CartItem {
   product: Product
   quantity: number
   product_id: string
-  id: string // cart item id (cartId) 
+  id: string 
   user_id: string
 }
 

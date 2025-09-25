@@ -70,9 +70,8 @@ export default function Home() {
   const [previewProducts, setPreviewProducts] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
 
-  // Auto slide carousel
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(
@@ -86,7 +85,6 @@ export default function Home() {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
   };
 
-  // Fetch preview products
   useEffect(() => {
     const fetchPreview = async () => {
       setLoading(true);
@@ -102,7 +100,6 @@ export default function Home() {
     fetchPreview();
   }, []);
 
-  // Fetch user and wishlist
   useEffect(() => {
     const fetchUserAndWishlist = async () => {
       try {
@@ -128,7 +125,6 @@ export default function Home() {
     fetchUserAndWishlist();
   }, []);
 
-  // Handle wishlist toggle
   const handleToggleWishlist = async (product: Product) => {
     const productId = product.id.trim();
     const isAlreadyWishlisted = wishlist.includes(productId);
@@ -196,7 +192,6 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      {/* Carousel */}
       <div className="relative w-full overflow-hidden h-[400px] md:h-[500px]">
         <div
           className="whitespace-nowrap transition-transform duration-700 ease-in-out"
@@ -216,13 +211,14 @@ export default function Home() {
                 <h2 className="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">
                   {slide.title}
                 </h2>
-                <p className="text-lg md:text-2xl drop-shadow">{slide.subtitle}</p>
+                <p className="text-lg md:text-2xl drop-shadow">
+                  {slide.subtitle}
+                </p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Dots */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
           {slides.map((_, index) => (
             <button
@@ -236,7 +232,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* About Section */}
       <div className="w-full bg-orange-50 mt-12">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 px-4 py-10">
           <div className="w-full md:w-1/2">
@@ -268,10 +263,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Explore More Food */}
       <ExploreMoreFood />
 
-      {/* Product Preview */}
       <div className="w-full bg-orange-50 py-12">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-orange-700 mb-8">
@@ -279,8 +272,7 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {loading
-              ? // Show 6 skeleton cards while loading
-                Array.from({ length: 6 }).map((_, idx) => (
+              ? Array.from({ length: 6 }).map((_, idx) => (
                   <SkeletonCard key={idx} />
                 ))
               : previewProducts.map((product: Product) => (

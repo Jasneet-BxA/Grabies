@@ -4,14 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DollarSign } from "lucide-react";
-import { createOrder } from "@/lib/api"; // Your backend API
+import { createOrder } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
-import toast from "react-hot-toast"; // Import react-hot-toast
+import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { addressId } = location.state || {}; // Assuming addressId is passed via state
+  const { addressId } = location.state || {};
   const { refreshCart } = useCart();
 
   const [email, setEmail] = useState("");
@@ -24,22 +24,19 @@ export default function CheckoutPage() {
     }
 
     try {
-      // Place the order and receive the response (which includes orderId)
       const res = await createOrder(addressId);
       await refreshCart();
       console.log(res);
 
-      // Show toast message on success
       toast.success("Your COD order has been placed successfully! 🛵💸");
 
-      // Navigate to the order history page and pass orderId
       setTimeout(() => {
         navigate("/orderhistory", {
           state: {
-            orderId: res.orderId, // Assuming this is returned by the API
+            orderId: res.orderId,
           },
         });
-      }, 3000); // Wait 3 seconds before navigating
+      }, 3000);
     } catch (error) {
       console.error("Order placement failed:", error);
       toast.error("Failed to place order. Please try again.");
@@ -52,9 +49,11 @@ export default function CheckoutPage() {
         Cash on Delivery (COD)
       </h2>
 
-      {/* Email */}
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
           Email Address
         </label>
         <Input
@@ -67,7 +66,6 @@ export default function CheckoutPage() {
         />
       </div>
 
-      {/* COD Info */}
       <div className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-md p-4">
         <DollarSign className="text-orange-600" />
         <p className="text-sm text-gray-700 font-medium">
@@ -75,7 +73,6 @@ export default function CheckoutPage() {
         </p>
       </div>
 
-      {/* Save Info */}
       <div className="flex items-center gap-2 p-2 hover:bg-orange-50 rounded-md transition">
         <Checkbox
           id="save-info"
@@ -83,25 +80,26 @@ export default function CheckoutPage() {
           onCheckedChange={(checked: boolean) => setSaveInfo(checked)}
           className="data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600 transition"
         />
-        <label htmlFor="save-info" className="text-sm text-gray-800 cursor-pointer">
+        <label
+          htmlFor="save-info"
+          className="text-sm text-gray-800 cursor-pointer"
+        >
           Save my info for faster checkout
         </label>
       </div>
 
-      {/* Place Order Button */}
       <Button
         className="w-full bg-orange-600 hover:bg-orange-700 text-white text-lg py-3 mt-4 transition"
         onClick={handlePayment}
-        disabled={!email} // Disable button if email is not entered
+        disabled={!email}
       >
-        Place COD Order 🛵
+        Place COD Order
       </Button>
 
-      {/* Footer */}
       <div className="text-xs text-gray-500 text-center mt-6 border-t pt-4">
-        Powered by COD | <span className="underline cursor-pointer">Privacy Policy</span>
+        Powered by COD |{" "}
+        <span className="underline cursor-pointer">Privacy Policy</span>
       </div>
-
     </main>
   );
 }

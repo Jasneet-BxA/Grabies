@@ -13,7 +13,6 @@ import {
 import type { Product, User } from "@/types";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
-// components/ui/SkeletonCard.tsx
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function SkeletonCard() {
@@ -27,7 +26,6 @@ export function SkeletonCard() {
     </div>
   );
 }
-
 
 export default function OurFood() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -52,20 +50,19 @@ export default function OurFood() {
   };
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllProducts(21, 0);
-      setProducts(data);
-    } catch (err) {
-      console.error("Failed to fetch products", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchData();
-}, []);
-
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllProducts(21, 0);
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to fetch products", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -77,7 +74,7 @@ export default function OurFood() {
           const wishlistItems: Product[] = await getWishlist();
           const ids = wishlistItems.map((item) => item.id.trim());
           setWishlist(ids);
-          saveWishlistToLocalStorage(ids); // Sync server -> local
+          saveWishlistToLocalStorage(ids);
         } else {
           const localWishlist = getWishlistFromLocalStorage();
           setWishlist(localWishlist);
@@ -93,7 +90,6 @@ export default function OurFood() {
   }, []);
 
   const { cartitem, refreshCart } = useCart();
-  // ... other states and useEffect remain same
 
   const handleAddToCart = async (product: Product) => {
     if (!product) return;
@@ -128,7 +124,7 @@ export default function OurFood() {
       if (user) {
         try {
           await removeFromWishlist(productId);
-           toast.success(`💔 Removed "${product.name}" from your CraveBox`);
+          toast.success(`💔 Removed "${product.name}" from your CraveBox`);
         } catch (err) {
           console.error("Failed to remove from server wishlist", err);
         }
@@ -141,7 +137,7 @@ export default function OurFood() {
       if (user) {
         try {
           await addToWishlist(product.id);
-    toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
+          toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
         } catch (err) {
           console.error("Failed to add to server wishlist", err);
         }
@@ -165,26 +161,25 @@ export default function OurFood() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-  {loading
-    ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-    : products.map((product) => (
-        <ProductDetailDialog
-          key={product.id}
-          category={product.cuisine}
-          productName={product.name}
-          triggerElement={
-            <ProductCard
-              product={product}
-              onAddToCart={handleAddToCart}
-              onToggleWishlist={handleToggleWishlist}
-              isWishlisted={isWishlisted(product)}
-              showWishlistIcon={!!user}
-            />
-          }
-        />
-      ))}
-</div>
-
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+            : products.map((product) => (
+                <ProductDetailDialog
+                  key={product.id}
+                  category={product.cuisine}
+                  productName={product.name}
+                  triggerElement={
+                    <ProductCard
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      onToggleWishlist={handleToggleWishlist}
+                      isWishlisted={isWishlisted(product)}
+                      showWishlistIcon={!!user}
+                    />
+                  }
+                />
+              ))}
+        </div>
       </div>
     </>
   );

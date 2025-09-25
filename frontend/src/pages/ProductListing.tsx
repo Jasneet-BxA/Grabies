@@ -28,7 +28,6 @@ import {
 
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
-// components/ui/SkeletonCard.tsx
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function SkeletonCard() {
@@ -42,7 +41,6 @@ export function SkeletonCard() {
     </div>
   );
 }
-
 
 export default function ProductListing() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -150,7 +148,6 @@ export default function ProductListing() {
     fetchUserAndWishlist();
   }, []);
   const { cartitem, refreshCart } = useCart();
-  // ... other states and useEffect remain same
 
   const handleAddToCart = async (product: Product) => {
     if (!product) return;
@@ -182,19 +179,17 @@ export default function ProductListing() {
     const isAlreadyWishlisted = wishlist.includes(productId);
 
     if (isAlreadyWishlisted) {
-      // Try removing from backend first
       if (user) {
         try {
           await removeFromWishlist(productId);
           const updatedWishlist = wishlist.filter((id) => id !== productId);
           setWishlist(updatedWishlist);
           saveWishlistToLocalStorage(updatedWishlist);
-           toast.success(`💔 Removed "${product.name}" from your CraveBox`);
+          toast.success(`💔 Removed "${product.name}" from your CraveBox`);
         } catch (err) {
           console.error("Failed to remove from server wishlist", err);
         }
       } else {
-        // Anonymous/local user
         const updatedWishlist = wishlist.filter((id) => id !== productId);
         setWishlist(updatedWishlist);
         saveWishlistToLocalStorage(updatedWishlist);
@@ -207,12 +202,11 @@ export default function ProductListing() {
           setWishlist(updatedWishlist);
           saveWishlistToLocalStorage(updatedWishlist);
           await addToWishlist(product.id);
-    toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
+          toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
         } catch (err) {
           console.error("Failed to add to server wishlist", err);
         }
       } else {
-        // Anonymous/local user
         const updatedWishlist = [...wishlist, productId];
         setWishlist(updatedWishlist);
         saveWishlistToLocalStorage(updatedWishlist);
@@ -226,13 +220,8 @@ export default function ProductListing() {
   return (
     <>
       <Breadcrumb className="mb-6 text-sm text-gray-600 flex items-center space-x-1">
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-
         {cameFromOurFood ? (
           <>
-            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink href="/food">OurFood</BreadcrumbLink>
             </BreadcrumbItem>
@@ -254,9 +243,7 @@ export default function ProductListing() {
           </>
         )}
       </Breadcrumb>
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-end items-start gap-4 mb-10 bg-white p-4 rounded-lg shadow-md border border-gray-200">
-        {/* Type Toggle */}
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-gray-700">Type</label>
           <div className="flex border border-gray-300 rounded-full overflow-hidden text-sm font-medium shadow-sm">
@@ -278,7 +265,6 @@ export default function ProductListing() {
           </div>
         </div>
 
-        {/* Rating Select */}
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-gray-700">Rating</label>
           <Select
@@ -298,7 +284,6 @@ export default function ProductListing() {
           </Select>
         </div>
 
-        {/* Price Range Select */}
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-gray-700">Price</label>
           <Select
@@ -315,7 +300,6 @@ export default function ProductListing() {
           </Select>
         </div>
 
-        {/* Reset Button */}
         <div className="sm:ml-auto">
           <button
             onClick={() => {
@@ -335,36 +319,35 @@ export default function ProductListing() {
           {category ? `${category} Items` : "All Food Items"}
         </h2>
 
-{loading && (
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-    {Array.from({ length: 6 }).map((_, i) => (
-      <SkeletonCard key={i} />
-    ))}
-  </div>
-)}
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        )}
         {error && <p className="text-center text-red-500">{error}</p>}
 
         {!loading && !error && (
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-    {products.map((product) => (
-      <ProductDetailDialog
-        key={product.id}
-        category={product.cuisine}
-        productName={product.name}
-        triggerElement={
-          <ProductCard
-            product={product}
-            onAddToCart={handleAddToCart}
-            onToggleWishlist={handleToggleWishlist}
-            isWishlisted={isWishlisted(product)}
-            showWishlistIcon={!!user}
-          />
-        }
-      />
-    ))}
-  </div>
-)}
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+            {products.map((product) => (
+              <ProductDetailDialog
+                key={product.id}
+                category={product.cuisine}
+                productName={product.name}
+                triggerElement={
+                  <ProductCard
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    onToggleWishlist={handleToggleWishlist}
+                    isWishlisted={isWishlisted(product)}
+                    showWishlistIcon={!!user}
+                  />
+                }
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

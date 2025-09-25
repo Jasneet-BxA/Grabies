@@ -3,8 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getOrderById } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FaArrowLeft } from "react-icons/fa"; // Back arrow icon for better navigation
-
+import { FaArrowLeft } from "react-icons/fa";
 interface OrderItem {
   quantity: number;
   total_price: number;
@@ -26,7 +25,7 @@ interface Order {
 }
 
 export default function OrderDetailPage() {
-  const { id } = useParams(); // read /order/:id
+  const { id } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -110,7 +109,9 @@ export default function OrderDetailPage() {
               <p className="font-semibold text-gray-800 text-lg">
                 {item.products.name}
               </p>
-              <p className="text-sm text-gray-600">Price: ₹{item.products.price}</p>
+              <p className="text-sm text-gray-600">
+                Price: ₹{item.products.price}
+              </p>
               <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
             </div>
             <p className="text-lg text-orange-600 font-semibold">
@@ -129,7 +130,6 @@ export default function OrderDetailPage() {
         </p>
       </div>
 
-      {/* Action Buttons */}
       <div className="mt-6 flex justify-between items-center">
         <button
           className="flex items-center space-x-2 px-4 py-2 rounded-md bg-orange-600 text-white font-semibold text-sm hover:bg-orange-700 transition-all"
@@ -138,7 +138,6 @@ export default function OrderDetailPage() {
           <FaArrowLeft className="text-white" />
           <span>Back to Orders</span>
         </button>
-
       </div>
     </main>
   );
