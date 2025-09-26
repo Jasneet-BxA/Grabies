@@ -69,7 +69,7 @@ export default function Home() {
   const delay = 4000;
   const [previewProducts, setPreviewProducts] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
-  const [user, setUser] = useState<User| null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -275,15 +275,32 @@ export default function Home() {
               ? Array.from({ length: 6 }).map((_, idx) => (
                   <SkeletonCard key={idx} />
                 ))
-              : previewProducts.map((product: Product) => (
-                  <ProductCard
+              : previewProducts.map((product) => (
+                  <div
                     key={product.id}
-                    product={product}
-                    onAddToCart={handleAddToCart}
-                    onToggleWishlist={handleToggleWishlist}
-                    isWishlisted={isWishlisted(product)}
-                    showWishlistIcon={!!user}
-                  />
+                    className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow"
+                  >
+                    <div className="relative w-full h-48">
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-xl font-semibold text-gray-800 mb-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <div className="mt-4 flex justify-between items-center">
+                        <span className="text-orange-600 font-bold text-lg">
+                          ₹{product.price}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 ))}
           </div>
         </div>
