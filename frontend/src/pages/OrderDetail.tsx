@@ -4,6 +4,7 @@ import { getOrderById } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaArrowLeft } from "react-icons/fa";
+
 interface OrderItem {
   quantity: number;
   total_price: number;
@@ -39,9 +40,14 @@ export default function OrderDetailPage() {
       try {
         const data = await getOrderById(id);
         setOrder(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching order:", err);
-        setError("Failed to load order details.");
+
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Failed to load order details.");
+        }
       } finally {
         setLoading(false);
       }
