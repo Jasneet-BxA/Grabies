@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router";
-import Home from "./pages/Home.tsx";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ProductDetails from "./pages/ProductDetails";
@@ -9,14 +9,14 @@ import Profile from "./pages/Profile";
 import Navbar from "./components/Layout/Navbar";
 import Footer from "./components/Layout/Footer";
 import About from "./pages/About";
-import Wishlist from "./pages/Wishlist.tsx";
-import ProductListing from "./pages/ProductListing.tsx";
-import OurFood from "./pages/OurFood.tsx";
-import OrderHistoryPage from "./pages/OrderHistory.tsx";
-import CheckoutwithStripe from "./pages/CheckoutwithStripe.tsx";
-import SearchResults from "./pages/SearchResults.tsx";
+import Wishlist from "./pages/Wishlist";
+import ProductListing from "./pages/ProductListing";
+import OurFood from "./pages/OurFood";
+import OrderHistoryPage from "./pages/OrderHistory";
+import CheckoutwithStripe from "./pages/CheckoutwithStripe";
+import SearchResults from "./pages/SearchResults";
 import { Toaster } from "react-hot-toast";
-import OrderDetailPage from "./pages/OrderDetail.tsx";
+import OrderDetailPage from "./pages/OrderDetail";
 
 function App() {
   return (
