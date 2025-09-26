@@ -18,11 +18,11 @@ export default function ProductCard({
 }: Props) {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition h-full flex flex-col">
-      <div className="relative w-full h-48">
+      <div className="w-full h-48">
         <img
           src={product.image_url}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover"
         />
       </div>
 
