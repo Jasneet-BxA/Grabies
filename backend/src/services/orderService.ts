@@ -26,7 +26,6 @@ export const getOrderByIdService = async (orderId: string) => {
     console.error("Error fetching order by ID:", error);
     throw new Error("Failed to fetch order details.");
   }
-console.log(data);
   return data;
 };
 
@@ -38,6 +37,7 @@ export const getUserOrdersService = async (userId: string) => {
       id,
       total_price,
       status,
+      created_at,
       order_items (
         quantity,
         total_price,
@@ -48,10 +48,12 @@ export const getUserOrdersService = async (userId: string) => {
       )
     `)
     .eq("user_id", userId)
+    .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
   return data;
 };
+
 
 export const createOrderFromCartService = async (
   userId: string,

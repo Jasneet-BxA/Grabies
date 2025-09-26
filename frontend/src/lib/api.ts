@@ -1,13 +1,10 @@
-// import type { SignupInput } from '@/types';
 import axios from 'axios'
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
-  // baseURL: "http://localhost:3000",
   withCredentials: true,
 })
 // Authentication
 export async function login(email: string, password: string) {
-  console.log(import.meta.env.VITE_BACKEND_URL);
   return api.post('/auth/login', { email, password })
 }
 export async function signup(data: any) {

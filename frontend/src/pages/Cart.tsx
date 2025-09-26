@@ -198,6 +198,7 @@ export default function Cart() {
                   <Button
                     variant="outline"
                     size="icon"
+                    aria-label="Decrease quantity"
                     onClick={() =>
                       updateQuantity(cartId, product.id, quantity - 1)
                     }
@@ -212,6 +213,7 @@ export default function Cart() {
                   <Button
                     variant="outline"
                     size="icon"
+                    aria-label="Increase quantity" 
                     onClick={() =>
                       updateQuantity(cartId, product.id, quantity + 1)
                     }
@@ -223,6 +225,7 @@ export default function Cart() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Remove item"   
                     className="text-red-500 hover:bg-red-100 hover:text-red-600 ml-2 transition-all"
                     onClick={() => handleRemove(cartId)}
                   >

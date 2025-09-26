@@ -18,7 +18,6 @@ dotenv.config();
  
 const app = express();
 app.use('/webhook', stripeWebhookRouter);
-console.log(process.env.FRONTEND_URL)
 app.use(cors({origin: process.env.FRONTEND_URL, credentials: true}));
 app.use(express.json());
 app.use(cookieParser());

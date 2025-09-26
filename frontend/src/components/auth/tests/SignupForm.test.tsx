@@ -2,6 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignupForm from '../SignupForm';
+import { useAuth } from '@/context/AuthContext';
 import { signup } from '@/lib/api';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -15,6 +16,13 @@ jest.mock('react-router-dom', () => ({
 // ✅ Mock signup API
 jest.mock('@/lib/api', () => ({
   signup: jest.fn(),
+}));
+
+// ✅ Mock AuthContext
+jest.mock('@/context/AuthContext', () => ({
+  useAuth: () => ({
+    setUser: jest.fn(),
+  }),
 }));
 
 const renderWithRouter = (ui: React.ReactElement) => {
