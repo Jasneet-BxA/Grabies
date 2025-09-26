@@ -51,8 +51,8 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orderhistory" element={<OrderHistoryPage />} />
           <Route path="/order/:id" element={<OrderDetailPage />} />
-<Route path="/search" element={<SearchResults />} />     
-   </Routes>
+          <Route path="/search" element={<SearchResults />} />
+        </Routes>
       </div>
       <Footer />
     </>

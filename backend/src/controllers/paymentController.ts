@@ -2,7 +2,6 @@ import { stripe } from "../utils/stripe.js";
 import type { Request, Response } from "express";
 import { createOrderFromCartService } from "../services/orderService.js";
 
-
 export const createCheckoutSession = async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
@@ -32,12 +31,15 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
     });
 
     res.json({ url: session.url });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating checkout session:", error);
-    res.status(500).json({ error: error.message || "Internal server error" });
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
 };
-
 
 export const placeOrderCashOnDelivery = async (req: Request, res: Response) => {
   try {
@@ -50,8 +52,12 @@ export const placeOrderCashOnDelivery = async (req: Request, res: Response) => {
     const { orderId, totalPrice } = await createOrderFromCartService(userId, addressId);
 
     res.json({ message: "Order placed with Cash on Delivery", orderId });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error placing COD order:", error);
-    res.status(500).json({ error: error.message || "Internal server error" });
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
 };

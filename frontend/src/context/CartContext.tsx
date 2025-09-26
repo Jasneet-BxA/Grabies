@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCart, addToCart, removeFromCart } from "@/lib/api";
+import type { RawCartItem } from "@/types";
 
 interface CartItem {
   id: string;
@@ -23,12 +24,13 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartitem, setCartItems] = useState<CartItem[]>([]);
 
-  const fetchCart = async () => {
-    const rawData = await getCart();
-    const transformed = rawData.map((item: any) => ({
+  const fetchCart= async () => {
+    const rawData:RawCartItem[]  = await getCart();
+    const transformed = rawData.map((item) => ({
       id: item.id,
       quantity: item.quantity,
       product: {

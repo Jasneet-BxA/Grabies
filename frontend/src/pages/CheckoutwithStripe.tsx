@@ -7,6 +7,8 @@ import {
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { MapPin, ShoppingBag } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import type { RawCartItem } from "@/types";
 
 interface CartItem {
   id: string;
@@ -32,6 +34,7 @@ export default function OrderPage() {
   const [address, setAddress] = useState<Address | null>(null);
   const [loading, setLoading] = useState(true);
   const [addressConfirmed, setAddressConfirmed] = useState(false);
+  const { refreshCart } = useCart();
 
   const location = useLocation();
   const addressId = location.state?.addressId;
@@ -51,8 +54,8 @@ export default function OrderPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cartData = await getCart();
-        const formattedCart = cartData.map((item: any) => ({
+        const cartData: RawCartItem[] = await getCart();
+        const formattedCart = cartData.map((item) => ({
           id: item.id,
           quantity: item.quantity,
           product: {
@@ -104,6 +107,7 @@ export default function OrderPage() {
     }
     try {
       const res = await createStripeCheckoutSession(address.id);
+      await refreshCart();
       console.log(res.data.url);
       window.location.href = res.data.url;
     } catch (err) {

@@ -46,3 +46,29 @@ export interface Profile {
   role?: string;
   address?: Address;
 }
+export interface RawCartItem {
+  id: string;
+  quantity: number;
+  products: {
+    id: string;
+    name: string;
+    image_url: string;
+    price: number;
+  };
+}
+export interface Address {
+  id: string;
+  address_line: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+}
+
+export interface SignupInput {
+  name: string;
+  email: string;
+  password: string;
+  contact?: string;
+  dob?: string;
+  address: Address;
+}

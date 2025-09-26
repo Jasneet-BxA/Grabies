@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getUserAddress } from "@/lib/api";
-import type { Address } from "@/types/index.ts";
+import type { Address, RawCartItem } from "@/types/index.ts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaShoppingCart } from "react-icons/fa";
 
@@ -37,11 +37,12 @@ export default function Cart() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
+
   const fetchCartItems = async () => {
     try {
       setLoading(true);
-      const rawData = await getCart();
-      const transformed: CartItem[] = rawData.map((item: any) => ({
+      const rawData:RawCartItem[] = await getCart();
+      const transformed: CartItem[] = rawData.map((item) => ({
         id: item.id,
         quantity: item.quantity,
         product: {

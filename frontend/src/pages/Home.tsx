@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import ExploreMoreFood from "@/components/product/ExploreMoreFood";
 import ProductCard from "@/components/product/ProductCard";
-import type { Product } from "@/types";
+import type { Product, User } from "@/types";
 import {
   getAllProducts,
   getCurrentUser,
@@ -69,7 +69,7 @@ export default function Home() {
   const delay = 4000;
   const [previewProducts, setPreviewProducts] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User| null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

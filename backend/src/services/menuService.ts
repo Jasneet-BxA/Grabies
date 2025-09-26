@@ -48,7 +48,6 @@ export const getFilteredProductsService = async (
     query = query.gte("rating", filters.rating);
   }
 
-  // Sorting logic (type-safe, no `any`)
   if (filters.sort === "price_asc") {
     query = query.order("price", { ascending: true });
   } else if (filters.sort === "price_desc") {
