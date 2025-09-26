@@ -191,7 +191,7 @@ export default function Home() {
     wishlist.includes(product.id.trim());
 
   return (
-    <div className="w-full">
+    <div className="w-full ">
       <div className="relative w-full overflow-hidden h-[400px] md:h-[500px]">
         <div
           className="whitespace-nowrap transition-transform duration-700 ease-in-out"

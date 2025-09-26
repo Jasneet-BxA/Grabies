@@ -21,7 +21,7 @@ import OrderDetailPage from "./pages/OrderDetail.tsx";
 function App() {
   return (
     <>
-      <div className="pt-20">
+      <div className="pt-5">
         <Navbar />
       </div>
       <Toaster position="top-right" />

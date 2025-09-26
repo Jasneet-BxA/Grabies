@@ -248,55 +248,80 @@ export default function ProductListing() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="font-semibold text-gray-700">Rating</label>
-          <Select
-            onValueChange={(value) => setRating(Number(value))}
-            value={rating?.toString() || ""}
-          >
-            <SelectTrigger className="w-[150px] border-gray-300 shadow-sm hover:border-orange-400 focus:ring-orange-500">
-              <SelectValue placeholder="Choose rating" />
-            </SelectTrigger>
-            <SelectContent>
-              {[5, 4.7, 4.5, 4].map((r) => (
-                <SelectItem key={r} value={r.toString()}>
-                  {r} ⭐ & up
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+  <label className="font-semibold text-orange-600">Rating</label>
+  <Select
+    onValueChange={(value) => setRating(Number(value))}
+    value={rating?.toString() || ""}
+  >
+    <SelectTrigger className="w-[150px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
+      <SelectValue placeholder="Choose rating" className="text-gray-700" />
+    </SelectTrigger>
+    <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
+      {[5, 4.7, 4.5, 4].map((r) => (
+        <SelectItem
+          key={r}
+          value={r.toString()}
+          className="hover:bg-orange-100 focus:bg-orange-200 cursor-pointer rounded-md text-orange-700 font-semibold"
+        >
+          {r} ⭐ & up
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+</div>
 
-        <div className="flex flex-col gap-1">
-          <label className="font-semibold text-gray-700">Price</label>
-          <Select
-            onValueChange={(value) => setPriceRange(value as any)}
-            value={priceRange}
-          >
-            <SelectTrigger className="w-[180px] border-gray-300 shadow-sm hover:border-orange-400 focus:ring-orange-500">
-              <SelectValue placeholder="Choose price range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="lt300">Less than ₹300</SelectItem>
-              <SelectItem value="300to600">₹300 – ₹600</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+<div className="flex flex-col gap-1">
+  <label className="font-semibold text-orange-600">Price</label>
+  <Select
+    onValueChange={(value) => setPriceRange(value as any)}
+    value={priceRange}
+  >
+    <SelectTrigger className="w-[180px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
+      <SelectValue placeholder="Choose price range" className="text-gray-700" />
+    </SelectTrigger>
+    <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
+      <SelectItem
+        value="lt300"
+        className="hover:bg-orange-100 focus:bg-orange-200 cursor-pointer rounded-md text-orange-700 font-semibold"
+      >
+        Less than ₹300
+      </SelectItem>
+      <SelectItem
+        value="300to600"
+        className="hover:bg-orange-100 focus:bg-orange-200 cursor-pointer rounded-md text-orange-700 font-semibold"
+      >
+        ₹300 – ₹600
+      </SelectItem>
+    </SelectContent>
+  </Select>
+</div>
 
-        <div className="flex flex-col gap-1">
-          <label className="font-semibold text-gray-700">Sort by</label>
-          <Select
-            onValueChange={(value) => setSort(value as "price_asc" | "price_desc")}
-            value={sort}
-          >
-            <SelectTrigger className="w-[180px] border-gray-300 shadow-sm hover:border-orange-400 focus:ring-orange-500">
-              <SelectValue placeholder="Sort by price" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="price_asc">Price: Low to High</SelectItem>
-              <SelectItem value="price_desc">Price: High to Low</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+<div className="flex flex-col gap-1">
+  <label className="font-semibold text-orange-600">Sort by</label>
+  <Select
+    onValueChange={(value) => setSort(value as "price_asc" | "price_desc")}
+    value={sort}
+  >
+    <SelectTrigger className="w-[180px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
+      <SelectValue placeholder="Sort by price" className="text-gray-700" />
+    </SelectTrigger>
+    <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
+      <SelectItem
+        value="price_asc"
+        className="hover:bg-orange-100 focus:bg-orange-200 cursor-pointer rounded-md text-orange-700 font-semibold"
+      >
+        Price: Low to High
+      </SelectItem>
+      <SelectItem
+        value="price_desc"
+        className="hover:bg-orange-100 focus:bg-orange-200 cursor-pointer rounded-md text-orange-700 font-semibold"
+      >
+        Price: High to Low
+      </SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
 
         <div className="sm:ml-auto">
           <button
