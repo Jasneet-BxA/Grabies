@@ -1,8 +1,8 @@
-import type { Address } from "cluster";
+import type { Address, AddressInput } from "../types/index.js";
 import { supabase } from "../config/supabaseClient.js";
 // import { addressSchema, updateAddressSchema } from "../validators/addressValidator.js";
 
-export const addAddressService = async (userId: string, data: Address) => {
+export const addAddressService = async (userId: string, data: AddressInput) => {
   const { data: address, error } = await supabase
     .from("addresses")
     .insert([{ ...data, user_id: userId }])
