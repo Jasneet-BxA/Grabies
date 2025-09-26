@@ -17,14 +17,14 @@ jest.mock('react-router-dom', () => ({
 jest.mock('@/lib/api', () => ({
   signup: jest.fn(),
 }));
- 
+
 // ✅ Mock AuthContext
 jest.mock('@/context/AuthContext', () => ({
   useAuth: () => ({
     setUser: jest.fn(),
   }),
 }));
- 
+
 const renderWithRouter = (ui: React.ReactElement) => {
   return render(<BrowserRouter>{ui}</BrowserRouter>);
 };

@@ -26,7 +26,6 @@ export default function CheckoutPage() {
     try {
       const res = await createOrder(addressId);
       await refreshCart();
-      console.log(res);
 
       toast.success("Your COD order has been placed successfully! 🛵💸");
 

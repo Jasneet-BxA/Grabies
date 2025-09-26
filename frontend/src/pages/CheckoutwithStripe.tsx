@@ -108,7 +108,6 @@ export default function OrderPage() {
     try {
       const res = await createStripeCheckoutSession(address.id);
       await refreshCart();
-      console.log(res.data.url);
       window.location.href = res.data.url;
     } catch (err) {
       console.error("Error redirecting to Stripe Checkout:", err);

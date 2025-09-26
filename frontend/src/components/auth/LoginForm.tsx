@@ -39,7 +39,6 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const res = await login(data.email, data.password);
-      console.log(res.data);
       setUser(res.data.user);
       navigate("/");
     } catch (err) {
