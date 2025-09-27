@@ -76,7 +76,7 @@ export default function WishlistPage() {
       await removeFromWishlist(product.id);
       setWishlist((prev) => prev.filter((item) => item.id !== product.id));
 
-      toast.success(`💔 Removed "${product.name}" from your CraveBox`);
+      toast(`💔 Removed "${product.name}" from your CraveBox`);
     } catch (err) {
       console.error("Error removing from wishlist", err);
       toast.error("Failed to update wishlist. Try again.");

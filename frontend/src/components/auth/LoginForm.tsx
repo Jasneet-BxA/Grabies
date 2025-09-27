@@ -8,6 +8,7 @@ import {Card,CardContent,CardDescription,CardHeader,CardTitle,}from "@/component
 import { useNavigate } from "react-router-dom";
 import { login } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
 
 const loginSchema = z.object({
   email: z.email({ message: "Enter a valid email address" }),
@@ -36,7 +37,7 @@ export default function LoginForm() {
       setUser(res.data.user);
       navigate("/");
     } catch (err) {
-      alert("Login failed. Please check your credentials.");
+      toast("⚠️ Please check your credentials.");
     }
   };
 

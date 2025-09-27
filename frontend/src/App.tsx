@@ -17,6 +17,8 @@ import Checkout from "./pages/Checkout";
 import SearchResults from "./pages/SearchResults";
 import { Toaster } from "react-hot-toast";
 import OrderDetailPage from "./pages/OrderDetail";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import ScrollToTop from "@/components/ScrollToTop";
 
 function App() {
   return (
@@ -24,7 +26,7 @@ function App() {
       <div className="pt-5">
         <Navbar />
       </div>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <div className="min-h-screen pt-16 px-4 md:px-8">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -41,16 +43,68 @@ function App() {
             }
           />
           <Route path="/about" element={<About />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkoutwithcod" element={<CheckoutwithCod />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/wishlist" element={<Wishlist />} />
+
+          {/* ✅ Protected routes */}
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkoutwithcod"
+            element={
+              <ProtectedRoute>
+                <CheckoutwithCod />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order"
+            element={
+              <ProtectedRoute>
+                <OrderHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetailPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Public routes */}
           <Route path="/category" element={<ProductListing />} />
           <Route path="/food" element={<OurFood />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/orderhistory" element={<OrderHistoryPage />} />
-          <Route path="/order/:id" element={<OrderDetailPage />} />
           <Route path="/search" element={<SearchResults />} />
         </Routes>
       </div>

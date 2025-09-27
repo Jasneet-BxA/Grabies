@@ -3,8 +3,7 @@ import {AddressData} from '../types/index'
 import {SignupData} from '../types/index'
 import {FilterOptions} from '../types/index'
 const api = axios.create({
-  // baseURL: import.meta.env.VITE_BACKEND_URL,
-  baseURL :"http://localhost:3000",
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 })
 // Authentication
@@ -119,10 +118,9 @@ export async function confirmPayment(orderId: string) {
 
 // Search
 export async function search(
-  q: string,
-  options?: FilterOptions
+  q: string
 ) {
-  const params = { q, ...options };
+  const params = { q };
   const res = await api.get('/search', { params });
   return res.data;
 }

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCart, addToCart, removeFromCart } from "@/lib/api";
-import type { RawCartItem } from "@/types";
+import type { RawCartItem } from "@/types/index";
 
 interface CartItem {
   id: string;

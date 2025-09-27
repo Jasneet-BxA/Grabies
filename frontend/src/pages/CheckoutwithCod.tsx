@@ -30,7 +30,7 @@ export default function CheckoutPage() {
       toast.success("Your COD order has been placed successfully! 🛵💸");
 
       setTimeout(() => {
-        navigate("/orderhistory", {
+        navigate(`/order/${res.orderId}`, {
           state: {
             orderId: res.orderId,
           },
@@ -70,21 +70,6 @@ export default function CheckoutPage() {
         <p className="text-sm text-gray-700 font-medium">
           You’ll pay in cash when your order is delivered.
         </p>
-      </div>
-
-      <div className="flex items-center gap-2 p-2 hover:bg-orange-50 rounded-md transition">
-        <Checkbox
-          id="save-info"
-          checked={saveInfo}
-          onCheckedChange={(checked: boolean) => setSaveInfo(checked)}
-          className="data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600 transition"
-        />
-        <label
-          htmlFor="save-info"
-          className="text-sm text-gray-800 cursor-pointer"
-        >
-          Save my info for faster checkout
-        </label>
       </div>
 
       <Button

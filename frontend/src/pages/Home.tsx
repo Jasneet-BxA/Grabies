@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import ExploreMoreFood from "@/components/product/ExploreMoreFood";
 import ProductCard from "@/components/product/ProductCard";
-import type { Product, User } from "@/types";
+import type { Product, User } from "@/types/index";
 import {
   getAllProducts,
   getCurrentUser,

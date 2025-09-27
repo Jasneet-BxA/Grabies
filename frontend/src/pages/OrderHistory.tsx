@@ -42,9 +42,9 @@ export default function OrderHistoryPage() {
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
                 <h2 className="text-xl font-medium text-gray-800">Order #{order.id}</h2>
-                <Badge variant="outline" className="text-sm font-medium bg-orange-200">
+                {/* <Badge variant="outline" className="text-sm font-medium bg-orange-200">
                   {order.status}
-                </Badge>
+                </Badge> */}
               </div>
               <p className="text-sm text-gray-600">
                 {new Date(order.created_at).toLocaleDateString()}

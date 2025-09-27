@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { signup } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
+import toast from 'react-hot-toast'
 
 // Schema
 const signupSchema = z.object({
@@ -36,16 +37,15 @@ export default function SignupForm() {
     formState: { errors },
   } = form
 
-  const { setUser } = useAuth()
   const navigate = useNavigate()
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
       const res = await signup(data)
-      setUser(res.data.user)
+      // setUser(res.data.user)
       navigate('/auth/login')
     } catch (err) {
-      alert('Signup failed. Try again.')
+      toast(' ⚠️ User already exists');
     }
   }
 

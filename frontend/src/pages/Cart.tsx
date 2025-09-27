@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, Trash } from "lucide-react";
-import { getCart, removeFromCart, addToCart } from "@/lib/api";
+import { getCart, removeFromCart, addToCart, getUserAddress, addUserNewAddress } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router";
 import {
@@ -12,10 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getUserAddress } from "@/lib/api";
 import type { Address, RawCartItem } from "@/types/index.ts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaShoppingCart } from "react-icons/fa";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 
 interface CartItem {
   id: string;
@@ -28,20 +32,39 @@ interface CartItem {
   };
 }
 
+const addressSchema = z.object({
+  address_line: z.string().min(5, "Address must be at least 5 characters"),
+  city: z
+    .string()
+    .min(2, "City is required")
+    .regex(/^[A-Za-z\s]+$/, "City must only contain alphabets"),
+  state: z
+    .string()
+    .min(2, "State is required")
+    .regex(/^[A-Za-z\s]+$/, "State must only contain alphabets"),
+  pincode: z
+    .string()
+    .min(4, "Pincode must be at least 4 digits")
+    .max(10, "Pincode too long")
+    .regex(/^[0-9]/, "Please enter 6-digit Indian pincode"),
+});
+
+type AddressFormValues = z.infer<typeof addressSchema>;
+
 export default function Cart() {
-  const { quantity, removeItem } = useCart();
-  const { refreshCart } = useCart();
+  const { quantity, removeItem, refreshCart } = useCart();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-
+  // Fetch cart items
   const fetchCartItems = async () => {
     try {
       setLoading(true);
-      const rawData:RawCartItem[] = await getCart();
+      const rawData: RawCartItem[] = await getCart();
       const transformed: CartItem[] = rawData.map((item) => ({
         id: item.id,
         quantity: item.quantity,
@@ -61,11 +84,7 @@ export default function Cart() {
     }
   };
 
-  useEffect(() => {
-    fetchCartItems();
-    fetchAddresses();
-  }, []);
-
+  // Fetch saved addresses
   const fetchAddresses = async () => {
     try {
       const res = await getUserAddress();
@@ -75,6 +94,12 @@ export default function Cart() {
     }
   };
 
+  useEffect(() => {
+    fetchCartItems();
+    fetchAddresses();
+  }, []);
+
+  // Remove cart item
   const handleRemove = async (cartId: string) => {
     try {
       await removeFromCart(cartId);
@@ -86,6 +111,7 @@ export default function Cart() {
     }
   };
 
+  // Update quantity of a cart item
   const updateQuantity = async (
     cartId: string,
     productId: string,
@@ -107,10 +133,35 @@ export default function Cart() {
     }
   };
 
+  // Total price calculation
   const totalPrice = cartItems.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
     0
   );
+
+  // Form for adding new address
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<AddressFormValues>({
+    resolver: zodResolver(addressSchema),
+  });
+
+  const onSubmit = async (data: AddressFormValues) => {
+    try {
+      const res = await addUserNewAddress(data);
+      const newAddress = res.address || data; // fallback if API returns no new address object
+      setAddresses((prev) => [...prev, newAddress]);
+      toast.success("Address saved!");
+      reset();
+      setDialogOpen(false);
+    } catch (err) {
+      console.error("Error saving address:", err);
+      toast.error("Failed to save address. Please try again.");
+    }
+  };
 
   if (loading) {
     return (
@@ -213,7 +264,7 @@ export default function Cart() {
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label="Increase quantity" 
+                    aria-label="Increase quantity"
                     onClick={() =>
                       updateQuantity(cartId, product.id, quantity + 1)
                     }
@@ -225,7 +276,7 @@ export default function Cart() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Remove item"   
+                    aria-label="Remove item"
                     className="text-red-500 hover:bg-red-100 hover:text-red-600 ml-2 transition-all"
                     onClick={() => handleRemove(cartId)}
                   >
@@ -239,10 +290,11 @@ export default function Cart() {
       </div>
 
       {/* Address Selection */}
-      <div className="w-full max-w-lg mx-auto">
+      <div className="w-full max-w-lg mx-auto space-y-4">
         <label className="block text-gray-800 font-semibold mb-2">
           📍 Select Delivery Address:
         </label>
+
         <Select
           onValueChange={(value) => {
             const selected = addresses.find(
@@ -255,7 +307,7 @@ export default function Cart() {
             <SelectValue placeholder="Choose an address" />
           </SelectTrigger>
 
-          <SelectContent className="bg-white rounded-lg shadow-lg border border-gray-200">
+          <SelectContent className="bg-white rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-auto">
             {addresses.map((addr, index) => (
               <SelectItem
                 key={index}
@@ -267,9 +319,107 @@ export default function Cart() {
             ))}
           </SelectContent>
         </Select>
+
+        {/* Add New Address Dialog */}
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="mt-2 bg-orange-500 text-white hover:bg-orange-600 w-full">
+              + Add New Address
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="sm:max-w-md bg-white">
+            <DialogHeader>
+              <DialogTitle>Add New Address</DialogTitle>
+              <DialogDescription>
+                Enter your new shipping address below.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4 mt-4"
+              noValidate
+            >
+              <div>
+                <input
+                  type="text"
+                  {...register("address_line")}
+                  placeholder="Address Line"
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+                />
+                {errors.address_line && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.address_line.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  {...register("city")}
+                  placeholder="City"
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+                />
+                {errors.city && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.city.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  {...register("state")}
+                  placeholder="State"
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+                />
+                {errors.state && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.state.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  {...register("pincode")}
+                  placeholder="Pincode"
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+                />
+                {errors.pincode && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.pincode.message}
+                  </p>
+                )}
+              </div>
+
+              <DialogFooter className="flex justify-end gap-2">
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="border-gray-300 text-gray-600"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-orange-500 text-white hover:bg-orange-600"
+                >
+                  {isSubmitting ? "Saving..." : "Save Address"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Total & CTA */}
       {/* Total & CTA */}
       <div className="flex flex-col sm:flex-row justify-between items-center mt-10 border-t pt-6 gap-4">
         <div className="text-2xl font-semibold text-gray-800">
@@ -277,7 +427,6 @@ export default function Cart() {
           <span className="text-orange-600">₹{totalPrice.toFixed(2)}</span>
         </div>
 
-        {/* Show button only if an address is selected */}
         {selectedAddress ? (
           <Button
             size="lg"

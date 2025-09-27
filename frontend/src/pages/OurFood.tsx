@@ -124,7 +124,7 @@ export default function OurFood() {
       if (user) {
         try {
           await removeFromWishlist(productId);
-          toast.success(`💔 Removed "${product.name}" from your CraveBox`);
+          toast(`💔 Removed "${product.name}" from your CraveBox`);
         } catch (err) {
           console.error("Failed to remove from server wishlist", err);
         }

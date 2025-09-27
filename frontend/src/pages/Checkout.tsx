@@ -21,7 +21,6 @@ interface CartItem {
     price: number;
   };
 }
-
 export default function OrderPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [address, setAddress] = useState<Address | null>(null);

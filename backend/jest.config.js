@@ -13,9 +13,13 @@ export default {
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
+  transformIgnorePatterns: [
+    "/node_modules/(?!(\\@t3-oss/env-core)/)",
+  ],
   testMatch: [
     "**/__test__/**/*.test.ts",
     "**/__tests__/**/*.test.ts",
-    "**/?(*.)+(spec|test).ts"
+    "**/?(*.)+(spec|test).ts",
   ],
+  coverageReporters: ["json", "lcov", "text", "html"],
 };

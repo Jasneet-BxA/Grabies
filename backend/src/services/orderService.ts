@@ -136,6 +136,7 @@ export const getOrderAmount = async (orderId: string) => {
 };
 
 export const confirmOrderPayment = async (orderId: string) => {
+  console.log(orderId)
   const { error } = await supabase
     .from("orders")
     .update({ status: "paid" })
