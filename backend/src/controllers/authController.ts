@@ -40,7 +40,6 @@ export const login = async (req: Request, res: Response, next:NextFunction) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  res.clearCookie('access', { path: '/', sameSite: PROD ? 'none' : 'lax', secure: PROD });
-  res.clearCookie('refresh', { path: '/api/auth', sameSite: PROD ? 'none' : 'lax', secure: PROD });
+  res.clearCookie('token', { path: '/', sameSite: PROD ? 'none' : 'lax', secure: PROD });
   return res.status(204).end();
 };
