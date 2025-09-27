@@ -4,24 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react"; 
-
-interface OrderItem {
-  quantity: number;
-  total_price: number;
-  products: {
-    name: string;
-    price: number;
-    image_url?: string;
-  };
-}
-
-interface Order {
-  id: string;
-  total_price: number;
-  status: string;
-  created_at: string;
-  order_items: OrderItem[];
-}
+import {OrderItem} from "@/types/index";
+import {Order} from "@/types/index";
 
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState<Order[]>([]);

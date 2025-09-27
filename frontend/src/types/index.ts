@@ -72,3 +72,48 @@ export interface SignupInput {
   dob?: string;
   address: Address;
 }
+
+export interface AddressData {
+  address_line: string;
+  city: string;
+  state: string;
+  pincode: string;
+}
+
+export interface SignupData {
+  email: string;
+  password: string;
+  name?: string;
+}
+
+export interface FilterOptions {
+  tag?: string;
+  rating?: number;
+  priceRange?: "lt300" | "300to600";
+  sort?: "price_asc" | "price_desc";
+}
+export interface OrderItem {
+  quantity: number;
+  total_price: number;
+  products: {
+    id: string;
+    name: string;
+    price: number;
+    image_url?: string;
+  };
+}
+
+export interface Order {
+  id: string;
+  total_price: number;
+  status: string;
+  created_at: string;
+  address_id?: string;
+  order_items: OrderItem[];
+}
+
+export interface AuthContextType {
+  user: User | null;
+  setUser: (user: User | null) => void;
+  isAuthenticated: boolean;
+}

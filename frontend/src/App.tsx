@@ -18,6 +18,7 @@ import SearchResults from "./pages/SearchResults";
 import { Toaster } from "react-hot-toast";
 import OrderDetailPage from "./pages/OrderDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import ScrollToTop from "@/components/ScrollToTop";
 
 function App() {
   return (

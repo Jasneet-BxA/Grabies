@@ -26,6 +26,29 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { getUserAddress, addUserNewAddress } from "@/lib/api";
+import toast from "react-hot-toast";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const addressSchema = z.object({
+  address_line: z.string().min(5, "Address must be at least 5 characters"),
+  city: z
+    .string()
+    .min(2, "City is required")
+    .regex(/^[A-Za-z\s]+$/, "City must only contain alphabets"),
+  state: z
+    .string()
+    .min(2, "State is required")
+    .regex(/^[A-Za-z\s]+$/, "State must only contain alphabets"),
+  pincode: z
+    .string()
+    .min(4, "Pincode must be at least 4 digits")
+    .max(10, "Pincode too long")
+    .regex(/^[0-9]/, "Please enter 6-digit Indian pincode"),
+});
+
+type AddressFormValues = z.infer<typeof addressSchema>;
 
 export default function Profile() {
   const { setUser, isAuthenticated } = useAuth();
@@ -35,11 +58,6 @@ export default function Profile() {
   const [showAddress, setShowAddress] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const [addressLine, setAddressLine] = useState("");
-  const [city, setCity] = useState("");
-  const [stateName, setStateName] = useState("");
-  const [pincode, setPincode] = useState("");
 
   const [savedAddresses, setSavedAddresses] = useState<
     { address_line: string; city: string; state: string; pincode: string }[]
@@ -61,36 +79,7 @@ export default function Profile() {
     };
 
     fetchProfile();
-  }, [sheetOpen, isAuthenticated]);
-
-  async function handleSaveAddress() {
-    if (!addressLine || !city || !stateName || !pincode) {
-      alert("Please fill out all fields.");
-      return;
-    }
-
-    try {
-      const res = await addUserNewAddress({
-        address_line: addressLine,
-        city,
-        state: stateName,
-        pincode: pincode,
-      });
-
-      const newAddress = res.address;
-      setSavedAddresses((prev) => [...prev, newAddress]);
-
-      setAddressLine("");
-      setCity("");
-      setStateName("");
-      setPincode("");
-
-      setShowAddress(false);
-    } catch (error) {
-      console.error("Failed to add new address", error);
-      alert("Failed to save address. Please try again.");
-    }
-  }
+  }, [sheetOpen, isAuthenticated, setUser]);
 
   const handleLogout = async () => {
     setLoading(true);
@@ -215,7 +204,7 @@ export default function Profile() {
                   <textarea
                     value={
                       profile?.address?.address_line
-                        ? `${profile?.address?.address_line}, ${profile?.address?.city}, ${profile?.address?.state}, ${profile?.address?.pincode}`
+                        ? `${profile.address.address_line}, ${profile.address.city}, ${profile.address.state}, ${profile.address.pincode}`
                         : ""
                     }
                     readOnly
@@ -235,9 +224,7 @@ export default function Profile() {
                         key={index}
                         className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-700"
                       >
-                        <div className="font-medium mb-1">
-                          Address {index + 1}
-                        </div>
+                        <div className="font-medium mb-1">Address {index + 1}</div>
                         <div>
                           {addr.address_line}, {addr.city}, {addr.state} -{" "}
                           {addr.pincode}
@@ -262,60 +249,12 @@ export default function Profile() {
                       </DialogDescription>
                     </DialogHeader>
 
-                    <div className="space-y-4">
-                      <input
-                        type="text"
-                        value={addressLine}
-                        onChange={(e) => setAddressLine(e.target.value)}
-                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Address Line"
-                      />
-
-                      <input
-                        type="text"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="City"
-                      />
-
-                      <input
-                        type="text"
-                        value={stateName}
-                        onChange={(e) => setStateName(e.target.value)}
-                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="State"
-                      />
-
-                      <input
-                        type="text"
-                        value={pincode}
-                        onChange={(e) => setPincode(e.target.value)}
-                        className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Pincode"
-                      />
-                    </div>
-
-                    <DialogFooter className="mt-4">
-                      <DialogClose asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="border-gray-300 text-gray-600"
-                        >
-                          Cancel
-                        </Button>
-                      </DialogClose>
-                      <DialogClose asChild>
-                        <Button
-                          type="button"
-                          className="bg-orange-500 text-white hover:bg-orange-600"
-                          onClick={handleSaveAddress}
-                        >
-                          Save Address
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
+                    <AddressForm
+                      onSuccess={(newAddress) => {
+                        setSavedAddresses((prev) => [...prev, newAddress]);
+                        toast.success("Address saved!");
+                      }}
+                    />
                   </DialogContent>
                 </Dialog>
               </div>
@@ -385,5 +324,99 @@ export default function Profile() {
         )}
       </SheetContent>
     </Sheet>
+  );
+}
+
+// Separate AddressForm component with react-hook-form + zod validation
+function AddressForm({ onSuccess }: { onSuccess: (newAddress: any) => void }) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<AddressFormValues>({
+    resolver: zodResolver(addressSchema),
+  });
+
+  const onSubmit = async (data: AddressFormValues) => {
+    try {
+      const res = await addUserNewAddress(data);
+      onSuccess(res.address);
+      reset(); // Clear form fields after success
+    } catch (err) {
+      console.error("Error saving address:", err);
+      toast.error("Failed to save address. Please try again.");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <input
+          type="text"
+          {...register("address_line")}
+          placeholder="Address Line"
+          className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+        />
+        {errors.address_line && (
+          <p className="text-sm text-red-500 mt-1">{errors.address_line.message}</p>
+        )}
+      </div>
+
+      <div>
+        <input
+          type="text"
+          {...register("city")}
+          placeholder="City"
+          className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+        />
+        {errors.city && (
+          <p className="text-sm text-red-500 mt-1">{errors.city.message}</p>
+        )}
+      </div>
+
+      <div>
+        <input
+          type="text"
+          {...register("state")}
+          placeholder="State"
+          className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+        />
+        {errors.state && (
+          <p className="text-sm text-red-500 mt-1">{errors.state.message}</p>
+        )}
+      </div>
+
+      <div>
+        <input
+          type="text"
+          {...register("pincode")}
+          placeholder="Pincode"
+          className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
+        />
+        {errors.pincode && (
+          <p className="text-sm text-red-500 mt-1">{errors.pincode.message}</p>
+        )}
+      </div>
+
+      <DialogFooter className="mt-4 flex justify-end gap-2">
+        <DialogClose asChild>
+          <Button
+            type="button"
+            variant="outline"
+            className="border-gray-300 text-gray-600"
+          >
+            Cancel
+          </Button>
+        </DialogClose>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="bg-orange-500 text-white hover:bg-orange-600"
+        >
+          {isSubmitting ? "Saving..." : "Save Address"}
+        </Button>
+      </DialogFooter>
+    </form>
   );
 }

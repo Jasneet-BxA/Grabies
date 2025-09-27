@@ -4,26 +4,8 @@ import { getOrderById } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaArrowLeft } from "react-icons/fa";
-
-interface OrderItem {
-  quantity: number;
-  total_price: number;
-  products: {
-    id: string;
-    name: string;
-    price: number;
-    image_url?: string;
-  };
-}
-
-interface Order {
-  id: string;
-  total_price: number;
-  status: string;
-  created_at: string;
-  address_id?: string;
-  order_items: OrderItem[];
-}
+import {OrderItem} from "@/types/index";
+import {Order} from "@/types/index";
 
 export default function OrderDetailPage() {
   const { id } = useParams();

@@ -6,19 +6,19 @@ import { useAuth } from '@/context/AuthContext';
 import { signup } from '@/lib/api';
 import { BrowserRouter } from 'react-router-dom';
  
-// ✅ Mock navigate
+// Mock navigate
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
  
-// ✅ Mock signup API
+// Mock signup API
 jest.mock('@/lib/api', () => ({
   signup: jest.fn(),
 }));
 
-// ✅ Mock AuthContext
+// Mock AuthContext
 jest.mock('@/context/AuthContext', () => ({
   useAuth: () => ({
     setUser: jest.fn(),

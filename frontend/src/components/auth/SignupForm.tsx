@@ -1,13 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '@/components/ui/card'
+import {Card,CardHeader,CardTitle,CardDescription,CardContent,} from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -71,13 +65,12 @@ export default function SignupForm() {
     formState: { errors },
   } = form
 
-  const { setUser } = useAuth()
   const navigate = useNavigate()
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
       const res = await signup(data)
-      setUser(res.data.user)
+      // setUser(res.data.user)
       navigate('/auth/login')
     } catch (err) {
       toast('⚠️ User already exists')

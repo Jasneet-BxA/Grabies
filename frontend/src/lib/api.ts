@@ -1,32 +1,12 @@
 import axios from 'axios'
-
+import {AddressData} from '../types/index'
+import {SignupData} from '../types/index'
+import {FilterOptions} from '../types/index'
 const api = axios.create({
   // baseURL: import.meta.env.VITE_BACKEND_URL,
   baseURL: 'http://localhost:3000',
   withCredentials: true,
 })
-
-
-interface SignupData {
-  email: string;
-  password: string;
-  name?: string;
-}
-
-interface AddressData {
-  address_line: string;
-  city: string;
-  state: string;
-  pincode: string;
-}
-
-interface FilterOptions {
-  tag?: string;
-  rating?: number;
-  priceRange?: "lt300" | "300to600";
-  sort?: "price_asc" | "price_desc";
-}
-
 // Authentication
 export async function login(email: string, password: string) {
   return api.post('/auth/login', { email, password })

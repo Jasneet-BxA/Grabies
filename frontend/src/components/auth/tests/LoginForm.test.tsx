@@ -6,10 +6,10 @@ import LoginForm from '../LoginForm';
 import { BrowserRouter } from 'react-router-dom';
 import * as api from '@/lib/api';
 
-// ✅ Create a mock for setUser to track calls
+// Create a mock for setUser to track calls
 const mockSetUser = jest.fn();
 
-// ✅ Mock useAuth hook from AuthContext
+// Mock useAuth hook from AuthContext
 jest.mock('@/context/AuthContext', () => ({
   useAuth: () => ({
     user: null,
@@ -18,19 +18,19 @@ jest.mock('@/context/AuthContext', () => ({
   }),
 }));
 
-// ✅ Mock useNavigate from react-router-dom
+//Mock useNavigate from react-router-dom
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
 
-// ✅ Mock login API
+// Mock login API
 jest.mock('@/lib/api', () => ({
   login: jest.fn(),
 }));
 
-// ✅ Helper to wrap component in Router
+//Helper to wrap component in Router
 const renderWithRouter = (ui: React.ReactElement) => {
   return render(<BrowserRouter>{ui}</BrowserRouter>);
 };
