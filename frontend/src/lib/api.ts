@@ -138,10 +138,9 @@ export async function confirmPayment(orderId: string) {
 
 // Search
 export async function search(
-  q: string,
-  options?: FilterOptions
+  q: string
 ) {
-  const params = { q, ...options };
+  const params = { q };
   const res = await api.get('/search', { params });
   return res.data;
 }
