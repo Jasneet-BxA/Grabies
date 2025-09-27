@@ -283,7 +283,7 @@ export default function Cart() {
             size="lg"
             className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg transition"
             onClick={() => {
-              navigate("/checkoutwithstripe", {
+              navigate("/checkout", {
                 state: {
                   addressId: selectedAddress.id,
                   address: selectedAddress,

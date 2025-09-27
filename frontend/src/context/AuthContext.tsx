@@ -7,12 +7,7 @@ import {
 } from "react";
 import type { User } from "../types";
 import { getCurrentUser } from "../lib/api";
-
-interface AuthContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
-  isAuthenticated: boolean;
-}
+import {AuthContextType} from "../types/index";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

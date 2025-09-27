@@ -3,28 +3,10 @@ import { useAuth } from "@/context/AuthContext";
 import { getUserProfile, logout } from "@/lib/api";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetFooter,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
+import {Sheet,SheetContent,SheetHeader,SheetTitle,SheetDescription,SheetFooter,SheetTrigger,SheetClose,} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import type { Profile } from "@/types";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
+import {Dialog,DialogTrigger,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFooter,DialogClose,} from "@/components/ui/dialog";
 import { getUserAddress, addUserNewAddress } from "@/lib/api";
 
 export default function Profile() {

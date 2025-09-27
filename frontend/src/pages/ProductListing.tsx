@@ -29,7 +29,7 @@ import {
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import {User} from "@/types/index";
 export function SkeletonCard() {
   return (
     <div className="flex flex-col space-y-3 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -40,13 +40,6 @@ export function SkeletonCard() {
       </div>
     </div>
   );
-}
-
-// Define User type properly or replace with your actual User type
-interface User {
-  id: string;
-  name: string;
-  // add other user fields as needed
 }
 
 type TagType = "" | "veg" | "non-veg";
