@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { signupSchema, loginSchema } from "../validators/authValidator.js";
 import { signupService, loginService } from "../services/authService.js";
 import type { SignupInput, LoginInput } from "../types/index.js";
-
+const PROD = process.env.NODE_ENV === "production";
 export const signup = async (req: Request, res: Response, next : NextFunction) => {
   try {
     const validatedData: SignupInput = signupSchema.parse(req.body);
@@ -25,8 +25,8 @@ export const login = async (req: Request, res: Response, next:NextFunction) => {
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        secure: PROD,
+        sameSite: PROD ? 'none' : 'lax',
         maxAge: 86400000,
       })
       .status(200)
@@ -39,7 +39,8 @@ export const login = async (req: Request, res: Response, next:NextFunction) => {
   }
 };
 
-export const logout = (req: Request, res: Response) => {
-  res.clearCookie("token");
-  return res.json({ message: "Logged out successful" });
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie('access', { path: '/', sameSite: PROD ? 'none' : 'lax', secure: PROD });
+  res.clearCookie('refresh', { path: '/api/auth', sameSite: PROD ? 'none' : 'lax', secure: PROD });
+  return res.status(204).end();
 };
