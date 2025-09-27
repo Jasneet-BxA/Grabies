@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getUserAddress } from "@/lib/api";
-import type { Address, RawCartItem } from "@/types/index.ts";
+import type { Address } from "@/types/index.ts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaShoppingCart } from "react-icons/fa";
 
@@ -37,12 +37,11 @@ export default function Cart() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
-
   const fetchCartItems = async () => {
     try {
       setLoading(true);
-      const rawData:RawCartItem[] = await getCart();
-      const transformed: CartItem[] = rawData.map((item) => ({
+      const rawData = await getCart();
+      const transformed: CartItem[] = rawData.map((item: any) => ({
         id: item.id,
         quantity: item.quantity,
         product: {
@@ -198,7 +197,6 @@ export default function Cart() {
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label="Decrease quantity"
                     onClick={() =>
                       updateQuantity(cartId, product.id, quantity - 1)
                     }
@@ -213,7 +211,6 @@ export default function Cart() {
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label="Increase quantity" 
                     onClick={() =>
                       updateQuantity(cartId, product.id, quantity + 1)
                     }
@@ -225,7 +222,6 @@ export default function Cart() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Remove item"   
                     className="text-red-500 hover:bg-red-100 hover:text-red-600 ml-2 transition-all"
                     onClick={() => handleRemove(cartId)}
                   >

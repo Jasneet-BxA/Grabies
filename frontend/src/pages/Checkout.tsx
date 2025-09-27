@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { MapPin, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import type { RawCartItem } from "@/types";
-
+import type {Address} from "@/types";
+ 
 interface CartItem {
   id: string;
   quantity: number;
@@ -20,22 +21,13 @@ interface CartItem {
     price: number;
   };
 }
-
-interface Address {
-  id: string;
-  address_line: string;
-  city: string;
-  state: string;
-  pincode: string;
-}
-
 export default function OrderPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [address, setAddress] = useState<Address | null>(null);
   const [loading, setLoading] = useState(true);
   const [addressConfirmed, setAddressConfirmed] = useState(false);
   const { refreshCart } = useCart();
-
+ 
   const location = useLocation();
   const addressId = location.state?.addressId;
   const navigate = useNavigate();
@@ -48,9 +40,9 @@ export default function OrderPage() {
       },
     });
   };
-
+ 
   const passedAddress = location.state?.address;
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,7 +58,7 @@ export default function OrderPage() {
           },
         }));
         setCartItems(formattedCart);
-
+ 
         if (passedAddress) {
           setAddress(passedAddress);
         } else {
@@ -81,17 +73,17 @@ export default function OrderPage() {
         setLoading(false);
       }
     };
-
+ 
     fetchData();
   }, [passedAddress]);
-
+ 
   const totalPrice = useMemo(() => {
     return cartItems.reduce(
       (total, item) => total + item.product.price * item.quantity,
       0
     );
   }, [cartItems]);
-
+ 
   const handleConfirmAddress = () => {
     if (!address) {
       alert("Please add a delivery address in your profile first.");
@@ -99,7 +91,7 @@ export default function OrderPage() {
     }
     setAddressConfirmed(true);
   };
-
+ 
   const handleProceedToPay = async () => {
     if (!address) {
       alert("No address found. Cannot proceed to payment.");
@@ -114,7 +106,7 @@ export default function OrderPage() {
       alert("Failed to start payment session. Try again later.");
     }
   };
-
+ 
   if (loading) {
     return (
       <p className="text-center py-20 text-gray-500">
@@ -122,13 +114,13 @@ export default function OrderPage() {
       </p>
     );
   }
-
+ 
   return (
     <main className="max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-8 text-center text-orange-700">
         🧾 Order Summary
       </h1>
-
+ 
       <section className="mb-8 bg-white shadow rounded-lg p-6 border border-orange-100">
         <div className="flex items-center gap-2 mb-4">
           <MapPin className="text-orange-600" size={22} />
@@ -136,14 +128,14 @@ export default function OrderPage() {
             Delivery Address
           </h2>
         </div>
-
+ 
         {address ? (
           <div className="text-gray-700 space-y-1">
             <p>{address.address_line}</p>
             <p>
               {address.city}, {address.state} - {address.pincode}
             </p>
-
+ 
             {!addressConfirmed ? (
               <Button
                 className="mt-4 bg-orange-600 hover:bg-orange-700 text-white"
@@ -161,7 +153,7 @@ export default function OrderPage() {
           <p className="text-red-600">No address found. Please add one.</p>
         )}
       </section>
-
+ 
       <section className="mb-8 bg-white shadow rounded-lg p-6 border border-gray-100">
         <div className="flex items-center gap-2 mb-4">
           <ShoppingBag className="text-orange-500" size={22} />
@@ -169,7 +161,7 @@ export default function OrderPage() {
             Items in Your Cart
           </h2>
         </div>
-
+ 
         <div className="divide-y divide-gray-200">
           {cartItems.map((item) => (
             <div
@@ -189,7 +181,7 @@ export default function OrderPage() {
                   <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                 </div>
               </div>
-
+ 
               <p className="text-orange-600 font-semibold whitespace-nowrap">
                 ₹{item.product.price * item.quantity}
               </p>
@@ -197,13 +189,13 @@ export default function OrderPage() {
           ))}
         </div>
       </section>
-
+ 
       <section className="flex flex-col sm:flex-row justify-between items-center border-t pt-6">
         <p className="text-xl font-bold text-gray-800 mb-4 sm:mb-0">
           Total Amount:{" "}
           <span className="text-orange-600">₹{totalPrice.toFixed(2)}</span>
         </p>
-
+ 
         {addressConfirmed && (
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <Button
@@ -212,7 +204,7 @@ export default function OrderPage() {
             >
               Pay Online (Stripe)
             </Button>
-
+ 
             <Button
               onClick={handlePayByCOD}
               variant="outline"
@@ -226,3 +218,4 @@ export default function OrderPage() {
     </main>
   );
 }
+ 

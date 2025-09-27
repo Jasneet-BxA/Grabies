@@ -294,11 +294,6 @@ export default function Home() {
                       <p className="text-sm text-gray-600 line-clamp-2">
                         {product.description}
                       </p>
-                      <div className="mt-4 flex justify-between items-center">
-                        <span className="text-orange-600 font-bold text-lg">
-                          ₹{product.price}
-                        </span>
-                      </div>
                     </div>
                   </div>
                 ))}
