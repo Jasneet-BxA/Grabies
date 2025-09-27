@@ -93,9 +93,9 @@ export default function OrderDetailPage() {
         <h1 className="text-3xl font-extrabold text-orange-600">
           🧾 Order #{order.id}
         </h1>
-        <Badge className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-800 capitalize bg-orange-100/50">
+        {/* <Badge className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-800 capitalize bg-orange-100/50">
           {order.status}
-        </Badge>
+        </Badge> */}
       </div>
 
       <div className="space-y-6 mt-6 ">
@@ -139,7 +139,7 @@ export default function OrderDetailPage() {
       <div className="mt-6 flex justify-between items-center">
         <button
           className="flex items-center space-x-2 px-4 py-2 rounded-md bg-orange-600 text-white font-semibold text-sm hover:bg-orange-700 transition-all"
-          onClick={() => navigate("/orderhistory")}
+          onClick={() => navigate("/order")}
         >
           <FaArrowLeft className="text-white" />
           <span>Back to Orders</span>

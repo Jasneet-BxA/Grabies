@@ -25,11 +25,6 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="/cart" className="hover:underline">
-                Cart
-              </a>
-            </li>
-            <li>
               <a href="/about" className="hover:underline">
                 About us
               </a>

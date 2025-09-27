@@ -178,7 +178,7 @@ export default function ProductListing() {
           const updatedWishlist = wishlist.filter((id) => id !== productId);
           setWishlist(updatedWishlist);
           saveWishlistToLocalStorage(updatedWishlist);
-          toast.success(`💔 Removed "${product.name}" from your CraveBox`);
+          toast(`💔 Removed "${product.name}" from your CraveBox`);
         } catch (err) {
           console.error("Failed to remove from server wishlist", err);
         }

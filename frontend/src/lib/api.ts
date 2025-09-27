@@ -5,15 +5,11 @@ const api = axios.create({
   withCredentials: true,
 })
 
-// Define types for data structures used in functions
 
 interface SignupData {
-  // Define the expected properties for signup data here
-  // Example:
   email: string;
   password: string;
   name?: string;
-  // Add other fields as required
 }
 
 interface AddressData {

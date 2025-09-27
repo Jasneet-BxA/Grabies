@@ -364,7 +364,7 @@ export default function Profile() {
             </Button>
 
             <Button
-              onClick={() => navigate("/orderhistory")}
+              onClick={() => navigate("/order")}
               className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
               variant="ghost"
             >
