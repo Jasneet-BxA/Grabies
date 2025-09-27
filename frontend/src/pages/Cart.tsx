@@ -249,7 +249,6 @@ export default function Cart() {
                   <Button
                     variant="outline"
                     size="icon"
-                    aria-label="Decrease quantity"
                     onClick={() =>
                       updateQuantity(cartId, product.id, quantity - 1)
                     }
