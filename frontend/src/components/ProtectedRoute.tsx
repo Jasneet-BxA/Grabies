@@ -11,9 +11,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
-        <div className="animate-pulse rounded-md bg-gray-300 h-16 w-48" />
-      </div>
+      <h1 className='text-white'>.</h1>
     );
   }
 

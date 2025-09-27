@@ -112,7 +112,7 @@ export default function OurFood() {
       toast.success(`${product.name} added to cart!`);
     } catch (error) {
       console.error("Failed to add to cart", error);
-      toast.error("Failed to add item to cart.");
+      toast.error("Your cart’s waiting—just login! 🔑");
     }
   };
 

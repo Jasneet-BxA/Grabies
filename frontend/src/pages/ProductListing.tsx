@@ -25,11 +25,11 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
+import { FaBoxOpen } from 'react-icons/fa';
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import {User} from "@/types/index";
+import { User } from "@/types/index";
 export function SkeletonCard() {
   return (
     <div className="flex flex-col space-y-3 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -156,7 +156,7 @@ export default function ProductListing() {
       toast.success(`${product.name} added to cart!`);
     } catch (error) {
       console.error("Failed to add to cart", error);
-      toast.error("Failed to add item to cart.");
+      toast.error("Your cart’s waiting—just login! 🔑");
     }
   };
 
@@ -258,7 +258,10 @@ export default function ProductListing() {
             value={rating?.toString() || ""}
           >
             <SelectTrigger className="w-[150px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
-              <SelectValue placeholder="Choose rating" className="text-gray-700" />
+              <SelectValue
+                placeholder="Choose rating"
+                className="text-gray-700"
+              />
             </SelectTrigger>
             <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
               {[5, 4.7, 4.5, 4].map((r) => (
@@ -281,7 +284,10 @@ export default function ProductListing() {
             value={priceRange}
           >
             <SelectTrigger className="w-[180px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
-              <SelectValue placeholder="Choose price range" className="text-gray-700" />
+              <SelectValue
+                placeholder="Choose price range"
+                className="text-gray-700"
+              />
             </SelectTrigger>
             <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
               <SelectItem
@@ -307,7 +313,10 @@ export default function ProductListing() {
             value={sort}
           >
             <SelectTrigger className="w-[180px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
-              <SelectValue placeholder="Sort by price" className="text-gray-700" />
+              <SelectValue
+                placeholder="Sort by price"
+                className="text-gray-700"
+              />
             </SelectTrigger>
             <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
               <SelectItem
@@ -356,24 +365,39 @@ export default function ProductListing() {
         {error && <p className="text-center text-red-500">{error}</p>}
 
         {!loading && !error && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-            {products.map((product) => (
-              <ProductDetailDialog
-                key={product.id}
-                category={product.cuisine}
-                productName={product.name}
-                triggerElement={
-                  <ProductCard
-                    product={product}
-                    onAddToCart={handleAddToCart}
-                    onToggleWishlist={handleToggleWishlist}
-                    isWishlisted={isWishlisted(product)}
-                    showWishlistIcon={!!user}
+          <>
+            {products.length === 0 ? (
+  <div className="max-w-md mx-auto p-8 mt-20 text-center text-orange-700">
+    <FaBoxOpen className="text-6xl mx-auto mb-4 animate-pulse" />
+    <h3 className="text-2xl font-semibold mb-2">
+      No Products Found
+    </h3>
+    <p className="text-orange-600">
+      Sorry, we couldn’t find any products matching your filters.
+      Please try adjusting your search criteria.
+    </p>
+  </div>
+)  : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+                {products.map((product) => (
+                  <ProductDetailDialog
+                    key={product.id}
+                    category={product.cuisine}
+                    productName={product.name}
+                    triggerElement={
+                      <ProductCard
+                        product={product}
+                        onAddToCart={handleAddToCart}
+                        onToggleWishlist={handleToggleWishlist}
+                        isWishlisted={isWishlisted(product)}
+                        showWishlistIcon={!!user}
+                      />
+                    }
                   />
-                }
-              />
-            ))}
-          </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </>
