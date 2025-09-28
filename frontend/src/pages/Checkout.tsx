@@ -8,8 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { MapPin, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast"; // Import toast
 import type { RawCartItem } from "@/types";
-import type {Address} from "@/types";
+import type { Address } from "@/types";
  
 interface CartItem {
   id: string;
@@ -21,6 +22,7 @@ interface CartItem {
     price: number;
   };
 }
+ 
 export default function OrderPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [address, setAddress] = useState<Address | null>(null);
@@ -31,15 +33,6 @@ export default function OrderPage() {
   const location = useLocation();
   const addressId = location.state?.addressId;
   const navigate = useNavigate();
-  const handlePayByCOD = () => {
-    navigate("/checkoutwithCod", {
-      state: {
-        addressId,
-        cartItems,
-        totalPrice,
-      },
-    });
-  };
  
   const passedAddress = location.state?.address;
  
@@ -69,6 +62,7 @@ export default function OrderPage() {
         }
       } catch (err) {
         console.error("Error loading order data:", err);
+        toast.error("Failed to load order data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -86,15 +80,16 @@ export default function OrderPage() {
  
   const handleConfirmAddress = () => {
     if (!address) {
-      alert("Please add a delivery address in your profile first.");
+      toast.error("Please add a delivery address in your profile first.");
       return;
     }
     setAddressConfirmed(true);
+    toast.success("Address confirmed!");
   };
  
   const handleProceedToPay = async () => {
     if (!address) {
-      alert("No address found. Cannot proceed to payment.");
+      toast.error("No address found. Cannot proceed to payment.");
       return;
     }
     try {
@@ -103,7 +98,26 @@ export default function OrderPage() {
       window.location.href = res.data.url;
     } catch (err) {
       console.error("Error redirecting to Stripe Checkout:", err);
-      alert("Failed to start payment session. Try again later.");
+      toast.error("Failed to start payment session. Try again later.");
+    }
+  };
+ 
+  const handlePayByCOD = () => {
+    try {
+      if (!addressId) {
+        toast.error("Please confirm your address before proceeding.");
+        return;
+      }
+      navigate("/checkoutwithCod", {
+        state: {
+          addressId,
+          cartItems,
+          totalPrice,
+        },
+      });
+    } catch (err) {
+      console.error("Error in COD payment handler:", err);
+      toast.error("Something went wrong while proceeding to COD checkout.");
     }
   };
  
