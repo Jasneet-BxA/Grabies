@@ -35,6 +35,7 @@ export default function WishlistPage() {
         }
       } catch (err) {
         console.error("Error loading wishlist", err);
+        toast.error("Something went wrong. Please try again later.")
       } finally {
         setLoading(false);
       }
@@ -44,32 +45,34 @@ export default function WishlistPage() {
   }, []);
 
   const { cartitem, refreshCart } = useCart();
+const handleAddToCart = async (product: Product) => {
+  if (!product) return;
 
-  const handleAddToCart = async (product: Product) => {
-    if (!product) return;
+  if (!user) {
+    toast("🔐 Please login first to add items to your cart.");
+    return;
+  }
 
-    const isAlreadyInCart = cartitem.some(
-      (item) => item.product.id === product.id
-    );
+  const isAlreadyInCart = cartitem.some(
+    (item) => item.product.id === product.id
+  );
 
-    if (isAlreadyInCart) {
-      toast("Already added to cart", {
-        icon: "ℹ️",
-        style: { background: "#333", color: "#fff" },
-      });
-      return;
-    }
-
-    try {
-      await addToCart(product.id, 1);
-      await refreshCart();
-      toast.success(`${product.name} added to cart!`);
-    } catch (error) {
-      console.error("Failed to add to cart", error);
-      toast.error("Failed to add item to cart.");
-    }
-  };
-
+  if (isAlreadyInCart) {
+    toast("ℹ️ Already added to cart", {
+      icon: "🛒",
+      style: { background: "#333", color: "#fff" },
+    });
+    return;
+  }
+  try {
+    await addToCart(product.id, 1);
+    await refreshCart();
+    toast.success(`🛒 ${product.name} added to cart!`);
+  } catch (error) {
+    console.error("Failed to add to cart:", error);
+    toast("❌ Something went wrong. Please try again later.");
+  }
+};
 
   const handleToggleWishlist = async (product: Product) => {
     try {

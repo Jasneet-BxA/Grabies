@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react"; 
 import {OrderItem} from "@/types/index";
 import {Order} from "@/types/index";
+import toast from "react-hot-toast";
 
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -17,6 +18,7 @@ export default function OrderHistoryPage() {
         setOrders(data);
       } catch (error) {
         console.error("Error fetching orders:", error);
+        toast.error("❌ Failed to fetch your orders.");
       }
     };
 

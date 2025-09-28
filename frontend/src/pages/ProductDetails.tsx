@@ -10,6 +10,8 @@ import { addToCart, getProductByName } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getCurrentUser } from "@/lib/api";
+import type { User } from "@/types";
 
 type Props = {
   category: string;
@@ -26,6 +28,7 @@ export default function ProductDetailDialog({
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const { cartitem, refreshCart } = useCart();
 
@@ -49,30 +52,34 @@ export default function ProductDetailDialog({
     }
   }, [open, category, productName]);
 
-  const handleAddToCart = async (product: Product) => {
-    if (!product) return;
+const handleAddToCart = async (product: Product) => {
+  if (!product) return;
 
-    const isAlreadyInCart = cartitem.some(
-      (item) => item.product.id === product.id
-    );
+  if (!user) {
+    toast("🔐 Please login first to add items to your cart.");
+    return;
+  }
 
-    if (isAlreadyInCart) {
-      toast("Already added to cart", {
-        icon: "ℹ️",
-        style: { background: "#333", color: "#fff" },
-      });
-      return;
-    }
+  const isAlreadyInCart = cartitem.some(
+    (item) => item.product.id === product.id
+  );
 
-    try {
-      await addToCart(product.id, 1);
-      await refreshCart();
-      toast.success(`${product.name} added to cart!`);
-    } catch (error) {
-      console.error("Failed to add to cart", error);
-      toast.error("Failed to add item to cart.");
-    }
-  };
+  if (isAlreadyInCart) {
+    toast("ℹ️ Already added to cart", {
+      icon: "🛒",
+      style: { background: "#333", color: "#fff" },
+    });
+    return;
+  }
+  try {
+    await addToCart(product.id, 1);
+    await refreshCart();
+    toast.success(`🛒 ${product.name} added to cart!`);
+  } catch (error) {
+    console.error("Failed to add to cart:", error);
+    toast("❌ Something went wrong. Please try again later.");
+  }
+};
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
