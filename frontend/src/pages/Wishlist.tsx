@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { getWishlist, removeFromWishlist, getCurrentUser, addToCart } from "@/lib/api";
+import { getCurrentUser, addToCart } from "@/lib/api";
 import ProductCard from "@/components/product/ProductCard";
 import type { Product, User } from "@/types";
 import { FaHeartBroken } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 export function SkeletonCard() {
   return (
@@ -18,72 +19,57 @@ export function SkeletonCard() {
     </div>
   );
 }
+
 export default function WishlistPage() {
-  const [wishlist, setWishlist] = useState<Product[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const { wishlist, removeFromWishlistContext } = useWishlist();
+  const { cartitem, refreshCart, addItem } = useCart();
+
+  // Fetch user only
   useEffect(() => {
-    const fetchWishlist = async () => {
+    const loadUser = async () => {
       try {
-        setLoading(true);
         const currentUser = await getCurrentUser();
         setUser(currentUser);
-        if (currentUser) {
-          const wishlistItems = await getWishlist();
-          setWishlist(wishlistItems);
-        }
       } catch (err) {
-        console.error("Error loading wishlist", err);
-        toast.error("Something went wrong. Please try again later.")
+        console.error("Failed to fetch user", err);
+        toast.error("Failed to load user info.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchWishlist();
+    loadUser();
   }, []);
 
-  const { cartitem, refreshCart } = useCart();
-const handleAddToCart = async (product: Product) => {
-  if (!product) return;
+  const handleAddToCart = async (product: Product) => {
+    if (!user) {
+      toast("🔐 Please login first to add items to your cart.");
+      return;
+    }
 
-  if (!user) {
-    toast("🔐 Please login first to add items to your cart.");
-    return;
-  }
+    const alreadyInCart = cartitem.some((item) => item.product.id === product.id);
+    if (alreadyInCart) {
+      toast("ℹ️ Already in cart", {
+        icon: "🛒",
+        style: { background: "#333", color: "#fff" },
+      });
+      return;
+    }
 
-  const isAlreadyInCart = cartitem.some(
-    (item) => item.product.id === product.id
-  );
-
-  if (isAlreadyInCart) {
-    toast("ℹ️ Already added to cart", {
-      icon: "🛒",
-      style: { background: "#333", color: "#fff" },
-    });
-    return;
-  }
-  try {
-    await addToCart(product.id, 1);
-    await refreshCart();
-    toast.success(`🛒 ${product.name} added to cart!`);
-  } catch (error) {
-    console.error("Failed to add to cart:", error);
-    toast("❌ Something went wrong. Please try again later.");
-  }
-};
+    try {
+      addItem(product.id, 1); // from CartContext
+      toast.success(`🛒 ${product.name} added to cart!`);
+    } catch (err) {
+      console.error("Error adding to cart", err);
+      toast.error("❌ Failed to add to cart");
+    }
+  };
 
   const handleToggleWishlist = async (product: Product) => {
-    try {
-      await removeFromWishlist(product.id);
-      setWishlist((prev) => prev.filter((item) => item.id !== product.id));
-
-      toast(`💔 Removed "${product.name}" from your CraveBox`);
-    } catch (err) {
-      console.error("Error removing from wishlist", err);
-      toast.error("Failed to update wishlist. Try again.");
-    }
+    await removeFromWishlistContext(product.id);
   };
 
   return (
@@ -99,7 +85,7 @@ const handleAddToCart = async (product: Product) => {
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {[...Array(6)].map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>

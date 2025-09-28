@@ -103,7 +103,7 @@ function App() {
           />
 
           {/* Public routes */}
-          <Route path="/category" element={<ProductListing />} />
+          <Route path="/food/:category" element={<ProductListing />} />
           <Route path="/food" element={<OurFood />} />
           <Route path="/search" element={<SearchResults />} />
         </Routes>

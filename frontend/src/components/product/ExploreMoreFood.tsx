@@ -31,7 +31,7 @@ export default function ExploreMoreFood() {
               key={index}
               className="flex flex-col items-center cursor-pointer hover:scale-105 transition"
               onClick={() =>
-                navigate(`/category?category=${item.title.toLowerCase()}`, {
+                navigate(`/food/${item.title.toLowerCase()}`, {
                   state: { fromOurFood: true },
                 })
               }

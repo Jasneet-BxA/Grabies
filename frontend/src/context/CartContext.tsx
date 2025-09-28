@@ -39,7 +39,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         image_url: item.products.image_url,
         price: item.products.price,
       },
-    }));
+    })).sort((a, b) => a.product.name.localeCompare(b.product.name));;
     setCartItems(transformed);
   };
 

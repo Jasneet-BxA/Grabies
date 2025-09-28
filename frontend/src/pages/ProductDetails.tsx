@@ -30,7 +30,7 @@ export default function ProductDetailDialog({
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const { cartitem, refreshCart } = useCart();
+  const { cartitem, addItem } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -72,8 +72,7 @@ const handleAddToCart = async (product: Product) => {
     return;
   }
   try {
-    await addToCart(product.id, 1);
-    await refreshCart();
+    await addItem(product.id, 1);
     toast.success(`🛒 ${product.name} added to cart!`);
   } catch (error) {
     console.error("Failed to add to cart:", error);

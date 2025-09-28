@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { getUserProfile, logout } from "@/lib/api";
+import { getCurrentUser, logout } from "@/lib/api";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -67,7 +67,7 @@ useEffect(() => {
   const fetchProfile = async () => {
     if (sheetOpen && isAuthenticated) {
       try {
-        const data = await getUserProfile();
+        const data = await getCurrentUser();
         setProfile(data);
         setUser(data);
 
@@ -79,7 +79,7 @@ useEffect(() => {
         const message =
           err instanceof Error ? err.message : "Something went wrong fetching profile.";
 
-        toast.error(message); // Show toast on error
+        toast.error(message); 
       }
     }
   };
@@ -100,7 +100,7 @@ const handleLogout = async () => {
     const message =
       err instanceof Error ? err.message : "Logout failed. Please try again.";
 
-    toast.error(message); // Use toast for error feedback
+    toast.error(message); 
   } finally {
     setLoading(false);
   }
@@ -340,7 +340,6 @@ const handleLogout = async () => {
   );
 }
 
-// Separate AddressForm component with react-hook-form + zod validation
 function AddressForm({ onSuccess }: { onSuccess: (newAddress: any) => void }) {
   const {
     register,
@@ -355,7 +354,7 @@ function AddressForm({ onSuccess }: { onSuccess: (newAddress: any) => void }) {
     try {
       const res = await addUserNewAddress(data);
       onSuccess(res.address);
-      reset(); // Clear form fields after success
+      reset(); 
     } catch (err) {
       console.error("Error saving address:", err);
       toast.error("Failed to save address. Please try again.");

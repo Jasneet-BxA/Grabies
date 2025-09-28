@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, Trash } from "lucide-react";
@@ -52,7 +52,7 @@ const addressSchema = z.object({
 type AddressFormValues = z.infer<typeof addressSchema>;
 
 export default function Cart() {
-  const { quantity, removeItem, refreshCart } = useCart();
+  const { quantity, removeItem } = useCart();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -60,7 +60,6 @@ export default function Cart() {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Fetch cart items
 const fetchCartItems = async () => {
   try {
     setLoading(true);
@@ -84,7 +83,7 @@ const fetchCartItems = async () => {
     setLoading(false);
   }
 };
-  // Fetch saved addresses
+
 const fetchAddresses = async () => {
   try {
     const res = await getUserAddress();
@@ -99,11 +98,8 @@ const fetchAddresses = async () => {
     fetchAddresses();
   }, []);
 
-  // Remove cart item
 const handleRemove = async (cartId: string) => {
   try {
-    await removeFromCart(cartId);
-    await refreshCart();
     removeItem(cartId);
     setCartItems((prev) => prev.filter((item) => item.id !== cartId));
   } catch (error) {
@@ -112,7 +108,6 @@ const handleRemove = async (cartId: string) => {
   }
 };
 
-  // Update quantity of a cart item
 const updateQuantity = async (
   cartId: string,
   productId: string,
@@ -121,8 +116,6 @@ const updateQuantity = async (
   if (newQuantity < 1) return;
 
   try {
-    await addToCart(productId, newQuantity);
-    await refreshCart();
     quantity(productId, newQuantity);
     setCartItems((prev) =>
       prev.map((item) =>
@@ -134,13 +127,11 @@ const updateQuantity = async (
     toast.error("Failed to update quantity. Please try again.");
   }
 };
-  // Total price calculation
-  const totalPrice = cartItems.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
-    0
-  );
 
-  // Form for adding new address
+const totalPrice =
+  cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+
+
   const {
     register,
     handleSubmit,
@@ -153,7 +144,7 @@ const updateQuantity = async (
   const onSubmit = async (data: AddressFormValues) => {
     try {
       const res = await addUserNewAddress(data);
-      const newAddress = res.address || data; // fallback if API returns no new address object
+      const newAddress = res.address || data; 
       setAddresses((prev) => [...prev, newAddress]);
       toast.success("Address saved!");
       reset();

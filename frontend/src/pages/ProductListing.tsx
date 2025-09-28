@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   getProductsByCategory,
-  getWishlist,
-  addToWishlist,
-  removeFromWishlist,
-  getCurrentUser,
   getFilteredProducts,
-  addToCart,
+  getCurrentUser,
 } from "@/lib/api";
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailDialog from "@/pages/ProductDetails";
@@ -27,9 +23,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { FaBoxOpen } from 'react-icons/fa';
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/types/index";
+import { useParams } from "react-router";
+
 export function SkeletonCard() {
   return (
     <div className="flex flex-col space-y-3 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -49,167 +48,106 @@ type SortType = "" | "price_asc" | "price_desc";
 export default function ProductListing() {
   const [sort, setSort] = useState<SortType>("");
   const [products, setProducts] = useState<Product[]>([]);
-  const [wishlist, setWishlist] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [searchParams] = useSearchParams();
-  const category = searchParams.get("category");
+  const { category } = useParams();
   const [tag, setTag] = useState<TagType>("");
   const [rating, setRating] = useState<number | "">("");
   const [priceRange, setPriceRange] = useState<PriceRangeType>("");
   const location = useLocation();
   const cameFromOurFood = location.state?.fromOurFood === true;
+  const { cartitem, addItem } = useCart();
 
-  const WISHLIST_KEY = "local_wishlist";
-
-  function getWishlistFromLocalStorage(): string[] {
-    try {
-      const stored = localStorage.getItem(WISHLIST_KEY);
-      if (!stored) return [];
-      const parsed: string[] = JSON.parse(stored);
-      return parsed.map((id) => id.trim());
-    } catch {
-      return [];
-    }
-  }
-
-  function saveWishlistToLocalStorage(wishlist: string[]) {
-    const trimmedWishlist = wishlist.map((id) => id.trim());
-    localStorage.setItem(WISHLIST_KEY, JSON.stringify(trimmedWishlist));
-  }
+  const {
+    wishlist,
+    addToWishlistContext,
+    removeFromWishlistContext,
+    refreshWishlist,
+  } = useWishlist();
 
   useEffect(() => {
     const fetchProducts = async () => {
-  try {
-    setLoading(true);
-    setError(null);
-
-    if (!tag && !rating && !priceRange && !sort) {
-      const data = await getProductsByCategory(category || "all");
-      setProducts(data);
-    } else {
-      const filtered = await getFilteredProducts(category || "all", {
-        tag: tag || undefined,
-        rating: rating || undefined,
-        priceRange: priceRange || undefined,
-        sort: sort || undefined,
-      });
-      setProducts(filtered.data || filtered);
-    }
-  } catch (err) {
-    console.error(err);
-    toast.error("❌ Failed to load products. Please try again.");
-    setError("Failed to load products");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      try {
+        setLoading(true);
+        setError(null);
+        if (!tag && !rating && !priceRange && !sort) {
+          const data = await getProductsByCategory(category || "all");
+          setProducts(data);
+        } else {
+          const filtered = await getFilteredProducts(category || "all", {
+            tag: tag || undefined,
+            rating: rating || undefined,
+            priceRange: priceRange || undefined,
+            sort: sort || undefined,
+          });
+          setProducts(filtered.data || filtered);
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("❌ Failed to load products. Please try again.");
+        setError("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchProducts();
   }, [category, tag, rating, priceRange, sort]);
 
   useEffect(() => {
     const fetchUserAndWishlist = async () => {
-  try {
-    const currentUser = await getCurrentUser();
-    setUser(currentUser);
-
-    if (currentUser) {
-      const wishlistItems = await getWishlist();
-      const ids = wishlistItems.map((item: Product) => item.id.trim());
-      setWishlist(ids);
-      saveWishlistToLocalStorage(ids);
-    } else {
-      const localWishlist = getWishlistFromLocalStorage();
-      setWishlist(localWishlist);
-    }
-  } catch (err) {
-    const localWishlist = getWishlistFromLocalStorage();
-    setWishlist(localWishlist);
-  }
-};
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      } catch {
+        setUser(null);
+      }
+      await refreshWishlist();
+    };
 
     fetchUserAndWishlist();
-  }, []);
+  }, [refreshWishlist]);
 
-  const { cartitem, refreshCart } = useCart();
-
-const handleAddToCart = async (product: Product) => {
-  if (!product) return;
-
-  if (!user) {
-    toast("🔐 Please login first to add items to your cart.");
-    return;
-  }
-
-  const isAlreadyInCart = cartitem.some(
-    (item) => item.product.id === product.id
-  );
-
-  if (isAlreadyInCart) {
-    toast("ℹ️ Already added to cart", {
-      icon: "🛒",
-      style: { background: "#333", color: "#fff" },
-    });
-    return;
-  }
-  try {
-    await addToCart(product.id, 1);
-    await refreshCart();
-    toast.success(`🛒 ${product.name} added to cart!`);
-  } catch (error) {
-    console.error("Failed to add to cart:", error);
-    toast("❌ Something went wrong. Please try again later.");
-  }
-};
-
+  const handleAddToCart = async (product: Product) => {
+    if (!product) return;
+    if (!user) {
+      toast("🔐 Please login first to add items to your cart.");
+      return;
+    }
+    const isAlreadyInCart = cartitem.some((item) => item.product.id === product.id);
+    if (isAlreadyInCart) {
+      toast("ℹ️ Already added to cart", {
+        icon: "🛒",
+        style: { background: "#333", color: "#fff" },
+      });
+      return;
+    }
+    try {
+      addItem(product.id, 1);
+      toast.success(`🛒 ${product.name} added to cart!`);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      toast("❌ Something went wrong. Please try again later.");
+    }
+  };
 
   const handleToggleWishlist = async (product: Product) => {
-  const productId = product.id.trim();
-  const isAlreadyWishlisted = wishlist.includes(productId);
+    const productId = product.id.trim();
+    const isAlreadyWishlisted = wishlist.some((item) => item.id === productId);
 
-  if (isAlreadyWishlisted) {
-    if (user) {
-      try {
-        await removeFromWishlist(productId);
-        const updatedWishlist = wishlist.filter((id) => id !== productId);
-        setWishlist(updatedWishlist);
-        saveWishlistToLocalStorage(updatedWishlist);
-        toast(`💔 Removed "${product.name}" from your CraveBox`);
-      } catch (err) {
-        console.error("Failed to remove from server wishlist", err);
-        toast.error("❌ Could not remove from wishlist. Try again.");
-      }
+    if (isAlreadyWishlisted) {
+      await removeFromWishlistContext(productId);
+      toast(`💔 Removed "${product.name}" from your CraveBox`);
     } else {
-      const updatedWishlist = wishlist.filter((id) => id !== productId);
-      setWishlist(updatedWishlist);
-      saveWishlistToLocalStorage(updatedWishlist);
-      toast("💔 Removed from local wishlist.");
+      await addToWishlistContext(productId);
+      toast.success(`😋 "${product.name}" added to your CraveBox!`);
     }
-  } else {
-    if (user) {
-      try {
-        await addToWishlist(productId);
-        const updatedWishlist = [...wishlist, productId];
-        setWishlist(updatedWishlist);
-        saveWishlistToLocalStorage(updatedWishlist);
-        toast.success(`😋 "${product.name}" added to your CraveBox!`);
-      } catch (err) {
-        console.error("Failed to add to server wishlist", err);
-        toast.error("❌ Could not add to wishlist. Try again.");
-      }
-    } else {
-      const updatedWishlist = [...wishlist, productId];
-      setWishlist(updatedWishlist);
-      saveWishlistToLocalStorage(updatedWishlist);
-    }
-  }
-};
+    await refreshWishlist();
+  };
 
   const isWishlisted = (product: Product) =>
-    wishlist.includes(product.id.trim());
+    wishlist.some((item) => item.id === product.id);
 
   return (
     <>
@@ -239,6 +177,7 @@ const handleAddToCart = async (product: Product) => {
       </Breadcrumb>
 
       <div className="flex flex-col sm:flex-row sm:items-end items-start gap-4 mb-10 bg-white p-4 rounded-lg shadow-md border border-gray-200">
+        {/* Type Filter */}
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-gray-700">Type</label>
           <div className="flex border border-gray-300 rounded-full overflow-hidden text-sm font-medium shadow-sm">
@@ -252,9 +191,7 @@ const handleAddToCart = async (product: Product) => {
                     : "bg-white text-gray-700 hover:bg-orange-100"
                 }`}
               >
-                {type === ""
-                  ? "All"
-                  : type.charAt(0).toUpperCase() + type.slice(1)}
+                {type === "" ? "All" : type.charAt(0).toUpperCase() + type.slice(1)}
               </button>
             ))}
           </div>
@@ -267,10 +204,7 @@ const handleAddToCart = async (product: Product) => {
             value={rating?.toString() || ""}
           >
             <SelectTrigger className="w-[150px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
-              <SelectValue
-                placeholder="Choose rating"
-                className="text-gray-700"
-              />
+              <SelectValue placeholder="Choose rating" className="text-gray-700" />
             </SelectTrigger>
             <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
               {[5, 4.7, 4.5, 4].map((r) => (
@@ -293,10 +227,7 @@ const handleAddToCart = async (product: Product) => {
             value={priceRange}
           >
             <SelectTrigger className="w-[180px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
-              <SelectValue
-                placeholder="Choose price range"
-                className="text-gray-700"
-              />
+              <SelectValue placeholder="Choose price range" className="text-gray-700" />
             </SelectTrigger>
             <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
               <SelectItem
@@ -322,10 +253,7 @@ const handleAddToCart = async (product: Product) => {
             value={sort}
           >
             <SelectTrigger className="w-[180px] border border-orange-400 bg-white rounded-md shadow-md hover:border-orange-500 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
-              <SelectValue
-                placeholder="Sort by price"
-                className="text-gray-700"
-              />
+              <SelectValue placeholder="Sort by price" className="text-gray-700" />
             </SelectTrigger>
             <SelectContent className="bg-white rounded-md shadow-lg border border-orange-300">
               <SelectItem
@@ -371,22 +299,20 @@ const handleAddToCart = async (product: Product) => {
             ))}
           </div>
         )}
+
         {error && <p className="text-center text-red-500">{error}</p>}
 
         {!loading && !error && (
           <>
             {products.length === 0 ? (
-  <div className="max-w-md mx-auto p-8 mt-20 text-center text-orange-700">
-    <FaBoxOpen className="text-6xl mx-auto mb-4 animate-pulse" />
-    <h3 className="text-2xl font-semibold mb-2">
-      No Products Found
-    </h3>
-    <p className="text-orange-600">
-      Sorry, we couldn’t find any products matching your filters.
-      Please try adjusting your search criteria.
-    </p>
-  </div>
-)  : (
+              <div className="max-w-md mx-auto p-8 mt-20 text-center text-orange-700">
+                <FaBoxOpen className="text-6xl mx-auto mb-4 animate-pulse" />
+                <h3 className="text-2xl font-semibold mb-2">No Products Found</h3>
+                <p className="text-orange-600">
+                  Sorry, we couldn’t find any products matching your filters. Please try adjusting your search criteria.
+                </p>
+              </div>
+            ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
                 {products.map((product) => (
                   <ProductDetailDialog
@@ -397,7 +323,7 @@ const handleAddToCart = async (product: Product) => {
                       <ProductCard
                         product={product}
                         onAddToCart={handleAddToCart}
-                        onToggleWishlist={handleToggleWishlist}
+                        onToggleWishlist={() => handleToggleWishlist(product)}
                         isWishlisted={isWishlisted(product)}
                         showWishlistIcon={!!user}
                       />

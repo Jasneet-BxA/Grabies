@@ -24,12 +24,11 @@ export async function getCurrentUser() {
   return api.get('/user/me').then(res => res.data);
 }
 
-export async function getUserProfile() {
-  return api.get('/user/me').then(res => res.data);
-}
-
 export async function getUserAddress() {
   return api.get('/address').then(res => res.data);
+}
+export async function addUserNewAddress(addressData: AddressData) {
+  return api.post('/address', addressData).then(res => res.data);
 }
 
 // Products
@@ -46,10 +45,6 @@ export async function getFilteredProducts(category: string, options: FilterOptio
 
 export async function getAllProducts(limit: number = 6, offset: number = 0) {
   return api.get(`/food?limit=${limit}&offset=${offset}`).then(res => res.data);
-}
-
-export async function addUserNewAddress(addressData: AddressData) {
-  return api.post('/address', addressData).then(res => res.data);
 }
 
 export async function getProductByName(category: string, productName: string) {
