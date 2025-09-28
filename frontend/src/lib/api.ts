@@ -3,7 +3,7 @@ import {AddressData} from '../types/index'
 import {SignupData} from '../types/index'
 import {FilterOptions} from '../types/index'
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 })
 // Authentication
