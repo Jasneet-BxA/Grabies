@@ -23,6 +23,9 @@ export async function logout() {
 export async function getCurrentUser() {
   return api.get('/user/me').then(res => res.data);
 }
+export async function getUserProfile() {
+  return api.get('/user/me').then(res => res.data);
+}
 
 export async function getUserAddress() {
   return api.get('/address').then(res => res.data);
