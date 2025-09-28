@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { supabase } from "../config/supabaseClient.js";
 import { generateToken } from "../utils/jwt.js";
 import type { SignupInput, LoginInput } from "../types/index.js";
+import { CustomError } from "../middlewares/errorHandler.js";
 
 export const signupService = async (userData: SignupInput) => {
   const { name, email, password, contact, dob, address } = userData;
@@ -17,7 +18,7 @@ export const signupService = async (userData: SignupInput) => {
   }
 
   if (existingUser) {
-    throw new Error("Email already exists");
+    throw new CustomError("User already exists", 409);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -73,13 +74,13 @@ export const loginService = async ({ email, password }: LoginInput) => {
     .single();
 
   if (fetchError || !user) {
-    throw new Error("Invalid email or password");
+    throw new CustomError("Invalid email or password", 401);
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
 
   if (!isPasswordMatch) {
-    throw new Error("Invalid email or password");
+    throw new CustomError("Invalid email or password", 401);
   }
 
   const token = generateToken({ userId: user.id, email: user.email });

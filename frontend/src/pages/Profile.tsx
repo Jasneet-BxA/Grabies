@@ -63,50 +63,50 @@ export default function Profile() {
     { address_line: string; city: string; state: string; pincode: string }[]
   >([]);
 
-useEffect(() => {
-  const fetchProfile = async () => {
-    if (sheetOpen && isAuthenticated) {
-      try {
-        const data = await getCurrentUser();
-        setProfile(data);
-        setUser(data);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (sheetOpen && isAuthenticated) {
+        try {
+          const data = await getCurrentUser();
+          setProfile(data);
+          setUser(data);
 
-        const addressData = await getUserAddress();
-        setSavedAddresses(addressData);
-      } catch (err: unknown) {
-        console.error("Failed to fetch profile or address:", err);
+          const addressData = await getUserAddress();
+          setSavedAddresses(addressData);
+        } catch (err: unknown) {
+          console.error("Failed to fetch profile or address:", err);
 
-        const message =
-          err instanceof Error ? err.message : "Something went wrong fetching profile.";
+          const message =
+            err instanceof Error
+              ? err.message
+              : "Something went wrong fetching profile.";
 
-        toast.error(message); 
+          toast.error(message);
+        }
       }
+    };
+
+    fetchProfile();
+  }, [sheetOpen, isAuthenticated, setUser]);
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      await logout();
+      setUser(null);
+      setSheetOpen(false);
+      navigate("/");
+    } catch (err: unknown) {
+      console.error("Logout failed:", err);
+
+      const message =
+        err instanceof Error ? err.message : "Logout failed. Please try again.";
+
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
-
-  fetchProfile();
-}, [sheetOpen, isAuthenticated, setUser]);
-
-const handleLogout = async () => {
-  setLoading(true);
-  try {
-    await logout();
-    setUser(null);
-    setSheetOpen(false);
-    navigate("/");
-  } catch (err: unknown) {
-    console.error("Logout failed:", err);
-
-    const message =
-      err instanceof Error ? err.message : "Logout failed. Please try again.";
-
-    toast.error(message); 
-  } finally {
-    setLoading(false);
-  }
-};
-
-
 
   if (!isAuthenticated) return null;
 
@@ -237,7 +237,9 @@ const handleLogout = async () => {
                         key={index}
                         className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-700"
                       >
-                        <div className="font-medium mb-1">Address {index + 1}</div>
+                        <div className="font-medium mb-1">
+                          Address {index + 1}
+                        </div>
                         <div>
                           {addr.address_line}, {addr.city}, {addr.state} -{" "}
                           {addr.pincode}
@@ -308,7 +310,10 @@ const handleLogout = async () => {
             </Button>
 
             <Button
-              onClick={() => navigate("/wishlist")}
+              onClick={() => {
+                setSheetOpen(false); 
+                navigate("/wishlist"); 
+              }}
               className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
               variant="ghost"
             >
@@ -316,7 +321,10 @@ const handleLogout = async () => {
             </Button>
 
             <Button
-              onClick={() => navigate("/order")}
+              onClick={() => {
+                setSheetOpen(false); 
+                navigate("/order"); 
+              }}
               className="w-full mb-6 text-sm bg-gray-100 text-gray-800 hover:bg-orange-100 hover:text-orange-700 transition-colors duration-200"
               variant="ghost"
             >
@@ -354,7 +362,7 @@ function AddressForm({ onSuccess }: { onSuccess: (newAddress: any) => void }) {
     try {
       const res = await addUserNewAddress(data);
       onSuccess(res.address);
-      reset(); 
+      reset();
     } catch (err) {
       console.error("Error saving address:", err);
       toast.error("Failed to save address. Please try again.");
@@ -371,7 +379,9 @@ function AddressForm({ onSuccess }: { onSuccess: (newAddress: any) => void }) {
           className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md"
         />
         {errors.address_line && (
-          <p className="text-sm text-red-500 mt-1">{errors.address_line.message}</p>
+          <p className="text-sm text-red-500 mt-1">
+            {errors.address_line.message}
+          </p>
         )}
       </div>
 

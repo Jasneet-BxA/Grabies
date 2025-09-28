@@ -1,16 +1,21 @@
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import {Card,CardHeader,CardTitle,CardDescription,CardContent,} from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
-import { signup } from '@/lib/api'
-import { useAuth } from '@/context/AuthContext'
-import toast from 'react-hot-toast'
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { signup } from '@/lib/api';
+import toast from 'react-hot-toast';
 
-// ✅ Real-world validation schema using Zod
+// ✅ Signup schema using Zod
 const signupSchema = z.object({
   name: z
     .string()
@@ -49,37 +54,45 @@ const signupSchema = z.object({
       .min(2, 'State is required')
       .regex(/^[a-zA-Z\s]+$/, 'State must only contain letters'),
   }),
-})
+});
 
-type SignupFormValues = z.infer<typeof signupSchema>
+type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupForm() {
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
-    mode: 'onChange', 
-  })
+    mode: 'onChange',
+  });
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = form
+  } = form;
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
-      const res = await signup(data)
-      // setUser(res.data.user)
-      navigate('/auth/login')
-    } catch (err) {
-      toast('⚠️ User already exists')
+      const res = await signup(data);
+      navigate('/auth/login');
+    } catch (err: any) {
+      if (err.response) {
+        if (err.response.status === 409) {
+          toast.error('⚠️ User already exists');
+        } else {
+          toast.error(`⚠️ Server error: ${err.response.status}`);
+        }
+      } else if (err.request) {
+        toast.error('⚠️ Network error. Please check your internet connection.');
+      } else {
+        toast.error('⚠️ Something went wrong. Please try again.');
+      }
     }
-  }
+  };
 
   return (
     <div className="relative min-h-screen w-full">
-      {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
@@ -88,7 +101,6 @@ export default function SignupForm() {
         }}
       ></div>
 
-      {/* Signup Form */}
       <div className="relative z-10 flex justify-center items-center min-h-screen px-4 py-10">
         <Card className="w-full max-w-sm shadow-xl backdrop-blur-sm bg-white/80">
           <CardHeader>
@@ -99,21 +111,18 @@ export default function SignupForm() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <Input id="name" {...register('name')} />
                 {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
 
-              {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" {...register('email')} />
                 {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
               </div>
 
-              {/* Contact */}
               <div className="space-y-2">
                 <Label htmlFor="contact">Contact Number</Label>
                 <Input
@@ -123,7 +132,9 @@ export default function SignupForm() {
                   maxLength={10}
                   {...register('contact')}
                 />
-                {errors.contact && <p className="text-sm text-red-500">{errors.contact.message}</p>}
+                {errors.contact && (
+                  <p className="text-sm text-red-500">{errors.contact.message}</p>
+                )}
               </div>
 
               {/* Address Line */}
@@ -135,7 +146,6 @@ export default function SignupForm() {
                 )}
               </div>
 
-              {/* City & Pincode */}
               <div className="flex gap-4">
                 <div className="flex-1 space-y-2">
                   <Label htmlFor="city">City</Label>
@@ -153,7 +163,6 @@ export default function SignupForm() {
                 </div>
               </div>
 
-              {/* State */}
               <div className="space-y-2">
                 <Label htmlFor="state">State</Label>
                 <Input id="state" {...register('address.state')} />
@@ -162,7 +171,6 @@ export default function SignupForm() {
                 )}
               </div>
 
-              {/* Password */}
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -176,7 +184,10 @@ export default function SignupForm() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full bg-orange-500 text-white hover:bg-orange-600">
+              <Button
+                type="submit"
+                className="w-full bg-orange-500 text-white hover:bg-orange-600"
+              >
                 Sign Up
               </Button>
             </form>
@@ -184,5 +195,5 @@ export default function SignupForm() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

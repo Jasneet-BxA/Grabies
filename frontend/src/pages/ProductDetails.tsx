@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCurrentUser } from "@/lib/api";
 import type { User } from "@/types";
+import { useAuth } from "@/context/AuthContext";
 
 type Props = {
   category: string;
@@ -28,7 +29,7 @@ export default function ProductDetailDialog({
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const {user} = useAuth()
 
   const { cartitem, addItem } = useCart();
 
@@ -54,6 +55,10 @@ export default function ProductDetailDialog({
 
 const handleAddToCart = async (product: Product) => {
   if (!product) return;
+  if (!navigator.onLine) {
+    toast.error("📡 Network issue. Please try again later.");
+    return;
+  }
 
   if (!user) {
     toast("🔐 Please login first to add items to your cart.");

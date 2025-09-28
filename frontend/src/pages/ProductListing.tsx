@@ -95,22 +95,33 @@ export default function ProductListing() {
     fetchProducts();
   }, [category, tag, rating, priceRange, sort]);
 
-  useEffect(() => {
-    const fetchUserAndWishlist = async () => {
-      try {
-        const currentUser = await getCurrentUser();
-        setUser(currentUser);
-      } catch {
-        setUser(null);
+useEffect(() => {
+  const fetchUserAndWishlist = async () => {
+    if (!navigator.onLine) {
+      toast.error("📡 Network issue. Please try again later.");
+      setUser(null);
+      return;
+    }
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+ 
+      if (currentUser) {
+        await refreshWishlist();
       }
-      await refreshWishlist();
-    };
-
-    fetchUserAndWishlist();
-  }, [refreshWishlist]);
+    } catch {
+      setUser(null);
+    }
+  };
+  fetchUserAndWishlist();
+}, []);
 
   const handleAddToCart = async (product: Product) => {
     if (!product) return;
+    if (!navigator.onLine) {
+    toast.error("📡 Network issue. Please try again later.");
+    return;
+  }
     if (!user) {
       toast("🔐 Please login first to add items to your cart.");
       return;

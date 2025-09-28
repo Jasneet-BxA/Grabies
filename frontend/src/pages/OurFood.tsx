@@ -51,20 +51,32 @@ export default function OurFood() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userData = await getCurrentUser();
-        setUser(userData);
-      } catch {
-        setUser(null);
+useEffect(() => {
+  const fetchUser = async () => {
+    if (!navigator.onLine) {
+      toast.error("📡 Network issue. Please try again later.");
+      setUser(null);
+      return;
+    }
+    try {
+      const userData = await getCurrentUser();
+      setUser(userData);
+ 
+      if (userData) {
+        await refreshWishlist();
       }
-    };
-    fetchUser();
-    refreshWishlist();
-  }, [refreshWishlist]);
+    } catch {
+      setUser(null);
+    }
+  }; 
+  fetchUser();
+}, []); 
 
   const handleAddToCart = async (product: Product) => {
+    if (!navigator.onLine) {
+    toast.error("📡 Network issue. Please try again later.");
+    return;
+  }
     if (!user) {
       toast("🔐 Please login first to add items to your cart.");
       return;

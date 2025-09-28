@@ -4,13 +4,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {Card,CardContent,CardDescription,CardHeader,CardTitle,}from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { login } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 
-// ✅ Real-world login schema
 const loginSchema = z.object({
   email: z
     .string()
@@ -36,7 +41,7 @@ export default function LoginForm() {
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    mode: "onChange", // ✅ validate on typing
+    mode: "onChange", 
   });
 
   const navigate = useNavigate();
@@ -47,8 +52,18 @@ export default function LoginForm() {
       const res = await login(data.email, data.password);
       setUser(res.data.user);
       navigate("/");
-    } catch (err) {
-      toast("⚠️ Invalid email or password");
+    } catch (err: any) {
+      if (err.response) {
+        if (err.response.status === 401) {
+          toast.error("⚠️ Invalid email or password");
+        } else {
+          toast.error(`⚠️ Server error: ${err.response.status}`);
+        }
+      } else if (err.request) {
+        toast.error("⚠️ Network error. Please check your internet connection.");
+      } else {
+        toast.error("⚠️ Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -70,7 +85,7 @@ export default function LoginForm() {
 
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email Field */}
+            {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" {...register("email")} />
@@ -79,7 +94,7 @@ export default function LoginForm() {
               )}
             </div>
 
-            {/* Password Field */}
+            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
