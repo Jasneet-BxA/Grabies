@@ -61,38 +61,38 @@ export default function Cart() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Fetch cart items
-  const fetchCartItems = async () => {
-    try {
-      setLoading(true);
-      const rawData: RawCartItem[] = await getCart();
-      const transformed: CartItem[] = rawData.map((item) => ({
-        id: item.id,
-        quantity: item.quantity,
-        product: {
-          id: item.products.id,
-          name: item.products.name,
-          image_url: item.products.image_url,
-          price: item.products.price,
-        },
-      }));
+const fetchCartItems = async () => {
+  try {
+    setLoading(true);
+    const rawData: RawCartItem[] = await getCart();
+    const transformed: CartItem[] = rawData.map((item) => ({
+      id: item.id,
+      quantity: item.quantity,
+      product: {
+        id: item.products.id,
+        name: item.products.name,
+        image_url: item.products.image_url,
+        price: item.products.price,
+      },
+    }));
 
-      setCartItems(transformed);
-    } catch (error) {
-      console.error("Failed to fetch cart items", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    setCartItems(transformed);
+  } catch (error) {
+    console.error("Failed to fetch cart items", error);
+    toast.error("Failed to load cart items. Please refresh.");
+  } finally {
+    setLoading(false);
+  }
+};
   // Fetch saved addresses
-  const fetchAddresses = async () => {
-    try {
-      const res = await getUserAddress();
-      setAddresses(res);
-    } catch (err) {
-      console.error("Error fetching addresses", err);
-    }
-  };
+const fetchAddresses = async () => {
+  try {
+    const res = await getUserAddress();
+    setAddresses(res);
+  } catch (err) {
+    console.error("Error fetching addresses", err);
+  }
+};
 
   useEffect(() => {
     fetchCartItems();
@@ -100,39 +100,40 @@ export default function Cart() {
   }, []);
 
   // Remove cart item
-  const handleRemove = async (cartId: string) => {
-    try {
-      await removeFromCart(cartId);
-      await refreshCart();
-      removeItem(cartId);
-      setCartItems((prev) => prev.filter((item) => item.id !== cartId));
-    } catch (error) {
-      console.error("Failed to remove item", error);
-    }
-  };
+const handleRemove = async (cartId: string) => {
+  try {
+    await removeFromCart(cartId);
+    await refreshCart();
+    removeItem(cartId);
+    setCartItems((prev) => prev.filter((item) => item.id !== cartId));
+  } catch (error) {
+    console.error("Failed to remove item", error);
+    toast.error("Failed to remove item from cart. Please try again.");
+  }
+};
 
   // Update quantity of a cart item
-  const updateQuantity = async (
-    cartId: string,
-    productId: string,
-    newQuantity: number
-  ) => {
-    if (newQuantity < 1) return;
+const updateQuantity = async (
+  cartId: string,
+  productId: string,
+  newQuantity: number
+) => {
+  if (newQuantity < 1) return;
 
-    try {
-      await addToCart(productId, newQuantity);
-      await refreshCart();
-      quantity(productId, newQuantity);
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item.id === cartId ? { ...item, quantity: newQuantity } : item
-        )
-      );
-    } catch (error) {
-      console.error("Failed to update quantity", error);
-    }
-  };
-
+  try {
+    await addToCart(productId, newQuantity);
+    await refreshCart();
+    quantity(productId, newQuantity);
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === cartId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  } catch (error) {
+    console.error("Failed to update quantity", error);
+    toast.error("Failed to update quantity. Please try again.");
+  }
+};
   // Total price calculation
   const totalPrice = cartItems.reduce(
     (acc, item) => acc + item.product.price * item.quantity,

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FaArrowLeft } from "react-icons/fa";
 import {OrderItem} from "@/types/index";
 import {Order} from "@/types/index";
+import toast from "react-hot-toast";
 
 export default function OrderDetailPage() {
   const { id } = useParams();
@@ -14,29 +15,34 @@ export default function OrderDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+useEffect(() => {
+  const fetchOrder = async () => {
+    if (!id) return;
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      if (!id) return;
-      setLoading(true);
-      try {
-        const data = await getOrderById(id);
-        setOrder(data);
-      } catch (err: unknown) {
-        console.error("Error fetching order:", err);
+    setLoading(true);
+    setError(null);
 
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Failed to load order details.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      const data = await getOrderById(id);
+      setOrder(data);
+    } catch (err: unknown) {
+      console.error("Error fetching order:", err);
 
-    fetchOrder();
-  }, [id]);
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong while loading the order.";
+
+      setError(message);
+      toast.error(`❌ ${message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchOrder();
+}, [id]);
+
 
   if (loading) {
     return (

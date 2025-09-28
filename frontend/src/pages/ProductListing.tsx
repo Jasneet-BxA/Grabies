@@ -81,123 +81,132 @@ export default function ProductListing() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  try {
+    setLoading(true);
+    setError(null);
 
-        if (!tag && !rating && !priceRange && !sort) {
-          const data = await getProductsByCategory(category || "all");
-          setProducts(data);
-        } else {
-          const filtered = await getFilteredProducts(category || "all", {
-            tag: tag || undefined,
-            rating: rating || undefined,
-            priceRange: priceRange || undefined,
-            sort: sort || undefined,
-          });
-          setProducts(filtered.data || filtered); // adjust based on API response structure
-        }
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load products");
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!tag && !rating && !priceRange && !sort) {
+      const data = await getProductsByCategory(category || "all");
+      setProducts(data);
+    } else {
+      const filtered = await getFilteredProducts(category || "all", {
+        tag: tag || undefined,
+        rating: rating || undefined,
+        priceRange: priceRange || undefined,
+        sort: sort || undefined,
+      });
+      setProducts(filtered.data || filtered);
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error("❌ Failed to load products. Please try again.");
+    setError("Failed to load products");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     fetchProducts();
   }, [category, tag, rating, priceRange, sort]);
 
   useEffect(() => {
     const fetchUserAndWishlist = async () => {
-      try {
-        const currentUser = await getCurrentUser();
-        setUser(currentUser);
+  try {
+    const currentUser = await getCurrentUser();
+    setUser(currentUser);
 
-        if (currentUser) {
-          const wishlistItems = await getWishlist();
-          const ids = wishlistItems.map((item: Product) => item.id.trim());
-          setWishlist(ids);
-          saveWishlistToLocalStorage(ids);
-        } else {
-          const localWishlist = getWishlistFromLocalStorage();
-          setWishlist(localWishlist);
-        }
-      } catch (err) {
-        console.error("Could not fetch wishlist", err);
-        const localWishlist = getWishlistFromLocalStorage();
-        setWishlist(localWishlist);
-      }
-    };
+    if (currentUser) {
+      const wishlistItems = await getWishlist();
+      const ids = wishlistItems.map((item: Product) => item.id.trim());
+      setWishlist(ids);
+      saveWishlistToLocalStorage(ids);
+    } else {
+      const localWishlist = getWishlistFromLocalStorage();
+      setWishlist(localWishlist);
+    }
+  } catch (err) {
+    const localWishlist = getWishlistFromLocalStorage();
+    setWishlist(localWishlist);
+  }
+};
 
     fetchUserAndWishlist();
   }, []);
 
   const { cartitem, refreshCart } = useCart();
 
-  const handleAddToCart = async (product: Product) => {
-    if (!product) return;
+const handleAddToCart = async (product: Product) => {
+  if (!product) return;
 
-    const isAlreadyInCart = cartitem.some(
-      (item) => item.product.id === product.id
-    );
+  if (!user) {
+    toast("🔐 Please login first to add items to your cart.");
+    return;
+  }
 
-    if (isAlreadyInCart) {
-      toast("Already added to cart", {
-        icon: "ℹ️",
-        style: { background: "#333", color: "#fff" },
-      });
-      return;
-    }
+  const isAlreadyInCart = cartitem.some(
+    (item) => item.product.id === product.id
+  );
 
-    try {
-      await addToCart(product.id, 1);
-      await refreshCart();
-      toast.success(`${product.name} added to cart!`);
-    } catch (error) {
-      console.error("Failed to add to cart", error);
-      toast.error("Your cart’s waiting—just login! 🔑");
-    }
-  };
+  if (isAlreadyInCart) {
+    toast("ℹ️ Already added to cart", {
+      icon: "🛒",
+      style: { background: "#333", color: "#fff" },
+    });
+    return;
+  }
+  try {
+    await addToCart(product.id, 1);
+    await refreshCart();
+    toast.success(`🛒 ${product.name} added to cart!`);
+  } catch (error) {
+    console.error("Failed to add to cart:", error);
+    toast("❌ Something went wrong. Please try again later.");
+  }
+};
+
 
   const handleToggleWishlist = async (product: Product) => {
-    const productId = product.id.trim();
-    const isAlreadyWishlisted = wishlist.includes(productId);
+  const productId = product.id.trim();
+  const isAlreadyWishlisted = wishlist.includes(productId);
 
-    if (isAlreadyWishlisted) {
-      if (user) {
-        try {
-          await removeFromWishlist(productId);
-          const updatedWishlist = wishlist.filter((id) => id !== productId);
-          setWishlist(updatedWishlist);
-          saveWishlistToLocalStorage(updatedWishlist);
-          toast(`💔 Removed "${product.name}" from your CraveBox`);
-        } catch (err) {
-          console.error("Failed to remove from server wishlist", err);
-        }
-      } else {
+  if (isAlreadyWishlisted) {
+    if (user) {
+      try {
+        await removeFromWishlist(productId);
         const updatedWishlist = wishlist.filter((id) => id !== productId);
         setWishlist(updatedWishlist);
         saveWishlistToLocalStorage(updatedWishlist);
+        toast(`💔 Removed "${product.name}" from your CraveBox`);
+      } catch (err) {
+        console.error("Failed to remove from server wishlist", err);
+        toast.error("❌ Could not remove from wishlist. Try again.");
       }
     } else {
-      if (user) {
-        try {
-          await addToWishlist(productId);
-          const updatedWishlist = [...wishlist, productId];
-          setWishlist(updatedWishlist);
-          saveWishlistToLocalStorage(updatedWishlist);
-          toast.success(`😋 Ohhh! "${product.name}" added to your CraveBox!`);
-        } catch (err) {
-          console.error("Failed to add to server wishlist", err);
-        }
-      } else {
+      const updatedWishlist = wishlist.filter((id) => id !== productId);
+      setWishlist(updatedWishlist);
+      saveWishlistToLocalStorage(updatedWishlist);
+      toast("💔 Removed from local wishlist.");
+    }
+  } else {
+    if (user) {
+      try {
+        await addToWishlist(productId);
         const updatedWishlist = [...wishlist, productId];
         setWishlist(updatedWishlist);
         saveWishlistToLocalStorage(updatedWishlist);
+        toast.success(`😋 "${product.name}" added to your CraveBox!`);
+      } catch (err) {
+        console.error("Failed to add to server wishlist", err);
+        toast.error("❌ Could not add to wishlist. Try again.");
       }
+    } else {
+      const updatedWishlist = [...wishlist, productId];
+      setWishlist(updatedWishlist);
+      saveWishlistToLocalStorage(updatedWishlist);
     }
-  };
+  }
+};
 
   const isWishlisted = (product: Product) =>
     wishlist.includes(product.id.trim());

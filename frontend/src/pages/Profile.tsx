@@ -63,37 +63,50 @@ export default function Profile() {
     { address_line: string; city: string; state: string; pincode: string }[]
   >([]);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (sheetOpen && isAuthenticated) {
-        try {
-          const data = await getUserProfile();
-          setProfile(data);
-          setUser(data);
-          const addressData = await getUserAddress();
-          setSavedAddresses(addressData);
-        } catch (err) {
-          console.error("Failed to fetch profile", err);
-        }
+useEffect(() => {
+  const fetchProfile = async () => {
+    if (sheetOpen && isAuthenticated) {
+      try {
+        const data = await getUserProfile();
+        setProfile(data);
+        setUser(data);
+
+        const addressData = await getUserAddress();
+        setSavedAddresses(addressData);
+      } catch (err: unknown) {
+        console.error("Failed to fetch profile or address:", err);
+
+        const message =
+          err instanceof Error ? err.message : "Something went wrong fetching profile.";
+
+        toast.error(message); // Show toast on error
       }
-    };
-
-    fetchProfile();
-  }, [sheetOpen, isAuthenticated, setUser]);
-
-  const handleLogout = async () => {
-    setLoading(true);
-    try {
-      await logout();
-      setUser(null);
-      setSheetOpen(false);
-      navigate("/");
-    } catch (err) {
-      alert("Logout failed");
-    } finally {
-      setLoading(false);
     }
   };
+
+  fetchProfile();
+}, [sheetOpen, isAuthenticated, setUser]);
+
+const handleLogout = async () => {
+  setLoading(true);
+  try {
+    await logout();
+    setUser(null);
+    setSheetOpen(false);
+    navigate("/");
+  } catch (err: unknown) {
+    console.error("Logout failed:", err);
+
+    const message =
+      err instanceof Error ? err.message : "Logout failed. Please try again.";
+
+    toast.error(message); // Use toast for error feedback
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   if (!isAuthenticated) return null;
 
